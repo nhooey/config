@@ -1,0 +1,5 @@
+Session.vim
+.*.swp
+.cvsexportcommit.diff
+.msg
+*~
