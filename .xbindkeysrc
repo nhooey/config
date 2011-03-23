@@ -1,0 +1,261 @@
+# For the benefit of emacs users: -*- shell-script -*-
+###########################
+# xbindkeys configuration #
+###########################
+#
+# Version: 1.7.1
+#
+# If you edit this file, do not forget to uncomment any lines
+# that you change.
+# The pound(#) symbol may be used anywhere for comments.
+#
+# To specify a key, you can use 'xbindkeys --key' or
+# 'xbindkeys --multikey' and put one of the two lines in this file.
+#
+# The format of a command line is:
+#    "command to start"
+#       associated key
+#
+#
+# A list of keys is in /usr/include/X11/keysym.h and in
+# /usr/include/X11/keysymdef.h
+# The XK_ is not needed.
+#
+# List of modifier:
+#   Release, Control, Shift, Mod1 (Alt), Mod2 (NumLock),
+#   Mod3 (CapsLock), Mod4, Mod5 (Scroll).
+#
+
+# The release modifier is not a standard X modifier, but you can
+# use it if you want to catch release events instead of press events
+
+# By defaults, xbindkeys does not pay attention with the modifiers
+# NumLock, CapsLock and ScrollLock.
+# Uncomment the lines above if you want to pay attention to them.
+
+#keystate_numlock = enable
+#keystate_capslock = enable
+#keystate_scrolllock= enable
+
+# Music
+"MPD_HOST=localhost mpc prev"
+Mod4 + z
+
+"MPD_HOST=localhost mpc next"
+Mod4 + b
+
+"MPD_HOST=localhost mpc toggle"
+Mod4 + c
+
+"MPD_HOST=localhost mpc stop"
+Mod4 + x
+
+"MPD_HOST=localhost mpc play"
+Mod4 + v
+
+"MPD_HOST=localhost mpc volume +5"
+Mod4 + equal
+
+"MPD_HOST=localhost mpc volume +5"
+Mod4 + KP_Add
+
+"MPD_HOST=localhost mpc volume -5"
+Mod4 + minus
+
+"MPD_HOST=localhost mpc volume -5"
+Mod4 + KP_Subtract
+
+"beep -f 1000"
+c:204
+
+"xbindkeys_show" 
+control + shift + k
+
+"gkrellm"
+Mod4 + k
+
+"nautilus --no-desktop"
+Mod4 + e
+
+"record-stop"
+Mod4 + r
+
+#"semaphore-v a"
+#Mod4 + a
+
+#"semaphore-v"
+#Mod4 + z
+
+# Gnome terminal on single-desktop with xfce
+#"gnome-terminal --geometry 120x40-0+0"
+# Gnome terminal on big-desktop with Fluxbox
+#"gnome-terminal --geometry 119x40+1060+0"
+#Mod4 + c
+
+"screen-sleep"
+Mod4 + s
+
+"mozilla-firefox"
+Mod4 + f
+
+"mozilla-thunderbird"
+Mod4 + t
+
+"speak what the fuck"
+shift + Mod4 + w
+
+"aumix -S; aumix -v 85 -w 85; play ~neil/sounds/rimshot.wav; aumix -L"
+shift + Mod4 + r
+
+"aumix -S; aumix -v 95 -w 95; play ~neil/sounds/crickets.wav; aumix -L"
+shift + Mod4 + c
+
+"aumix -S; aumix -v 85 -w 85; play ~neil/sounds/buzzer.wav; aumix -L"
+shift + Mod4 + b
+
+"aumix -S; aumix -v 85 -w 85; play ~neil/sounds/ting.wav; aumix -L"
+shift + Mod4 + t
+
+"aumix -S; aumix -v 80 -w 80; mpg123 ~neil/sounds/applause.mp3; aumix -L"
+shift + Mod4 + a
+
+"aumix -S; aumix -v 80 -w 80; play ~neil/sounds/laughter.wav; aumix -L"
+shift + Mod4 + l
+
+"aumix -S; aumix -v 70 -w 70; speak cd ready; aumix -L"
+shift + Mod4 + d
+
+#"xmms"
+#Mod4 + x
+
+#"amarok-ctrl --play & xmms-ctrl --play"
+#Mod4 + control + x
+
+#"ssh p4 xmms-ctrl --play"
+#Mod4 + control + alt + x
+
+#"amarok-ctrl --pause & xmms-ctrl --pause"
+#Mod4 + control + c
+
+#"ssh p4 xmms-ctrl --pause"
+#Mod4 + control + alt + c
+
+#"amarok-ctrl --previous & xmms-ctrl --rew"
+#Mod4 + control + z
+
+#"ssh p4 xmms-ctrl --rew"
+#Mod4 + control + alt + z
+
+#"amarok-ctrl --next & xmms-ctrl --fwd"
+#Mod4 + control + b
+
+#"ssh p4 xmms-ctrl --fwd"
+#Mod4 + control + alt + b
+
+#"amarok-ctrl --stop & xmms-ctrl --stop"
+#Mod4 + control + v
+
+#"ssh p4 xmms-ctrl --stop"
+#Mod4 + control + alt + v
+
+"amarok-ctrl --previous"
+m:0x10 + c:237
+
+"amarok-ctrl --play-pause"
+m:0x10 + c:162
+
+"amarok-ctrl --pause"
+m:0x10 + c:160
+
+"amarok-ctrl --stop"
+m:0x10 + c:230
+
+"amarok-ctrl --next"
+m:0x10 + c:236
+
+"amarok"
+m:0x10 + c:178
+
+"gaim"
+Mod4 + g
+
+"gt3"
+Mod4 + 3
+
+"gt4"
+Mod4 + 4
+
+"gt3-2"
+Mod4 + 2
+
+# Lock the screen
+"xlock"
+Mod4 + l
+
+# Speedup processor
+"pstart"
+Mod4 + m:0x0 + c:105
+
+# Slowdown processor
+"pstop"
+Mod4 + m:0x0 + c:99
+
+# Print Screen
+#"gnome-screenshot"
+#c:111 + m:0x0
+#"gnome-screenshot --window"
+#alt + c:111 + m:0x0
+
+# Volume down
+"aumix -v -3 -w -3"
+c:174 + m:0x0
+"aumix -v -3 -w -3"
+shift + control + b:5
+"aumix -v -1 -w -1"
+shift + c:174 + m:0x0
+"aumix -v -10 -w -10"
+control + c:174 + m:0x0
+
+# Volume up
+"aumix -v +3 -w +3"
+c:176 + m:0x0
+"aumix -v +3 -w +3"
+shift + control + b:4
+"aumix -v +1 -w +1"
+shift + c:176 + m:0x0
+"aumix -v +10 -w +10"
+control + c:176 + m:0x0
+
+# Mute Sound
+"if amixer get Master | tail -n1 | grep off > /dev/null; then amixer set Master unmute > /dev/null; else amixer set Master mute > /dev/null; fi"
+c:160 + m:0x0
+"if aumix -q | egrep 'vol 40|pcm 40' | wc -l | grep '2' > /dev/null; then aumix -L; else aumix -S; aumix -v 40 -w 40; fi"
+shift + c:160 + m:0x0
+
+
+# set directly keycode (here control + f with my keyboard)
+#"xterm"
+#  c:41 + m:0x4
+
+# specify a mouse button
+#"xterm"
+#  control + b:2
+
+#"xterm -geom 50x20+20+20"
+#   Shift+Mod2+alt + s
+#
+## set directly keycode (here control+alt+mod2 + f with my keyboard)
+#"xterm"
+#  alt + c:0x29 + m:4 + mod2
+#
+## Control+Shift+a  release event starts rxvt
+#"rxvt"
+#  release+control+shift + a
+#
+## Control + mouse button 2 release event starts rxvt
+#"rxvt"
+#  Control + b:2 + Release
+
+##################################
+# End of xbindkeys configuration #
+##################################
