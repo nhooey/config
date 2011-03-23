@@ -1,0 +1,7 @@
+--type-set=mason=.md,.mh,.mhtml,.html
+--type-set=web=.md,.mh,.mhtml,.html,.htm,.js,.pm,.pl,.css
+--color-match=red
+--color-file=blue
+--pager=less -FRX -x4
+--ignore-dir=neil
+--ignore-dir=task-deployment/test_environment
