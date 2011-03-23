@@ -1,0 +1,72 @@
+#caption always "%C %a %l [%w]"
+deflogin off
+vbell on
+autodetach on
+term screen
+startup_message off
+
+# Tell screen that you term can scroll and bind Shift+PgUp/PgDn
+termcapinfo gnome|xterm ti@:te@
+bindkey -m "^[[5;2~" stuff ^b
+bindkey -m "^[[6;2~" stuff ^f
+
+termcap  gnome|xterm hs@:cs=\E[%i%d;%dr:im=\E[4h:ei=\E[4l
+terminfo gnome|xterm hs@:cs=\E[%i%p1%d;%p2%dr:im=\E[4h:ei=\E[4l
+
+# 80/132 column switching must be enabled for ^AW to work
+# change init sequence to not switch width
+termcapinfo  gnome|xterm Z0=\E[?3h:Z1=\E[?3l:is=\E[r\E[m\E[2J\E[H\E[?7h\E[?1;4;6l
+
+# Make the output buffer large for (fast) xterms.
+# termcapinfo xterm* OL=10000
+termcapinfo gnome|xterm* OL=100
+
+# tell screen that xterm can switch to dark background and has function
+# keys.
+termcapinfo gnome|xterm 'VR=\E[?5h:VN=\E[?5l'
+termcapinfo gnome|xterm 'k1=\E[11~:k2=\E[12~:k3=\E[13~:k4=\E[14~'
+termcapinfo gnome|xterm 'kh=\EOH:kI=\E[2~:kD=\E[3~:kH=\EOF:kP=\E[5~:kN=\E[6~'
+
+# special xterm hardstatus: use the window title.
+termcapinfo gnome|xterm 'hs:ts=\E]2;:fs=\007:ds=\E]2;screen\007'
+
+#terminfo xterm 'vb=\E[?5h$<200/>\E[?5l'
+termcapinfo gnome|xterm 'vi=\E[?25l:ve=\E[34h\E[?25h:vs=\E[34l'
+
+# emulate part of the 'K' charset
+termcapinfo gnome|xterm 'XC=K%,%\E(B,[\304,\\\\\326,]\334,{\344,|\366,}\374,~\337'
+
+# xterm-52 tweaks:
+# - uses background color for delete operations
+termcapinfo gnome|xterm* be
+
+# Do not use xterm's alternative window buffer, it breaks scrollback (see bug #61195)
+termcapinfo gnome|xterm|xterms|xs ti@:te=\E[2J
+
+# when programs like vi exit, let them leave their content on the window
+altscreen off
+
+# turn utf8 on in all windows
+defutf8 on
+
+# add tabs and stuff at the bottom of the screen
+# see http://gentoo-wiki.com/TIP_Using_screen for more info
+hardstatus alwayslastline
+hardstatus string '%{= dK}%-w%{= dR}%50>%n %t%{-}%+w%< %{= dK}%-=%D %d %M %Y %c:%s%{-}'
+
+# set a big enough scrollback buffer to be useful
+defscrollback 10000
+
+# name each screen based on what it is running
+shelltitle "$ |bash"
+
+# 256 color support - from: http://frexx.de/xterm-256-notes/
+# terminfo and termcap for nice 256 color terminal
+# allow bold colors - necessary for some reason
+attrcolor b ".I"
+# tell screen how to set colors. AB = background, AF=foreground
+termcapinfo xterm 'Co#256:AB=\E[48;5;%dm:AF=\E[38;5;%dm'
+termcapinfo xterm-color "Co#256:AB=\E[48;5;%dm:AF=\E[38;5;%dm"
+
+# Tell Vim not to crap on the screen when it exits
+altscreen on
