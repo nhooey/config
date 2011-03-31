@@ -25,4 +25,9 @@ alias config='git --git-dir=/home/neil/.config.git/ --work-tree=/home/neil'
 export PATH
 unset USERNAME
 
+export CLICOLOR=1
+
 $echo_dot_bashprofile
+
+# MacPorts: adding an appropriate PATH variable for use with MacPorts.
+export PATH=/opt/local/bin:/opt/local/sbin:$PATH

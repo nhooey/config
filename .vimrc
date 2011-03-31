@@ -63,6 +63,11 @@ set wildmode=longest,list
 set smartcase
 set smartindent
 
+" No backup or swap files
+set nobackup
+set nowritebackup
+set noswapfile
+
 " Make the mouse behave like GVim, scrolling and clicking
 set ttymouse=xterm2
 
@@ -269,4 +274,23 @@ match comp /['"][\/]\?\w\+\.m[hd]\(tml\)\?['"]/
 " au FileChangedShell * Reload
 " -----------------------------------------------------------------------------
 
+" Highlight groups
+" -----------------------------------------------------------------------------
+"         |          |      |          |    |          |      |          |    |          |
 :if has("gui_running") | gui | endif
+highlight green        ctermbg=green     guibg=green     ctermfg=black     guifg=black
+highlight blue         ctermbg=blue      guibg=blue      ctermfg=black     guifg=black
+highlight red          ctermbg=red       guibg=red       ctermfg=black     guifg=black
+highlight yellow       ctermbg=yellow    guibg=yellow    ctermfg=black     guifg=black
+
+highlight clear DiffAdd
+highlight clear DiffChange
+highlight clear DiffText
+highlight clear DiffDelete
+
+highlight DiffAdd      ctermbg=black     guibg=#0c1427
+highlight DiffChange   ctermbg=darkblue  guibg=#0c1427
+highlight DiffText     ctermbg=black     guibg=#19316b
+highlight DiffDelete   ctermbg=none      guibg=#292929   ctermfg=black   guifg=black
+" -----------------------------------------------------------------------------
+

@@ -13,6 +13,8 @@ fi
 
 $echo_dot_bashrc
 
+PATH="/opt/local/libexec/gnubin:$HOME/bin/shutter:$HOME/bin:/usr/local/bin:$PATH"
+
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
 
@@ -79,7 +81,7 @@ function __host_ps1()
 function __git_ps1_branch()
 {
 	if __gitdir > /dev/null 2>&1; then
-		__color "[$(basename $(dirname $(echo $(cd $(__gitdir); pwd))))]"
+		__color "[$(basename "$(dirname "$(echo $(cd "$(__gitdir)"; pwd))")")]"
 	fi
 	if __git_ps1 > /dev/null 2>&1; then
 		if [[ $(__git_ps1) =~ '\|' ]]; then
@@ -163,8 +165,9 @@ export HISTSIZE=10000
 shopt -s histappend
 
 # Shutterstock
-export PERL5LIB=/home/ssuser/lib
+export PERL5LIB=/home/neil/perl5/lib/perl5
 export CVSROOT=/data/export/code/cvsroot
+export PERL_CPANM_OPT="--local-lib=~/perl5"
 if [ $(__shutterstock_env) == 'dev' ]; then
 	eval $(perl -I $HOME/perl5/lib/perl5 -Mlocal::lib)
 fi
@@ -175,6 +178,8 @@ PATH="$HOME/bin/shutter:$HOME/bin:/usr/local/bin:$PATH"
 # Git
 if [ -f "/usr/local/src/git-1.7.1/contrib/completion/git-completion.bash" ]; then
 	source /usr/local/src/git-1.7.1/contrib/completion/git-completion.bash
+elif [ -f "$HOME/.git-completion.bash" ]; then
+	source "$HOME/.git-completion.bash"
 fi
 
 # Sorting Algorithms
