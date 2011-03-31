@@ -107,7 +107,7 @@ xterm|linux|screen|vt320|ansi)
 		SCREEN_WIN="[$WINDOW]"
 	fi
 
-	PS1='\[\033[00;31m\]$(r=$?; if test $r -ne 0; then echo "[$r]"; set ?=$r; unset r; fi)\[\033[00m\]${debian_chroot:+($debian_chroot)}\[\033[01;37m\]\u\[\033[01;30m\]@$(__host_ps1 "%s")\[\033[00;32m\]$SCREEN_WIN\[\033[00m\]$(__git_ps1_branch):\[\033[00;36m\]\w\[\033[00m\]
+	PS1='\[\033[00;31m\]$(r=$?; if test $r -ne 0; then echo "[$r]"; set ?=$r; unset r; fi)\[\033[00m\]${debian_chroot:+($debian_chroot)}\[\033[01;37m\]\u\[\033[01;30m\]@$(__host_ps1 "%s")$(__git_ps1_branch):\[\033[00;36m\]\w\[\033[00m\]
 \[\033[01;30m\]$(date +"%Y-%m-%d %H:%M:%S")\[\033[00m\] \[\033[00;34m\]\$\[\033[00m\] '
 	;;
 *)
