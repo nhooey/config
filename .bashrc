@@ -157,7 +157,11 @@ if [ -f /etc/bash_completion ]; then
 fi
 
 # Neil Hooey
-export MANPAGER="/usr/bin/most -s"
+if [ -f /usr/bin/most ]; then
+	export MANPAGER="/usr/bin/most -s"
+else
+	export MANPAGER="/usr/bin/less"
+fi
 export GREP_OPTIONS='--color=auto'
 export GREP_COLOR='0;36'
 export HISTCONTROL=erasedups
