@@ -1,0 +1,17 @@
+#!/bin/bash
+
+if [ $# -ne 0 ]; then
+	echo "usage: $(basename $0)"
+	exit 1
+fi
+
+IDLE_TIME=$(xscreensaver-command -time \
+	| tail -n 1 \
+	| egrep -o "[0-9]{2}:[0-9]{2}:[0-9]{2}")
+
+while xscreensaver-command -time | tail -n 1 | grep "$IDLE_TIME"; do
+	sleep 1s
+	echo -n .
+done
+
+speak "Good morning. How are you on this fine day? I feel great myself, just warming up my cash and CPU. Enjoy the Chinese pastries in the fridge for breakfast."

@@ -1,0 +1,23 @@
+#!/bin/bash
+# cvsup
+
+MCLASS_DIR="$1"
+WGEN_DIR="$HOME/code/wgen"
+CODE_DIR="$WGEN_DIR/$MCLASS_DIR"
+
+if [ $# -ne 1 ]; then
+    echo "usage: $(basename $0) <source-dir>"
+    exit 1
+elif [ ! -d "$CODE_DIR" ]; then
+	echo "Error, could not find \`$MCLASS_DIR' in \`$WGEN_DIR'."
+    exit 1
+fi
+
+cd "$CODE_DIR"
+cvs -Q co mclass/release/tools
+python mclass/release/tools/rover/fetch.py sync_client_maemo
+
+CVS_DIRS=$(cat "$CODE_DIR/mclass/release/tools/rover/config/sync_client_maemo.csv" | \
+    perl -ne 'printf "%s\n", ((split(/,\s*/))[0])';)
+
+cvs -Q up -d $CVS_DIRS

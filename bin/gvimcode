@@ -1,0 +1,9 @@
+#!/bin/bash
+
+if ! vim --serverlist | grep CODE > /dev/null 2>&1; then
+	gvim --servername code $*
+elif [ $# -gt 0 ]; then
+	gvim --servername code --remote $@
+else
+	gvim --servername code
+fi

@@ -1,0 +1,6 @@
+echo Compiling SL.cup.original...
+./compile SL.cup.original
+echo
+echo Converting $1.sl to MIPS code...
+echo
+java Main $1

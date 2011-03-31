@@ -1,0 +1,5 @@
+#!/bin/bash
+
+clear;
+slc $1;
+mipsc $1;

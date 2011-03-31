@@ -1,0 +1,6 @@
+#!/bin/bash
+# bbxmms
+# loads xmms on p4, with display on inspiron
+
+export DISPLAY=:0.0
+ssh p4 xmms --play

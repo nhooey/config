@@ -1,0 +1,4 @@
+#!/bin/bash
+# To be run on neil-ubuntu
+
+ssh -fXN -p 22 192.168.2.8 -L 0.0.0.0:22028:fs1:22  -o 'ConnectTimeout 5'

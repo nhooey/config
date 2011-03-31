@@ -1,0 +1,4 @@
+#!/bin/bash
+# lns
+
+ln -s "`pwd`/$1" /home/neil/mydocs/University/3b/voc/K-Court/classy/

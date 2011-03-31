@@ -1,0 +1,2 @@
+gkrellm -s sempron --geometry 10x10+1788+798 &
+gkrellm -s sempron --geometry 10x10+3390+823 &

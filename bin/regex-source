@@ -1,0 +1,3 @@
+#!/bin/bash
+
+echo -n '\.(cpp|hpp|h|hh|c|cc|tpp|inl|java|asm)$'

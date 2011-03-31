@@ -1,0 +1,34 @@
+#!/bin/bash
+# coursechk
+# Check if a UW course is available
+
+TERM="1055"
+SUBJECT="MUSIC"
+COURSENUM="140"
+ADDRESS="http://www.adm.uwaterloo.ca/cgi-bin/cgiwrap/infocour/salook.pl"
+TOTAL=180
+LOGFILE="/tmp/coursechk.log"
+
+echo "Checking for course: $SUBJECT $COURSENUM..."
+
+while true
+do
+	CURL_RESULT=`curl -k -d "sess=$TERM" -d "subject=$SUBJECT" -d "cournum=$COURSENUM" "$ADDRESS" 2> /dev/null`
+
+	RESULT=`echo $CURL_RESULT | egrep -o "$TOTAL" | wc -l`
+
+	echo -n "$RESULT "
+
+	if [ $RESULT -eq 1 ]
+	then
+		echo
+		date
+		echo FOUND! Sign up for course: 1524
+		xmms --pause
+		beep -d 100 -f 1000 -r 3
+		xmms --play
+		exit 0
+	fi
+
+	sleep 5s
+done

@@ -1,0 +1,14 @@
+#!/bin/bash
+
+CODE_DIR="$HOME/code/wgen"
+IMPORT_DIR="$CODE_DIR/git-cvs"
+ROVER_FILE="$CODE_DIR/main/mclass/release/tools/rover/config/r3d2_pda_qt.csv"
+CVS_REPO=":pserver:nhooey@wgbuild01.wgenhq.net:/home/cvs/repository"
+
+mkdir "$CODE_DIR"
+for i in $(cat "$ROVER_FILE"); do
+    MODULE="$(echo "$i" | perl -ne 'printf "%s\n", ((split(/,\s*/))[0]);')"
+    BRANCH="$(echo "$i" | perl -ne 'printf "%s\n", ((split(/,\s*/))[1]);')"
+    mkdir -pv "git-cvs/$MODULE"
+    git-cvsimport -p x -v -d "$CVS_REPO" "$MODULE" -o "$BRANCH" -C "$IMPORT_DIR/$MODULE"
+done

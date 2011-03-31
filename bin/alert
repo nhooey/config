@@ -1,0 +1,2 @@
+play "/home/neil/sounds/Musica Maximize.wav" > /dev/null 2>&1
+play "/home/neil/sounds/Musica Maximize.wav" > /dev/null 2>&1

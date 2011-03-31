@@ -1,0 +1,37 @@
+#!/bin/bash
+# lsmon
+# print out the difference between `ls -l` between time durations
+
+LS1="/tmp/lsmon.0.log"
+LS2="/tmp/lsmon.1.log"
+LSDIFF="/tmp/lsmon.diff"
+
+# If the user didn't specify a target directory to monitor
+if [ "$1" = "" ]
+then
+    TARGET_DIR="."
+else
+    TARGET_DIR=$1
+fi
+
+# Loop and detect any changes
+while true
+do
+    ls -l "$TARGET_DIR" > "$LS1"
+    sleep 1s;
+    ls -l "$TARGET_DIR" > "$LS2"
+    
+    # Do a diff and keep track of the result
+    diff "$LS1" "$LS2" > "$LSDIFF"
+    DIFF_RESULT=$?
+    
+    # Paste the results and beep if there was a change
+    if [ $DIFF_RESULT -ne 0 ]
+    then
+        cat "$LSDIFF"
+        if [ `which beep` != "" ]
+        then
+            beep -f 1000
+        fi
+    fi
+done    

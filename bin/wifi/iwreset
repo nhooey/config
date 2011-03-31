@@ -1,0 +1,3 @@
+#!/bin/bash
+# iwreset
+su -c "echo Removing wireless module...; rmmod ipw2100 && echo Done && echo Inserting wireless module... && modprobe -v ipw2100 && echo Done"

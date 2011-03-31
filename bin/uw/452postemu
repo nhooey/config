@@ -1,0 +1,70 @@
+#!/bin/bash
+
+if [ /u/cs452/public/tools/bin/452mkemu -nt $HOME/.452_emu_setup ] ; then
+  echo "Warning: The 452mkemu script has changed since you last ran it."
+  echo "I recommend rerunning 452mkemu. You will have to repost"
+  echo "any previously posted files after doing so."
+fi
+
+EMUDIR=$HOME/code/uw/cs452/emu
+MENU=$EMUDIR/menu.lst
+
+if [ -e $MENU ] ; then
+  rm $MENU || exit 1
+fi
+
+mcopy -no C:\menu.lst $MENU &> /dev/null
+if [ ! -e $MENU ] ; then
+  touch $MENU
+fi
+
+TITLE="$1"
+shift
+
+if [ "x$TITLE" = x ] ; then
+  echo "Usage: $0 title kernel [modules]"
+  exit 1
+fi
+
+gawk 'BEGIN { inside = 0; } /^title '"$TITLE"'$/ { inside = 1; next } /^title / { inside = 0; } { if (!inside) print; }' < $MENU > $MENU.tmp
+mv $MENU.tmp $MENU
+
+KERNEL="$1"
+shift
+if [ "x$KERNEL" = x ] ; then
+  echo "Usage: $0 title kernel [modules]"
+  exit 1
+fi
+
+if [ ! -e "$KERNEL" ] ; then
+  echo "Kernel $KERNEL does not exist. Aborting"
+  exit 1
+fi
+
+mcopy -no "$KERNEL" C:`basename "$KERNEL"`
+KERNEL=`basename "$KERNEL"`
+
+if [ -e $MENU.prepend ] ; then rm $MENU.prepend ; fi
+echo "timeout 0" >> $MENU.prepend
+echo "title $TITLE" >> $MENU.prepend
+echo "root (hd0,0)" >> $MENU.prepend
+echo "kernel /$KERNEL" >> $MENU.prepend
+
+MODULE="$1"
+shift
+while [ "x$MODULE" != x ]; do
+  if [ ! -e "$MODULE" ] ; then
+    echo "Module $MODULE does not exist. Aborting"
+	exit 1
+  fi
+  mcopy -no "$MODULE" C:`basename "$MODULE"`
+  MODULE=`basename "$MODULE"`
+  echo "module /$MODULE" >> $MENU.prepend
+  MODULE="$1"
+  shift
+done
+
+#cat $MENU >> $MENU.prepend
+mv $MENU.prepend $MENU
+mcopy -no $MENU C:\menu.lst
+#rm $MENU

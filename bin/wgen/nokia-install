@@ -1,0 +1,19 @@
+#!/bin/bash
+
+if [[ $# -lt 1 || $# -gt 1 ]]; then
+	echo "usage: $(basename $0) <nokia-device>"
+	exit 1
+fi
+
+HOST=$1
+DEB_DIR='/home/nhooey/code/wgen/mclass/d2/pda/qt/debug-DIABLO_ARMEL'
+DEST_DIR='~/downloads/software'
+
+cd "$DEB_DIR"
+
+MCLASS_DIBELS=$(ls -t1 mclass-dibels_*.deb | head -n 1)
+MCLASS_DIBELS_LIB=$(ls -t1 mclass-dibels-lib_*.deb | head -n 1)
+
+rsync --progress -rvtl "$MCLASS_DIBELS" "$MCLASS_DIBELS_LIB" $HOST:$DEST_DIR \
+	&& ssh $HOST 'rm /usr/bin/wgen/WG_D2 -f' \
+	&& ssh $HOST "dpkg -i $DEST_DIR/$MCLASS_DIBELS $DEST_DIR/$MCLASS_DIBELS_LIB"

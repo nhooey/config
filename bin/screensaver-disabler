@@ -1,0 +1,24 @@
+#!/bin/bash
+
+while true; do
+	FIREFOX_CPU="$( \
+		top -b -n 1 \
+		| grep firefox \
+		| perl -ne 'printf "%d\n", int((split /\s+/, $_)[8]);' \
+	)"
+
+	pgrep "mplayer|xine|totem" > /dev/null
+	MOVIEPLAYER_RUNNING=$?
+
+	echo "Firefox CPU: $FIREFOX_CPU, Movie Player?: $MOVIEPLAYER_RUNNING"
+
+	if [[ $MOVIEPLAYER_RUNNING -eq 0 || $FIREFOX_CPU -gt 18 ]]; then
+		if pgrep -l gnome-screensaver > /dev/null; then
+			gnome-screensaver-command --poke > /dev/null
+		fi
+		if pgrep -l xscreensaver > /dev/null; then
+			xscreensaver-command -deactivate > /dev/null
+		fi
+	fi
+	sleep 30s
+done

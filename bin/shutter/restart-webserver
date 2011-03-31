@@ -1,0 +1,4 @@
+#!/bin/bash
+
+sudo /www/bin/apachectl_coder stop neil
+sudo /www/bin/apachectl_coder start neil #/home/neil/code/neil/www_modperl.conf

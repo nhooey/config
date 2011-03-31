@@ -1,0 +1,15 @@
+#!/bin/bash
+# timer
+
+sleep $1 $2 $3 $4;
+echo $2
+
+aumix -S
+
+while true
+do
+	aumix -v 80 -w 80
+	alert;
+	aumix -L
+	sleep 5s;
+done;

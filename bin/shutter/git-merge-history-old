@@ -1,0 +1,26 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use File::Basename;
+
+my $basename = basename $0;
+
+my $git_args = join(' ', grep { /^-/ } @ARGV);
+@ARGV = grep { /^[^\-]/ } @ARGV;
+
+die "Usage: $basename: <branch> <merge-branch>\n"
+	unless @ARGV == 2;
+
+my ($branch, $merge) = @ARGV;
+
+my @git_rev_list = split /\s+/, `git rev-list $branch --grep="^Merge branch '$merge'"`;
+
+for my $commit (@git_rev_list) {
+	my $merge_base = `git merge-base $commit^1 $commit^2`;
+	chomp $merge_base;
+	die "No merge-base for branch: '$merge'.\n"
+		unless $merge_base =~ /[a-f0-9]+/;
+	system "git log --color $git_args $merge_base..$commit^2 | less -RXc";
+}

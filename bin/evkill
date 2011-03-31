@@ -1,0 +1,2 @@
+killall evolution-mail
+killall evolution-alarm-notify

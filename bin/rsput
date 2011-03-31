@@ -1,0 +1,106 @@
+#!/bin/bash
+# rsput
+# rsync put something on another computer
+
+RSYNC='rsync -rvtlu -e ssh'
+
+if [ $# -lt 2 ]
+then
+	echo "usage: `basename $0` <destination> <backup_target>"
+	exit 1;
+fi
+
+# Check if the user wants a dry-run
+if [ "$1" = "-d" -o "$1" = "--dry-run" ]
+then
+	echo "Doing an rsync --dry-run"
+	RSYNC="${RSYNC} --dry-run"
+	shift
+else
+	if [ `basename $0` = "rsput" ]
+	then
+		echo
+		echo "Doing an rsync << FROM `hostname` >> , << TO $1 >>"
+	elif [ `basename $0` = "rsget" ]
+	then
+		echo "Doing an rsync << FROM $1 >>, << TO `hostname` >>"
+	fi
+
+	echo "Press any key to continue..."
+	read
+fi
+
+SERVER=$1
+
+if [ "`basename $0`" = "rsput" ]
+then
+	DEST=${SERVER}:
+	SRC=
+elif [ "`basename $0`" = "rsget" ]
+then
+	DEST=
+	SRC=${SERVER}:
+else
+	echo "error: `basename $0` is not a valid name for this executeable, use rsput or rsget."
+	exit 1
+fi
+
+COMPLETED=""
+
+# Kill off the first parameter now
+shift
+
+for monkey in $@
+do
+	COMPLETED="${COMPLETED} ${monkey}"
+	EXCLUDE=""
+
+	case "$monkey" in
+		"bin"			)	TARGET=~neil/bin;;
+		"licq"			)	TARGET=~neil/.licq;;
+		"gaim"			)	TARGET=~neil/.gaim; EXCLUDE="*/icons/*";;
+		"im"			)	TARGET=~neil/.gaim; EXCLUDE="*/icons/*";;
+		"evolution"		)	TARGET=~neil/.evolution;;
+		"thunderbird"	)	TARGET=~neil/.mozilla-thunderbird;;
+		"email"			)	TARGET=~neil/.mozilla-thunderbird;;
+		"firefox"		)	TARGET=~neil/.mozilla; EXCLUDE="*/Cache/*";;
+		"browser"		)	TARGET=~neil/.mozilla; EXCLUDE="*/Cache/*";;
+		"mozilla"		)	TARGET=~neil/.mozilla;;
+		"opera"			)	TARGET=~neil/.opera/opera6.adr;;
+		"xchat"			)	TARGET=~neil/.xchat2;;
+		"mydocs"		)	TARGET=~neil/mydocs/*; EXCLUDE='Archive';;
+		"mypics"		)	TARGET=~neil/mypics/*;;
+		"code"			)	TARGET=~neil/code; EXCLUDE='code/oss';;
+		"pan"			)	TARGET=~neil/.pan;;
+		"news"			)	TARGET=~neil/.pan;;
+		"xbindkeys"		)	TARGET=~neil/.xbindkeysrc;;
+		"gimp"			)	TARGET=~neil/.gimp-2.2;;
+		"www"			)	TARGET=~neil/code/www;;
+        "eclipse"       )   TARGET=~neil/.eclipse;;
+        "bashrc"        )   TARGET=~neil/.bashrc;;
+		*				)	echo "`basename $0`: invalid backup target: $monkey"; exit 1;;
+	esac
+
+	# Cut the destination down to the parent directory
+	DEST_TARGET=`dirname "${TARGET}"`
+	SRC_TARGET=${TARGET}
+
+	if [ "${EXCLUDE}" = "" ]
+	then
+		EXCLUDE_PARAM=""
+	else
+		EXCLUDE_PARAM="--exclude="
+	fi
+
+	COMMAND_LINE="${RSYNC} ${SRC}${SRC_TARGET} ${DEST}${DEST_TARGET} ${EXCLUDE_PARAM}${EXCLUDE}"
+	echo "Rsyncing ${monkey}: ${COMMAND_LINE}"
+	echo "--------------------------------------------------------------------------------"
+	${COMMAND_LINE}
+done
+
+echo
+echo "================================================================"
+echo "Did an rsync to ${DEST} for the following targets:"
+echo "${COMPLETED}"
+
+exit 0

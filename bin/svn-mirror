@@ -1,0 +1,109 @@
+#!/bin/bash
+# svn-mirror
+# Mirrors the changes in one svn checkout to another sandbox
+
+START_DIR=$(pwd)
+BASENAME=$(basename $0)
+
+SVN_FINISHED_TEXT="--- SVN Checkout Complete ---"
+
+if [[ $# -lt 2 || $# -gt 3 ]]; then
+	echo "usage: $BASENAME <src-dir> <dest-dir> [dir]"
+	exit 1
+fi
+
+SRC_DIR="$1"
+shift
+DEST_DIR="$1"
+shift
+DIR=$1
+shift
+
+if [ ! -d "$SRC_DIR" ]; then
+	echo "$BASENAME: <src-dir> '$SRC_DIR' not a directory."
+	exit 1
+fi
+
+DEST_DIR_EXISTED=1
+if mkdir -p "$DEST_DIR"; then
+	DEST_DIR_EXISTED=0
+fi
+	
+(
+	if ! cd "$DEST_DIR"; then
+		echo "$BASENAME: Cannot cd to directory '$DEST_DIR' for some reason."
+		exit 1
+	fi
+)
+
+echo
+echo "--- Finding svn repository for source directory: '$SRC_DIR'..."
+SVN_REPO=$(egrep "^svn" "$SRC_DIR/.svn/entries" | head -n 1)
+echo "$SVN_REPO"
+
+echo
+echo "--- Checking out repository into '$DEST_DIR' in the background..."
+SVN_LOG=$(mktemp)
+if [ "$DEST_DIR_EXISTED" -eq 1 ]; then
+	SVN_EXISTING_REPO=$(egrep "^svn" "$DEST_DIR/.svn/entries" | head -n 1)
+	if [ "x$SVN_REPO" = "x$SVN_EXISTING_REPO" ]; then
+		svn up "$DEST_DIR" > "$SVN_LOG" &
+	else
+		echo "The svn directory '$DEST_DIR' exists, but has a different"
+		echo "repository than the source: '$SRC_DIR'"
+		exit 2
+	fi
+else
+	svn checkout "$SVN_REPO" "$DEST_DIR" > "$SVN_LOG" &
+fi
+SVN_PID=$!
+echo "--- Writing to log file: '$SVN_LOG'"
+
+echo
+echo "--- Conducting \`svn diff\` in '$SRC_DIR/$DIR'..."
+SVN_DIFF_FILE=$(mktemp)
+(cd "$SRC_DIR/$DIR";
+	svn diff > "$SVN_DIFF_FILE")
+head -n 5 "$SVN_DIFF_FILE"
+echo "... [clipped] ..."
+tail -n 5 "$SVN_DIFF_FILE"
+
+echo
+echo "--- Finding list of added files in '$SRC_DIR/$DIR'..."
+SVN_ADDED_FILES=$(mktemp)
+(cd "$SRC_DIR/$DIR";
+	svn stat | egrep "^A[ ]+" | sed -e "s/^A[ ]\+//g" > "$SVN_ADDED_FILES")
+cat "$SVN_ADDED_FILES"
+
+echo
+echo "--- Waiting for SVN checkout to complete: PID $SVN_PID ..."
+
+while kill -0 $SVN_PID > /dev/null; do
+	printf "Files copied: $(wc -l $SVN_LOG | cut -d ' ' -f1)\r"
+	sleep 1
+done
+printf "\n"
+
+head -n 5 "$SVN_LOG"
+echo "... [clipped] ..."
+tail -n 5 "$SVN_LOG"
+echo "--- Complete!"
+
+echo
+echo "--- Applying SVN Diff patch gathered earlier..."
+(cd "$DEST_DIR/$DIR";
+	patch -p0 < "$SVN_DIFF_FILE")
+
+echo
+echo "--- Copying files that were SVN added..."
+for i in $(cat "$SVN_ADDED_FILES"); do
+	cp -v "$SRC_DIR/$DIR/$i" "$DEST_DIR/$DIR/$i"
+done
+
+echo
+echo "--- New SVN Sandbox is complete."
+
+
+rm "$SVN_LOG"
+rm "$SVN_DIFF_FILE"
+rm "$SVN_ADDED_FILES"

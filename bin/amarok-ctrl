@@ -1,0 +1,8 @@
+#!/bin/bash
+
+ps aux | grep -v grep | egrep "/\<amarokapp\>$" > /dev/null 2>&1
+RUNNING=$?
+
+if [ $RUNNING -eq 0 ]; then
+	amarok $@
+fi

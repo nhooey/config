@@ -1,0 +1,4 @@
+#!/bin/bash
+
+killall fbimg
+killall -9 fbimg

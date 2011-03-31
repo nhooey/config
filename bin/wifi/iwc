@@ -1,0 +1,176 @@
+#!/usr/bin/perl
+# iwc.pl
+# Wireless Connector
+
+use strict;
+use warnings;
+use Switch;
+
+my $MAX_BEACON_TOLERANCE = 10000;
+
+my $INTERFACE = 'eth1';
+my $IWCONFIG = '/sbin/iwconfig';
+my @waps;
+my %blacklisted_indexes;
+
+
+sub enumerate_waps();
+sub choose_best_wap();
+sub bind_adapter($);
+
+
+sub enumerate_waps()
+{
+	my $iwlist_scan = `iwlist $INTERFACE scan`;
+	
+	my $index = -1;
+
+	foreach my $line (split "\n", $iwlist_scan)
+	{
+		# When we have a new Cell address and list of attributes
+		if ($line =~ /^\s*Cell [0]*([0-9]+) - Address: (([0-9A-F]{2}:){5}[0-9A-F]{2})/)
+		{
+			$index++;
+			my %wap = (
+				'mac' => $2,
+				'index' => $index,
+			);
+			$waps[$index] = \%wap;
+			print "\nWAP $index: $2\n";
+			next;
+		}
+
+		# Capture each attribute
+		if ($line =~ /^\s*(Extra:)?\s*([^:]+):\s*(.*)\s*$/)
+		{
+			my $label = $2;
+			my $value = $3;
+
+			my $wap = $waps[$index];
+
+			switch ($label)
+			{
+				case "ESSID"
+				{
+					$value =~ /^"(.*)"$/;
+					$wap->{'essid'} = $1;
+					printf "    %-10s: %s\n", 'essid', $wap->{'essid'};
+				}
+				case "Encryption key"
+				{
+					$wap->{'key'} = $value;
+					printf "    %-10s: %s\n", 'key', $wap->{'key'};
+				}
+				case "Quality"
+				{
+					$value =~ /^([0-9]+)/;
+					$wap->{'quality'} = $1;
+					printf "    %-10s: %s\n", 'quality', $wap->{'quality'};
+				}
+				case "Last beacon"
+				{
+					$value =~ /^([0-9]+)/;
+					$wap->{'beacon'} = $1;
+					printf "    %-10s: %s\n", 'beacon', $wap->{'beacon'};
+				}
+			}
+		}
+	}
+}
+
+
+sub choose_best_wap()
+{
+	my $best_index = -1;
+	my $best_qual = 0;
+
+	foreach my $wap (@waps)
+	{
+		if ($wap->{'key'} eq 'off' and $wap->{'beacon'} < $MAX_BEACON_TOLERANCE
+			and $wap->{'quality'} > $best_qual
+#			and $wap->{'essid'} eq "uw-wireless"
+			and not defined $blacklisted_indexes{$wap->{'index'}})
+		{
+			$best_index = $wap->{'index'};
+			$best_qual = $wap->{'quality'};
+		}
+	}
+
+	if ($best_index != -1)
+	{
+		print "Best WAP:\n";
+		my $wap = $waps[$best_index];
+		while ((my $key, my $value) = each %$wap)
+		{
+			printf "    %-10s: %s\n", $key, $value;
+		}
+	}
+	else
+	{
+		print "No good WAP found...\n";
+		print "The following WAPs all failed to bind: ";
+		foreach (sort keys %blacklisted_indexes)
+		{
+			print "$_ ";
+		}
+		print "\n";
+	}
+
+	return $best_index;
+}
+
+
+sub bind_adapter($)
+{
+	my ($wap_index) = @_;
+
+	my $wap = $waps[$wap_index];
+
+	print "Binding adapter to: $wap->{'mac'}\n";
+	system("$IWCONFIG $INTERFACE essid \'$wap->{'essid'}\'");
+	system("$IWCONFIG $INTERFACE ap $wap->{'mac'}");
+
+	# Wait for iwconfig to catch up to the binding
+	sleep 1;
+
+	my $iwconfig_ap = `$IWCONFIG $INTERFACE`;
+	$iwconfig_ap =~ /Access Point: ([A-F0-9:]+|Not-Associated)/;
+
+	print "Adapter bound to:   $1\n";
+
+	if ($1 eq $wap->{'mac'})
+	{
+		return 1;
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+
+enumerate_waps();
+
+my $bound = 0;
+until ($bound)
+{
+	my $best_index = choose_best_wap();
+	print "\n";
+
+	last if ($best_index == -1);
+
+	$bound = bind_adapter($best_index);
+
+	if ($bound)
+	{
+		system("dhclient $INTERFACE");
+		exit 0;
+	}
+	else
+	{
+		$blacklisted_indexes{$best_index} = 1 unless ($bound);
+		print "Binding adapter failed...\n\n";
+	}
+}
+
+exit 1;

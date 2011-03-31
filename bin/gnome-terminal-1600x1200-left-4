@@ -1,0 +1,6 @@
+#!/bin/bash
+
+gnome-terminal --geometry 110x36+0+0 &
+gnome-terminal --geometry 100x36+808+0 &
+gnome-terminal --geometry 100x36+808+596 &
+gnome-terminal --geometry 110x36+0+596 &

@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# Neil's Sleep-In script
+
+# disable wakeup
+rm --force /home/neil/bin/wakeup
+
+# move killsleepin to replace wakeup
+# killsleepin does nothing, then restores wakeup to original
+cp --force /home/neil/bin/wakeup.killsleepin /home/neil/bin/wakeup

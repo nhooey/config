@@ -1,0 +1,16 @@
+#!/bin/bash
+
+REGEX='.*\/\(.*\.mk$\|.*\.mak$\|Makefile\|SConstruct.*\|SConscript.*\)'
+
+if [[ $# -gt 0 && -d $1 ]]; then
+	DIR="$1"
+	if [ -d "$DIR" ]; then
+		shift
+#		echo "find \"$DIR\" -regex $REGEX \"$@\""
+		exec find "$DIR" -regex $REGEX "$@"
+		exit 0
+	fi
+fi
+
+#echo "find -regex \"$REGEX\" \"$@\""
+exec find -regex "$REGEX" "$@"

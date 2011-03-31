@@ -1,0 +1,1 @@
+find ./ -regex ".*\(cpp\|cc\|h\)" | ctags -R -L -

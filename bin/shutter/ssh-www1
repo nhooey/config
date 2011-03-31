@@ -1,0 +1,4 @@
+#!/bin/bash
+
+#ssh -t dev "bash -l -c \"ssh -t fs1 screen -UdRR\""
+ssh -t dev "bash -l -c \"ssh -t www1 bash\""

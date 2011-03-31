@@ -1,0 +1,334 @@
+#!/bin/bash
+# uww
+# uw wireless connector, lights up an AP and connects to it
+
+#ifdown eth0
+ifconfig eth0 down
+
+# Check to make sure curl and wget are installed
+which curl 2>&1 > /dev/null
+if [ $? -ne 0 ]
+then
+	echo "Error: curl is not installed."
+fi
+which wget 2>&1 > /dev/null
+if [ $? -ne 0 ]
+then
+	echo "Error: wget is not installed."
+fi
+
+
+# Check for quiet switch
+QUIET=0
+XMMS=0
+if [ "$1" = "-q" ]
+then
+	QUIET=1
+elif [ "$1" = "-x" ]
+then
+	XMMS=1
+fi
+
+# Check for verbose switch
+VERBOSE=0
+if [ "$1" = "-v" ]
+then
+	VERBOSE=1
+fi
+
+INTERFACE=eth1
+PING_CMD_LINE='ping -q -W 1 -n -c 1 129.97.128.15'
+IWLIST_OUTPUT=/tmp/iwlist.log
+IWCONFIG_OUTPUT=/tmp/iwconfig.log
+MAX_FAILURES=3
+
+# Find username and password
+USERNAME=`cat "${HOME}/.uww-passwd" | head -n 1`
+PASSWORD=`cat "${HOME}/.uww-passwd" | tail -n 1`
+
+killall dhclient
+
+echo "UW Wireless Connector"
+echo "========================================"
+
+function beep_success
+{
+	if [ $QUIET -eq 0 ]
+	then
+		beep -f 10000 -l 100
+	elif [ $XMMS -eq 1 ]
+	then
+		xmms --pause
+	fi
+}
+
+function beep_failure
+{
+	if [ $QUIET = 0 ]
+	then
+		beep -f 100 -l 30
+	fi
+}
+
+# Go through the list of APs and find the highest quality
+function find_best_ap
+{
+	echo "Searching for the best wireless access point..."
+
+	iwlist eth1 scanning | egrep "ESSID|Signal level=|Cell|Extra: Last beacon:" > $IWLIST_OUTPUT
+	cat "$IWLIST_OUTPUT"
+	echo
+
+	QUAL_PREV=0
+	QUAL_MAX_INDEX=1
+	QUAL_MAX=-10000
+	BEACON_MIN=-1
+	i=0
+	for QUAL_CURRENT in `cat $IWLIST_OUTPUT | egrep "Signal level=" | egrep -o "(-)*[0-9][0-9]*"`
+	do
+		let i+=1
+		
+		if [ "$QUAL_CURRENT" -gt "$QUAL_MAX" ]
+		then
+			LAST_BEACON=`cat $IWLIST_OUTPUT | egrep "Extra: Last beacon:" \
+				| egrep -o "[0-9][0-9]*" | head -n $i | tail -n 1`
+			if [ "$LAST_BEACON" -lt 100000 ]
+			then
+				QUAL_MAX_INDEX=$i
+				QUAL_MAX=$QUAL_CURRENT
+				BEACON_MIN=$LAST_BEACON
+			fi
+		fi
+
+		QUAL_PREV=$QUAL_CURRENT
+	done
+
+	# Output the best ap's mac address
+	BEST_AP_MAC_ADDRESS=`\
+		cat $IWLIST_OUTPUT | egrep -o "([A-Z0-9][A-Z0-9]:)([A-Z0-9][A-Z0-9]:)*([A-Z0-9][A-Z0-9])" \
+		| head -n $QUAL_MAX_INDEX \
+		| tail -n 1`
+	echo "Best AP MAC:  $BEST_AP_MAC_ADDRESS"
+
+	BEST_AP_ESSID=`\
+		cat $IWLIST_OUTPUT | egrep -o "\"[-_A-Za-z0-9]+\"" | egrep -o "[-_A-Za-z0-9]+" \
+		| head -n $QUAL_MAX_INDEX \
+		| tail -n 1`
+	echo "Best ESSID:   $BEST_AP_ESSID"
+
+	# Output the index of the best ap
+	echo "Best Quality: $QUAL_MAX dBm"
+	echo "Best Beacon:  $BEACON_MIN ms"
+
+	if [ "$BEST_AP_MAC_ADDRESS" = "" -o "$BEACON_MIN" -lt 0 ]
+	then
+		echo
+		echo "Failed to find a good Access Point"
+		beep_failure
+		return 1
+	else
+		return 0
+	fi
+
+	return 1
+}
+
+
+function bind_adapter
+{
+	# Configure eth1 wireless
+	echo
+	echo "iwconfig eth1 ap $BEST_AP_MAC_ADDRESS"
+	iwconfig eth1 essid "$BEST_AP_ESSID"
+	iwconfig eth1 ap $BEST_AP_MAC_ADDRESS
+	RESULT=$?
+
+	if [ $RESULT -ne 0 ]
+	then
+		echo
+		echo "Connection lost!"
+		beep_failure
+		return 1
+	fi
+
+	sleep 1s;
+	iwconfig eth1 > "$IWCONFIG_OUTPUT"
+	egrep "Access Point|ESSID" "$IWCONFIG_OUTPUT"
+	egrep "Access Point" "$IWCONFIG_OUTPUT" | egrep "$BEST_AP_MAC_ADDRESS" > /dev/null 2>&1
+	RESULT=$?
+
+	echo
+
+	if [ $RESULT -ne 0 ]
+	then
+		echo "Binding adapter failed."
+	else
+		dhclient eth1
+		RESULT=$?
+	fi
+
+	return $RESULT
+}
+
+
+function find_router_ip
+{
+	# Find the address of the router
+	ROUTER_IP=`ifconfig \
+		| egrep "^eth1" -A 1 \
+		| tail -n 1 \
+		| egrep -o "addr:([0-9][0-9]*\.){3}" \
+		| egrep -o "([0-9][0-9]*\.){3}"`1
+}
+
+
+function get_auth_page
+{
+#	echo "start: get_auth_page"
+
+# Commented out because there is no longer an http-refresh to the auth page, it's done automatically
+	AUTH_ADDRESS=`wget --timeout=5 --quiet "http://$ROUTER_IP" --output-document=- --no-check-certificate \
+		| egrep -o "URL=.*\"" \
+		| egrep -o "http.*\"" \
+		| egrep -o "[^\"][^\"]*" \
+		`
+
+#	echo "end:  get_auth_page"
+
+	if [ "$AUTH_ADDRESS" != "" ]
+	then
+		AUTH_ADDRESS=$AUTH_ADDRESS/index.php
+		return 0
+	else
+		AUTH_ADDRESS=https://www.laptop.uwaterloo.ca/login/index.php
+#		echo "get_auth_page: failed"
+#		return 1
+		return 0
+	fi
+
+	return 0
+}
+
+function authenticate
+{
+	# Send the username and password with curl
+	echo
+	echo -n "Authenticating... "
+	echo
+	echo "AUTH_ADDRESS = $AUTH_ADDRESS"
+#	echo "curl -k -d \"userid=$USERNAME\" -d \"password=$PASSWORD\" -d \"mode=Connect\" $AUTH_ADDRESS  2>&1 | grep \"<input type=\\"submit\\"\" | egrep -o \"Connect|Disconnect\" "
+
+	AUTH_RESULT=`curl -k -d "userid=$USERNAME" -d "password=$PASSWORD" -d "mode=Connect" \
+		$AUTH_ADDRESS --connect-timeout 5 --max-time 5 2>&1 \
+		`
+    #-------------------------------------------------------------------------------------
+#		| grep "<input type=\"submit\"" \
+#		| egrep -o "Connect|Disconnect" \
+
+	CONNECT_BUTTON="value=\"Connect\""
+	DISCONNECT_BUTTON="value=\"Disconnect\""
+
+    AUTH_RESULT=`echo $AUTH_RESULT \
+        | grep "<input type=\"submit\"" \
+		| egrep -o "${CONNECT_BUTTON}|${DISCONNECT_BUTTON}" \
+        `
+    #------------------------------------
+
+
+	# Test the result of curl's authentication
+	if [ "$AUTH_RESULT" = "$CONNECT_BUTTON" ]
+	then
+		echo "Authentication Failed."
+		exit 1
+	elif [ "$AUTH_RESULT" = "$DISCONNECT_BUTTON" ]
+	then
+		echo "Done!"
+		return 0
+	else
+		echo "========== ERROR: curl did not find \"Connect\" or \"Disconnect\" in the result page =========="
+		return 2
+	fi
+}
+
+
+function connect
+{
+	find_best_ap
+	while [ $? != 0 ]
+	do
+		find_best_ap
+	done
+
+	bind_adapter
+	while [ $? != 0 ]
+	do
+		sleep 1s
+		bind_adapter
+	done
+
+	find_router_ip
+
+	get_auth_page
+	if [ $? != 0 ]
+	then
+		beep_failure
+		return 1
+	fi
+
+	authenticate
+	if [ $? != 0 ]
+	then
+		beep_failure
+		return 1
+	fi
+	echo -n "Connected: "
+
+	beep_success
+	return 0
+}
+
+function connection_loop
+{
+	sleep 1
+	$PING_CMD_LINE 2>&1 > /dev/null
+	PING_RESULT=$?
+	
+	if [ "$PING_RESULT" -ne 0 ]
+	then
+		PING_FAILURES=0
+		while [ $PING_FAILURES -lt $MAX_FAILURES ]
+		do
+			$PING_CMD_LINE 2>&1 > /dev/null
+			PING_RESULT=$?
+			if [ "$PING_RESULT" -ne 0 ]
+			then
+				let PING_FAILURES+=1
+				echo -n "+"
+			else
+				return 0
+			fi
+		done
+
+		echo
+		echo "Connection lost!"
+		beep_failure
+		return 1
+	fi
+
+	echo -n "|"
+}
+
+
+while true
+do
+	connect
+	if [ $? -eq 0 ]
+	then
+		CONNECTED=0
+		while [ $CONNECTED -ne 1 ]
+		do
+			connection_loop
+			CONNECTED=$?
+		done
+	fi
+done

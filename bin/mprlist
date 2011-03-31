@@ -1,0 +1,12 @@
+#!/bin/bash
+# mplaylist
+# plays every video in $1 with mplayer
+
+pwd0=`pwd`
+
+cd "$1"
+ls "$pwd0"/*.AVI "$pwd0"/*.MPG "$pwd0"/*.ASF "$pwd0"/*.ASX "$pwd0"/*.MOV \
+"$pwd0"/*.MPEG "$pwd0"/*.WMV "$pwd0"/*.avi "$pwd0"/*.mpg "$pwd0"/*.mpeg \
+"$pwd0"/*.asf "$pwd0"/*.asx "$pwd0"/*.mov "$pwd0"/*.wmv > /tmp/mplayer-temp-playlist.mpl
+mplayer -fs -playlist /tmp/mplayer-temp-playlist.mpl
+rm /tmp/mplayer-temp-playlist.mpl

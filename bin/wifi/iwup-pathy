@@ -1,0 +1,10 @@
+eth1      IEEE 802.11b  ESSID:"boldstreet"  Nickname:"ipw2100"
+          Mode:Managed  Frequency:2.457 GHz  Access Point: 00:50:E8:21:BB:F0   
+          Bit Rate=11 Mb/s   Tx-Power:16 dBm   
+          Retry min limit:7   RTS thr:off   Fragment thr:off
+          Encryption key:off
+          Power Management:off
+          Link Quality=87/100  Signal level=-71 dBm  
+          Rx invalid nwid:0  Rx invalid crypt:0  Rx invalid frag:0
+          Tx excessive retries:0  Invalid misc:487   Missed beacon:2
+

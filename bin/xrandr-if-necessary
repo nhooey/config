@@ -1,0 +1,10 @@
+#!/bin/bash
+
+if [[ ! `diff /etc/X11/xorg.conf /etc/X11/xorg.conf.big-desktop.right.1280` \
+	|| ! `diff /etc/X11/xorg.conf /etc/X11/xorg.conf.big-desktop.right.1600` \
+	|| ! `diff /etc/X11/xorg.conf /etc/X11/xorg.conf.big-desktop.above.1600` ]]; then
+	xrandr -s 18
+	exit 0
+fi
+
+exit 1

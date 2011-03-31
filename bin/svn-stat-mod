@@ -1,0 +1,2 @@
+#!/bin/bash
+svn stat | egrep "^M +" | sed -e "s/^M \+//g"

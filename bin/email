@@ -1,0 +1,19 @@
+#!/bin/bash
+# nail
+
+if [ $# -ne 3 ]
+then
+	echo "usage: `basename $0` <recipient@domain.com> <subject> <email_file>"
+	exit 1;
+fi
+
+if [ -f "$3" ]
+then
+	env MAILRC=/dev/null from="Neil Hooey <nhooey@uwaterloo.ca>" smtp=smtp.broadband.rogers.com \
+		smtp-auth-user=nhooey smtp-auth-password="doobie" \
+		smtp-auth=login nail -n -s "$2" \
+		-- "$1" < "$3"
+else
+	echo "`basename $0`: file: \'$3\' does not exist or is not accessible."
+	exit 2;
+fi

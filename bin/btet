@@ -1,0 +1,1 @@
+btdownloadcurses --minport 49152 --maxport 65535 "$@"

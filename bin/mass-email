@@ -1,0 +1,7 @@
+#!/bin/bash
+# nail
+
+env MAILRC=/dev/null from="Neil Hooey <nhooey@uwaterloo.ca>" smtp=smtp.broadband.rogers.com \
+	smtp-auth-user=nhooey smtp-auth-password="doobie" \
+	smtp-auth=login nail -n -s "`cat /tmp/subject.txt`" \
+	-- "$1" < /tmp/email.txt

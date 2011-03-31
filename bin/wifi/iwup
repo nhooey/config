@@ -1,0 +1,4 @@
+#!/bin/bash
+# iwup
+
+sudo $0.sh $@

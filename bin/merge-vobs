@@ -1,0 +1,173 @@
+#! /usr/bin/perl -w
+    eval 'exec /usr/bin/perl -S $0 ${1+"$@"}'
+        if 0; #$running_under_some_shell
+# Recursively searches a directory and merges all vobs in the same directory
+# Meant for use with dvdrip's stupid naming and merging conventions
+
+use strict;
+
+use Cwd;
+use Getopt::Long;
+use File::Basename;
+use File::Find ();
+use File::Copy;
+use Number::Bytes::Human qw(format_bytes);
+
+my $human = Number::Bytes::Human->new(bs => 1024, si => 1);
+
+my $basename = basename $0;
+sub wanted;
+sub format_human($);
+sub update_max_length($);
+
+my $max_length = 0;
+
+my %options = (
+	'verbose'           => 1,
+	'dry-run'           => 0,
+	'output-dir'        => '.',
+	'type'              => 'vob',
+	'move'              => 0,
+	'ignore-free-space' => 0,
+);
+
+my $result = GetOptions(
+	'debug'             => \$options{'debug'},
+	'verbose'           => \$options{'verbose'},
+	'quiet'             => sub { $options{'verbose'} = 0 },
+	'dry-run'           => \$options{'dry-run'},
+	'output-dir=s'      => \$options{'output-dir'},
+	'type=s'            => \$options{'type'},
+	'move'              => \$options{'move'},
+	'ignore-free-space' => \$options{'ignore-free-space'},
+);
+my %args = (
+	'path' => $ARGV[0] ? $ARGV[0] : '.',
+);
+
+$options{'verbose'} = $options{'debug'} ? 1 : $options{'verbose'};
+
+exit 1 unless ($result);
+
+die "$basename: Path: \`" . $args{'path'} . "' is not a directory: $!\n"
+	unless (-d $args{'path'});
+
+# for the convenience of &wanted calls, including -eval statements:
+use vars qw/*name *dir *prune/;
+*name   = *File::Find::name;
+*dir    = *File::Find::dir;
+*prune  = *File::Find::prune;
+
+# Traverse desired filesystems
+my %merged_files = ();
+File::Find::find({wanted => \&wanted}, $args{'path'});
+#	or die "$basename: Could not execute \`find' on " . $args{'path'} . ": $!\n";
+
+# Go through all the merged files and compose their parts
+for my $key (sort keys %merged_files) {
+	print "$key:\n" if ($options{'verbose'});
+
+	my $path_dest = $options{'output-dir'} . '/' . $key;
+
+	my @src_file_hashes = sort { $a->{'file'} cmp $b->{'file'} } @{$merged_files{$key}->{'src_files'}};
+	# If there's only one file and --move is enabled, just move the file
+	if (scalar @src_file_hashes == 1 && $options{'move'}) {
+		my $path_src = $src_file_hashes[0]->{'path'};
+		print "    move: '$path_src' -> '$path_dest'\n"
+			if ($options{'verbose'});
+
+		unless ($options{'dry-run'}) {
+			move $path_src, $path_dest
+				or die "$basename: Could not move file: \`$path_src' to \`$path_dest': $!\n";
+		}
+	# If there is only one file, merely append files
+	} else {
+		unless ($options{'dry-run'}) {
+			open fh_dest, '>', $path_dest
+				or die "Could not open file: \`$path_dest' for writing: $!\n";
+		}
+		for my $src_file (@src_file_hashes) {
+			print "    " . $src_file->{'file'} . "\n" if ($options{'verbose'});
+			next if ($options{'dry-run'});
+
+			my $path_src = $merged_files{$key}->{'path'} . '/' . $src_file->{'file'};
+			open fh_src, '<', $path_src
+				or die "Could not open file: \`$path_src' for writing: $!\n";
+			while (<fh_src>) {
+				print fh_dest $_;
+			}
+			close fh_src unless ($options{'dry-run'});;
+		}
+		close fh_dest unless ($options{'dry-run'});;
+	}
+
+	print "\n" if $options{'verbose'};
+}
+
+# Function that gets executed for every file found by find
+sub wanted {
+	my $type = $options{'type'};
+    unless (/-[0-9]{3}\.$type\z/s) {
+		return;
+	}
+	my $src_path = $name;
+	$src_path =~ s/^(\.\/)+//;
+
+	(my $dir_str, my $idx, my $src_file)
+		= ($src_path =~ /^(.*)\/$type\/([0-9]{3})\/(.*\.$type)$/);
+
+	my @dirs = split '/', $dir_str;
+	my $dir = $dirs[-1];
+
+	my $merged_name = sprintf "%s_%s.$type", $dir, $idx;
+	my $src_size = (-s $src_file);
+	my $src_size_human = format_human($src_size);
+
+	update_max_length $src_file;
+	update_max_length $merged_name;
+
+	my $src_files = [];
+	my $metadata = {
+		'path'      => sprintf "%s/%s", $options{'output-dir'}, $merged_name,
+		'src_files' => $src_files,
+		'size'      => 0,
+	};
+
+	if ($options{'debug'}) {
+		print "Destination File:  $merged_name\n"
+			. "Destination Path:  " . $metadata->{'path'} . "\n"
+		    . "Source Path:       $src_path\n"
+			. "Source File:       $src_file\n"
+			. "Source Directory:  $dir\n"
+			. "Source Size:       $src_size_human\n"
+			. "Dest Index:        $idx\n"
+			. "\n";
+	}
+
+
+	if($merged_files{$merged_name}) {
+		$metadata = $merged_files{$merged_name};
+	} else {
+		$merged_files{$merged_name} = $metadata;
+	}
+	
+	push @{$metadata->{'src_files'}}, { file => $src_file, path => $src_path, size => $src_size };
+	$metadata->{'size'} += $src_size;
+}
+
+# Pretty-print human-readable sizes
+sub format_human($) {
+	(my $string) = @_;
+
+	my $readable = $human->format($string);
+	$readable =~ s/(\d+)(\w+)/$1 $2/;
+
+	return $readable;
+}
+
+sub update_max_length($) {
+	(my $value) = @_;
+
+	$max_length = length $value > length $max_length ? $value : $max_length;
+	return $max_length;
+}

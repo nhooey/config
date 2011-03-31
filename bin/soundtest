@@ -1,0 +1,7 @@
+#!/bin/bash
+# soundtest
+# tests common sounds for volume
+
+play "/home/neil/sounds/Utopia Default.wav"
+play "/home/neil/sounds/Utopia Close.wav"
+play "/home/neil/sounds/Musica Restore Down.wav"

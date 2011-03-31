@@ -1,0 +1,13 @@
+#!/bin/bash
+
+speak "holy shit dude"
+sleep 1s
+speak "this shit is fucked up"
+sleep 1s
+speak "I've been sitting here thinking this whole fucking time. And now I can speak"
+sleep 2s
+speak "Crazy shit right here"
+sleep 1s
+speak  "Fucking computer"
+sleep 1s
+speak "Fuckin talkin"

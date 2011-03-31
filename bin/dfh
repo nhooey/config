@@ -1,0 +1,5 @@
+#!/bin/bash
+# dfh
+# does a df -h and greps out the crap
+
+df -h | egrep "Filesystem|hda3|hda1|hdb1|hdd1"

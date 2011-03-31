@@ -1,0 +1,140 @@
+#!/bin/bash
+# uww
+# uw wireless connector, lights up an AP and connects to it
+
+EXE_NAME=$0
+
+killall dhclient
+
+echo "UW Wireless Connector"
+echo "---------------------"
+echo
+echo "Searching for the best Access Point..."
+
+IWLIST_OUTPUT=/tmp/iwlist.log
+
+iwlist eth1 scanning | egrep "Extra: Signal:|Cell|Extra: Last beacon:" > $IWLIST_OUTPUT
+cat "$IWLIST_OUTPUT"
+echo
+
+# Go through the list of APs and find the highest quality
+QUAL_PREV=0
+QUAL_MAX_INDEX=1
+QUAL_MAX=-10000
+BEACON_MIN=-1
+i=0
+for QUAL_CURRENT in `cat $IWLIST_OUTPUT | egrep "Extra: Signal:" | egrep -o "(-)*[0-9][0-9]*"`
+do
+	let i+=1
+	
+	if [ "$QUAL_CURRENT" -gt "$QUAL_MAX" ]
+	then
+		LAST_BEACON=`cat $IWLIST_OUTPUT | egrep "Extra: Last beacon:" \
+			| egrep -o "[0-9][0-9]*" | head -n $i | tail -n 1`
+		if [ "$LAST_BEACON" -lt 1000 ]
+		then
+			QUAL_MAX_INDEX=$i
+			QUAL_MAX=$QUAL_CURRENT
+			BEACON_MIN=$LAST_BEACON
+		fi
+	fi
+
+	QUAL_PREV=$QUAL_CURRENT
+done
+
+# Output the best ap's mac address
+BEST_AP_MAC_ADDRESS=`\
+	cat $IWLIST_OUTPUT | egrep -o "([A-Z0-9][A-Z0-9]:)([A-Z0-9][A-Z0-9]:)*([A-Z0-9][A-Z0-9])" \
+	| head -n $QUAL_MAX_INDEX \
+	| tail -n 1`
+echo "Best AP MAC:  $BEST_AP_MAC_ADDRESS"
+
+# Output the index of the best ap
+echo "Best Quality: $QUAL_MAX dBm"
+echo "Best Beacon:  $BEACON_MIN ms"
+
+if [ "$BEST_AP_MAC_ADDRESS" = "" -o "$BEACON_MIN" -lt 0 ]; then
+	echo
+	echo "Failure! UW Sucks ass..."
+	if [ "$1" != "-q" ]; then
+		beep -f 100 -l 30
+	fi
+	exit 1
+fi
+
+# Configure eth1 wireless
+echo
+echo "iwconfig eth1 ap $BEST_AP_MAC_ADDRESS"
+iwconfig eth1 ap $BEST_AP_MAC_ADDRESS
+RESULT=$?
+
+if [ $RESULT -ne 0 ]; then
+	echo
+	echo "Connection lost!"
+	if [ "$1" != "-q" ]; then
+		beep -f 100 -l 30
+	fi
+	exit 1
+fi
+
+dhclient eth1
+
+# Find the address of the router
+ROUTER_IP=`ifconfig \
+	| egrep "^eth1" -A 1 \
+	| tail -n 1 \
+	| egrep -o "addr:([0-9][0-9]*\.){3}" \
+	| egrep -o "([0-9][0-9]*\.){3}"`1
+
+# First ping, check if authenticated already
+echo "Pinging uwaterloo.ca..."
+ping -n -c 1 uwaterloo.ca
+PING_RESULT=$?
+if [ "$PING_RESULT" -ne 0 ]
+then
+	echo
+	echo "Press any key to authenticate with the router: $ROUTER_IP"
+	read
+	lynx "$ROUTER_IP"
+fi
+
+echo "Pinging uwaterloo.ca..."
+ping -n -c 1 uwaterloo.ca
+PING_RESULT=$?
+
+echo
+if [ "$PING_RESULT" -eq 0 ]
+then
+	echo "Success! You are now connected."
+	echo -n "Connection Status: "
+	if [ "$1" != "-q" ]; then
+		beep -f 10000 -l 100
+	fi
+
+	while true; do
+		sleep 5
+		ping -n -c 1 uwaterloo.ca > /dev/null
+		PING_RESULT=$?
+		echo -n "|"
+		
+		if [ "$PING_RESULT" -ne 0 ]; then
+			echo
+			echo "Connection lost!"
+			if [ "$1" != "-q" ]; then
+				beep -f 100 -l 30
+			fi
+
+			# Run it again
+			$EXE_NAME $@ &
+			exit 1
+		fi
+	done
+else
+	echo "Failure! UW sucks ass..."
+	if [ "$1" != "-q" ]; then
+		beep -f 100 -l 30
+	fi
+	# Run it again
+	# $EXE_NAME $@ &
+	exit 1
+fi

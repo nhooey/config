@@ -1,0 +1,20 @@
+#!/bin/bash
+# catdir
+# cat everything in the directory, with nice formatting
+
+target=$1
+
+if [ "$1" = "" ]
+then
+	target="./"
+fi
+
+echo "$target"
+
+for monkey in "$target"/*
+do
+	echo "$monkey"
+	echo ----------------------------------------
+	cat -n "$monkey"
+	echo
+done

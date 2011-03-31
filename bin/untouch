@@ -1,0 +1,11 @@
+#!/bin/bash
+# untouch
+# restores a file's backed up modified time from the .notouch file
+
+if [ -f "$1.notouch" ]
+then
+	touch "$1" -r "$1.notouch"
+	rm "$1.notouch"
+else
+	echo `basename "$0"`: "$1.notouch" does not exist, was not backed up by notouch
+fi

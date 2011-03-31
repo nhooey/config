@@ -1,0 +1,8 @@
+#!/bin/bash
+# notouch
+# backs up a file's modified time as another file
+
+pwd0=`pwd`
+bsname=`basename "$1"`
+echo `ls "$pwd0/$bsname"` > "$1.notouch"
+touch "$1.notouch" -r "$1"

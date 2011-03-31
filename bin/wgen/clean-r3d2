@@ -1,0 +1,43 @@
+#!/bin/bash
+
+if [[ $# -lt 1 || $# -gt 1 ]]; then
+	echo "usage: $(basename $0) <mclass-parent-dir>"
+	exit 1
+fi
+
+CODE_DIR="$1"
+D2DIR="$HOME/code/wgen/$CODE_DIR/mclass/d2"
+BUILD_DIRS="
+debug-DIABLO_X86
+debug-DIABLO_ARMEL
+release-DIABLO_X86
+release-DIABLO_ARMEL
+"
+
+if [ ! -d "$D2DIR" ]; then
+	echo "$(basename $0): Directory: \`$D2DIR' does not exist."
+	exit 2
+fi
+
+for dir in $BUILD_DIRS; do
+	OBJECT_FILES="
+		$D2DIR/pda/qt/$dir/*.o*
+		$D2DIR/pda/qt/$dir/mvc/QtViewFactory.o*
+		$D2DIR/pda/qt/$dir/view/common/D2Style.o*
+		$D2DIR/pda/qt/$dir/view/splash/QtSplashView.o*
+		$D2DIR/pda/qt/$dir/view/classlist/*.o*
+		$D2DIR/pda/qt/$dir/view/common/*.o*
+		$D2DIR/pda/qt/$dir/view/studentsummary/*.o*
+		$D2DIR/pda/$dir/controller2/HomeController.o*  
+		$D2DIR/pda/$dir/controller2/ClassListController.o*
+		$D2DIR/pda/$dir/controller2/StudentSummaryController.o*
+		$D2DIR/pda/$dir/view2/splash/*.o* 
+		$D2DIR/pda/$dir/view2/studentsummary/*.o*
+		$D2DIR/pda/$dir/view2/classlist/*.o*
+	"
+	for file in $OBJECT_FILES; do
+		if [ -f "$file" ]; then
+			rm -v "$file"
+		fi
+	done
+done

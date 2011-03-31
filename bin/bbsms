@@ -1,0 +1,23 @@
+#!/bin/bash
+
+RESULT=$?
+
+NUM=6138644335
+BBDATE_ON=0
+
+which lynx > /dev/null 2>&1
+if [ $? != 0 ]; then
+	echo "$0: error: lynx not found, install lynx"
+fi
+
+if [ "${BBDATE}" = "" ]; then
+	TEXT="$@"
+else
+	BBDATE_ON=1
+	TEXT="($RESULT) ${BBDATE}: $@"
+fi
+MSG_URL=http://216.129.53.44:8080/cgi-bin/send_sm_rogers.new
+echo "msisdn=${NUM}&text=${TEXT}" \
+	| lynx -post-data $MSG_URL &> /dev/null
+
+BBDATE=""

@@ -1,0 +1,42 @@
+#!/bin/bash
+# psify
+# compile a tex file, then convert it to postscript
+
+EXENAME=`basename $0`
+
+if [ $# -lt 1 ]
+then
+	echo "Please specify a target file..."
+	exit 1
+fi
+
+cd "`dirname "$1"`"
+NOEXT_FILENAME=`basename "$1" .tex`
+
+echo "Running LaTeX on '$1'"
+echo
+latex --file-line-error-style --interaction errorstopmode "$1"
+RESULT=$?
+
+echo
+
+if [ $RESULT -ne 0 ]
+then
+	echo "Failure! Fix the bugs in your tex file."
+else
+	echo "Success!"
+	echo "Running dvips on '$NOEXT_FILENAME.dvi'"
+	echo
+	dvips "$NOEXT_FILENAME.dvi"
+	RESULT=$?
+fi
+
+if [ $RESULT -ne 0 ]
+then
+	echo "Failure! dvips didn't work for some reason..."
+else
+	if [ "$EXENAME" = "psifygv" ]
+	then
+		gv --spartan "$NOEXT_FILENAME.ps" -geometry 1050x1110-0-100
+	fi
+fi

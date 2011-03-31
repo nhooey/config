@@ -1,0 +1,9 @@
+#!/bin/bash
+# p4music
+# loads music stuff from p4
+
+ssh p4 xmms &
+ssh p4 nautilus &
+sleep 2s
+ssh p4 grip &
+ssh p4 gnome-volume-control &

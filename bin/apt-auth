@@ -1,0 +1,7 @@
+#!/bin/bash
+# apt-auth
+# Authenticates a key for apt-get
+
+gpg --keyserver wwwkeys.eu.pgp.net --recv-keys $@ \
+    && apt-key add /root/.gnupg/pubring.gpg \
+    && apt-get update

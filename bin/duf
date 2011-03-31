@@ -1,0 +1,13 @@
+#!/bin/bash
+# duf
+# does a du -hs on all files
+
+cd "$1"
+
+for monkey in *
+do
+	if [ -f "$monkey" ]
+	then
+		du -hs "$monkey"
+	fi
+done

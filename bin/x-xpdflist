@@ -1,0 +1,4 @@
+#!/bin/bash
+# x-xpdflist
+
+xterm -e "xpdflist \"$1\""

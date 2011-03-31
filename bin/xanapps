@@ -1,0 +1,10 @@
+#!/bin/bash
+
+gt3-2 &
+#gt4 &
+firefox &
+mozilla-thunderbird &
+gaim &
+bin/gkrellm-2windows-bd-1920-1600 &
+bin/gkrellm-2windows-sempron-bd-1920-1600 &
+gvim -geometry 146x81-0+0 &

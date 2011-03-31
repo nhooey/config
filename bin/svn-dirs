@@ -1,0 +1,3 @@
+#!/bin/bash
+
+echo "src perf_test_suite test_suite test_reporting test_system prebuilt/shared prebuilt/linux-x86_64 applications engines_analysis edf DocSet"

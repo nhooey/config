@@ -1,0 +1,18 @@
+#!/bin/bash
+# semaphore-q
+# Does a Query on /tmp/semaphore
+
+SEMAPHORE=/tmp/semaphore-$1
+
+if [ -f "$SEMAPHORE" ]
+then
+	if grep "V" "$SEMAPHORE" > /dev/null
+	then
+		exit 0
+	elif grep "P" "$SEMAPHORE" > /dev/null
+	then
+		exit 1
+	fi
+fi
+
+exit 0

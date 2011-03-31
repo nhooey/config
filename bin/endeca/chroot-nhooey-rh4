@@ -1,0 +1,29 @@
+#!/bin/bash
+
+CHROOT="/home/chroot-nhooey-rh4"
+
+echo "Mounting devices and directories..."
+if ! mount | grep "$CHROOT/proc"; then
+	sudo mount -v -t proc none "$CHROOT/proc"
+fi
+if ! mount | grep "$CHROOT/dev"; then
+	sudo mount -v -o bind /dev "$CHROOT/dev"
+fi
+if ! mount | grep "$CHROOT/dev/pts"; then
+	sudo mount -v -o bind /dev/pts "$CHROOT/dev/pts"
+fi
+if ! mount | grep "$CHROOT/sys"; then
+	sudo mount -v -o bind /sys "$CHROOT/sys"
+fi
+if ! mount | grep "$CHROOT/tmp"; then
+	sudo mount -v -o bind /tmp "$CHROOT/tmp"
+fi
+
+echo "Copying Xauthority..."
+sudo cp -v ~nhooey/.Xauthority "$CHROOT/home/nhooey"
+
+echo "Adding X access control for myself..."
+xhost +local:nhooey
+
+echo "Diving in!"
+sudo chroot "$CHROOT" su -l nhooey -c "WINDOW=$WINDOW /bin/bash"

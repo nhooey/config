@@ -1,0 +1,109 @@
+#! /usr/bin/perl -w
+    eval 'exec /usr/bin/perl -S $0 ${1+"$@"}'
+        if 0; #$running_under_some_shell
+# Recursively searches a directory and merges all vobs in the same directory
+# Meant for use with dvdrip's stupid naming and merging conventions
+
+use strict;
+
+use Cwd;
+use Getopt::Long;
+use File::Basename;
+use File::Find ();
+use File::Copy;
+
+my $basename = basename $0;
+sub wanted;
+sub format_human($);
+sub update_max_length($);
+
+my $max_length = 0;
+
+my %options = (
+	'verbose'           => 1,
+	'dry-run'           => 0,
+	'output-dir'        => '.',
+	'type'              => 'vob',
+	'move'              => 0,
+	'ignore-free-space' => 0,
+);
+
+my $result = GetOptions(
+	'debug'             => \$options{'debug'},
+	'verbose'           => \$options{'verbose'},
+	'quiet'             => sub { $options{'verbose'} = 0 },
+	'dry-run'           => \$options{'dry-run'},
+	'output-dir=s'      => \$options{'output-dir'},
+	'type=s'            => \$options{'type'},
+	'move'              => \$options{'move'},
+	'ignore-free-space' => \$options{'ignore-free-space'},
+);
+my %args = (
+	'path' => $ARGV[0] ? $ARGV[0] : '.',
+);
+
+$options{'verbose'} = $options{'debug'} ? 1 : $options{'verbose'};
+
+exit 1 unless ($result);
+
+die "$basename: Path: \`" . $args{'path'} . "' is not a directory: $!\n"
+	unless (-d $args{'path'});
+
+# for the convenience of &wanted calls, including -eval statements:
+use vars qw/*name *dir *prune/;
+*name   = *File::Find::name;
+*dir    = *File::Find::dir;
+*prune  = *File::Find::prune;
+
+# Traverse desired filesystems
+my %merged_files = ();
+File::Find::find({wanted => \&wanted}, $args{'path'});
+
+# Function that gets executed for every file found by find
+sub wanted {
+	my $type = $options{'type'};
+    unless (/-[0-9]{3}\.$type\z/s) {
+		return;
+	}
+	my $path_src = $name;
+	$path_src =~ s/^(\.\/)+//;
+
+	(my $dir_str, my $chapter, my $src_file, my $index)
+		= ($path_src =~ /^(.*)\/$type\/([0-9]{3})\/(.*-([0-9]{3})\.$type)$/);
+
+	my @dirs = split '/', $dir_str;
+	my $dir = $dirs[-1];
+
+	my $merged_name = sprintf "%s_%s_%s.$type", $dir, $chapter, $index;
+	my $path_dest = $options{'output-dir'} . '/' . $merged_name;
+
+	if ($options{'debug'}) {
+		print "Destination File:  $merged_name\n"
+			. "Destination Path:  $path_dest\n"
+		    . "Source Path:       $path_src\n"
+			. "Source File:       $src_file\n"
+			. "Source Directory:  $dir\n"
+			. "Chapter:           $chapter\n"
+			. "Index:             $index\n"
+			. "\n";
+	}
+
+	print "$merged_name:\n    $path_src\n -> $path_dest\n" if ($options{'verbose'});
+
+	if ($merged_files{$merged_name}) {
+		die "$basename: Error, duplicate file: \`$merged_name' will be created."
+			. " There must be a bug in the script. Aborting.\n";
+	} else {
+		$merged_files{$merged_name} = $src_file;
+	}
+
+	unless ($options{'dry-run'}) {
+		if ($options{'move'}) {
+			move $src_file, $path_dest
+				or die "$basename: Could not move file: \`$src_file' to \`$path_dest': $!\n";
+		} else {
+			copy $src_file, $path_dest
+				or die "$basename: Could not copy file: \`$src_file' to \`$path_dest': $!\n";
+		}
+	}
+}

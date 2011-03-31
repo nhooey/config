@@ -1,0 +1,7 @@
+#!/bin/bash
+# gta
+# Load a gnome-terminal and gvim for assignments
+
+cd "/home/neil/mydocs/University/4b/$1"
+gnome-terminal --hide-menubar --geometry 113x20+3-55 &
+gvim --hide-menubar -geometry 113x51+0+0 &

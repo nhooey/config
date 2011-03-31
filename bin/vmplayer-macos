@@ -1,0 +1,3 @@
+#!/bin/bash
+
+vmplayer "/home/neil/vmware/Mac OS Leopard 10.4.8/Mac OS Leopard 10.4.8.vmx"

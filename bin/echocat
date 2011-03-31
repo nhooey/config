@@ -1,0 +1,12 @@
+#!/bin/bash
+# echogrep
+# A script that echos the name of a file, then prints the contents of it with
+# nice headers and padding
+
+IFS=\n
+echo
+echo "$1"
+echo ------------------------------------------------------------
+cat "$1"
+echo
+

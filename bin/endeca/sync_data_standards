@@ -1,0 +1,3 @@
+#!/bin/bash
+
+perl /nfs/automation/ReleaseEng/bin/sync_data_standards.pl $*

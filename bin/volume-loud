@@ -1,0 +1,4 @@
+#!/bin/bash
+
+aumix -S
+aumix -v 80 -w 80

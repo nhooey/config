@@ -1,0 +1,11 @@
+#!/bin/bash
+# timer
+
+sleep $1;
+echo $2
+
+while true
+do
+	alert;
+	sleep 5s;
+done;

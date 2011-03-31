@@ -1,0 +1,16 @@
+#!/bin/bash
+# au
+# audible command, beep high on success, low on failure
+
+# run the command
+"$@"
+
+RESULT=$?
+if [ $RESULT -eq 0 ]
+then
+	beep -f 5000 -l 100
+else
+	beep -f 100 -l 100
+fi
+
+exit $RESULT

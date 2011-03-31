@@ -1,0 +1,22 @@
+#!/bin/bash
+
+mysql='/usr/bin/mysql'
+
+case "$(hostname)" in
+	lvs[0-9]c|worker)
+#		rlwrap -a'Enter password:' -p'YELLOW' 
+		$mysql --prompt='mysql-worker> ' shutterstock -h workerdb -p "$@"
+		;;
+	DEV-fs[0-9]|worker-DEV)
+#		rlwrap -a'Enter password:' -p'BLUE'   
+		$mysql --prompt='mysql-dev> '    shutterstock "$@"
+		;;
+	neil-ubuntu)
+		echo "Login to some shutterstock firewall first."
+		exit 2
+		;;
+	*)
+		echo "Unrecognized hostname \`$(hostname)'"
+		exit 1
+		;;
+esac

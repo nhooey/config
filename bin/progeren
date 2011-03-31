@@ -1,0 +1,67 @@
+#!/usr/bin/perl
+# Does a semaphore p on a named lock, and executes a program, then does a semaphore v
+
+use strict;
+use File::Basename;
+
+$| = 1; # Set flush
+
+sub spinidle($);
+
+my $progname = basename $0;
+my $spinchar = '/';
+my $semvp = "semvp";
+my $sempp = "sempp";
+
+# Setup the labeled semaphore file
+my $file_prefix = '/tmp/semaphore-';
+my $label = '';
+$label = substr(shift(@ARGV), 2) if ($ARGV[0] =~ /^--/);
+my $sem_file = "${file_prefix}${label}";
+
+# If executed as "sempp", then pause initially
+if ($progname eq $sempp) {
+	# Open the file
+	open SEMAPHORE, "> $sem_file"
+		or die "$progname: Failed to open $sem_file for writing.";
+	close SEMAPHORE;
+}
+
+# If this program is being called as "semvp" then we don't care if the lock
+# already exists, but we will create a lock. This is useful for running the
+# master lock that might leave the lock laying around when its cmd fails.
+while ($progname ne $semvp and -e $sem_file) {
+	$spinchar = spinidle $spinchar;
+	printf "\r%s", "$spinchar Waiting on semaphore: $label";
+	sleep 1;
+}
+print "\n" if ($progname ne $semvp);
+
+# Open the file
+open SEMAPHORE, "> $sem_file"
+	or die "$progname: Failed to open $sem_file for writing.";
+
+# Execute the user-specified task and output the results
+my $return = system @ARGV;
+close SEMAPHORE;
+
+# Leave the semaphore if the command failed
+if ($return == 0) {
+	print "Command succeeded, unlocking semaphore: \"$label\".\n";
+	unlink $sem_file;
+	exit 0;
+} else {
+	print "\nCommand failed, leaving semaphore.\n";
+	exit 1;
+}
+
+sub spinidle($)
+{
+	my $char = $_[0];
+	return '-'  if $char eq '/';
+	return '\\' if $char eq '-';
+	return '|'  if $char eq '\\';
+	return '/'  if $char eq '|';
+
+	return '/';
+}

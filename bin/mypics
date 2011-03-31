@@ -1,0 +1,4 @@
+#!/bin/bash
+# mypics
+# launch gqview and look at my pictures
+gqview ~neil/mypics
