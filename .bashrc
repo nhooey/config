@@ -161,7 +161,7 @@ export MANPAGER="/usr/bin/most -s"
 export GREP_OPTIONS='--color=auto'
 export GREP_COLOR='0;36'
 export HISTCONTROL=erasedups
-export HISTSIZE=10000
+export HISTSIZE=100000
 shopt -s histappend
 
 # Shutterstock
@@ -183,11 +183,11 @@ elif [ -f "$HOME/.git-completion.bash" ]; then
 fi
 
 # Sorting Algorithms
-hostname=$(hostname)
-if [[ $hostname =~ '.*DEV-data.*' ]]; then
-	PERL5LIB="$HOME/git/search/lib"
-	echo "Overriding PERL5LIB to $PERL5LIB"
-	export PERL5LIB
-fi
+#hostname=$(hostname)
+#if [[ $hostname =~ '.*DEV-data.*' ]]; then
+#	PERL5LIB="$HOME/git/search/lib"
+#	echo "Overriding PERL5LIB to $PERL5LIB"
+#	export PERL5LIB
+#fi
 
 $echo_dot_bashrc
