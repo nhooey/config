@@ -1,7 +1,7 @@
 # .bash_profile
 
 echo_dot_bashprofile=''
-if [ -f "/tmp/echo-login-script" ]; then
+if [ -f "$HOME/.echo_login" ]; then
 	echo_dot_bashprofile="echo '~/.bash_profile'"
 fi
 

@@ -3,7 +3,7 @@
 # for examples
 
 echo_dot_bashrc=''
-if [ -f "/tmp/echo-login-script" ]; then
+if [ -f "$HOME/.echo_login" ]; then
 	echo_dot_bashrc="echo '~/.bashrc'"
 fi
 
