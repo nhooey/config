@@ -20,7 +20,6 @@ fi
 # User specific environment and startup programs
 
 PATH=$HOME/bin:$HOME/bin/shutter:$PATH
-alias config='git --git-dir=/home/neil/.config.git/ --work-tree=/home/neil'
 
 export PATH
 unset USERNAME

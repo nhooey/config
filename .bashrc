@@ -172,6 +172,7 @@ if [ $(__shutterstock_env) == 'dev' ]; then
 	eval $(perl -I $HOME/perl5/lib/perl5 -Mlocal::lib)
 fi
 alias mysql='mysql-shutterstock'
+alias config='git --git-dir=/home/neil/.config.git/ --work-tree=/home/neil'
 
 PATH="$HOME/bin/shutter:$HOME/bin:/usr/local/bin:$PATH"
 
