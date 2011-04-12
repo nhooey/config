@@ -13,7 +13,7 @@ fi
 
 $echo_dot_bashrc
 
-PATH="/opt/local/libexec/gnubin:$HOME/bin/shutter:$HOME/bin:/usr/local/bin:$PATH"
+PATH="/opt/local/libexec/gnubin:$HOME/bin/shutter:$HOME/bin:$HOME/.gem/ruby/1.8/bin:/usr/local/bin:$PATH"
 
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
