@@ -161,7 +161,7 @@ export MANPAGER="/usr/bin/most -s"
 export GREP_OPTIONS='--color=auto'
 export GREP_COLOR='0;36'
 export HISTCONTROL=erasedups
-export HISTSIZE=10000
+export HISTSIZE=1000000
 shopt -s histappend
 
 # Shutterstock
