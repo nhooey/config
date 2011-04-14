@@ -157,7 +157,7 @@ if [ -f /etc/bash_completion ]; then
 fi
 
 # Neil Hooey
-export MANPAGER="/usr/bin/most -s"
+export MANPAGER="most -s"
 export GREP_OPTIONS='--color=auto'
 export GREP_COLOR='0;36'
 export HISTCONTROL=erasedups
