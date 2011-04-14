@@ -1,0 +1,25 @@
+#!/bin/bash
+
+FILES="
+libQtCore.so.4.5.0
+libQtDBus.so.4.5.0
+libphonon.so.4.3.1
+libQtSvg.so.4.5.0
+libQtXml.so.4.5.0
+libQtSql.so.4.5.0
+libQtScript.so.4.5.0
+libQtTest.so.4.5.0
+libQtGui.so.4.5.0
+libQtDesignerComponents.so.4.5.0
+libQtDesigner.so.4.5.0
+libQtXmlPatterns.so.4.5.0
+libQtNetwork.so.4.5.0
+libQtWebKit.so.4.5.0
+libQtScriptTools.so.4.5.0
+libQtHelp.so.4.5.0
+libQt3Support.so.4.5.0
+libQtAssistantClient.so.4.5.0
+libQtCLucene.so.4.5.0
+"
+
+echo $FILES

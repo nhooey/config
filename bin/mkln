@@ -1,0 +1,35 @@
+#!/bin/bash
+# mkln
+# Make a link to a file or directory with shadow directories representing
+# the path to the file
+
+EXENAME=`basename $0`
+
+if [ $# -lt 1 ] || [ $# -gt 2 ]; then
+	echo "$EXENAME: usage: $EXENAME <source> [dest]"
+	exit 1
+fi
+
+SRC="$1"
+SRCDIR="`dirname $SRC`"
+DEST="$2"
+DESTFILE="`basename $DEST`"
+
+if ! test -a "$SRC"; then
+	echo "$EXENAME: error: \"$SRC\" does not exist."
+	exit 1
+elif ! test -a "$DEST"; then
+	echo "$EXENAME: error: \"$DEST\" does not exist."
+	exit 1
+elif ! test -w "$DEST"; then
+	echo "$EXENAME: error: \"$DEST\" is not writeable. Cannot create link."
+	exit 1
+fi
+
+mkdir -pv "$DEST/$SRCDIR"
+
+if test -d "$DEST"; then            # If the dest is a directory
+	ln -sv "$SRC" "$DEST/$SRCDIR"
+else                                # If it's a file or something else
+	ln -sv "$SRC" "$DEST"
+fi

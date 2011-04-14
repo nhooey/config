@@ -1,0 +1,96 @@
+#!/bin/bash
+
+INPUT="$1";
+INPUT_FILE=$(basename "$INPUT")
+
+if [ $# -eq 1 ]; then
+	PARAMS=$(
+		ffmpeg -i "$INPUT" 2>&1 \
+			| egrep "Stream .* Video" \
+			| perl -p -e "s/^.*, ([0-9]+)x([0-9]+).*, ([0-9]+(\.[0-9]+)?) tb\(r\)/\1 \2 \3/"
+	)
+	if [ "x$PARAMS" == "x" ]; then
+		echo "error: ffmpeg has no information about the file: \`$INPUT'"
+		exit 1
+	fi
+
+	ipod-convert-old "$INPUT" $PARAMS
+	exit
+fi
+
+MIN_PARAMS=4
+let MAX_PARAMS=$MIN_PARAMS+2
+
+if [[ $# -ne $MIN_PARAMS && $# -ne $MAX_PARAMS ]]; then
+	echo "usage: $(basename $0) <src-file> <src-length> <src-width> <FPS> [<dest-width> <dest-height>]"
+	exit 1
+fi
+
+if [ ! -f "$INPUT" ]; then
+	echo "error: \`$INPUT' is not a file."
+	exit 1
+fi
+
+shift; # Discard INPUT file
+SRC_W="$1"; shift
+SRC_H="$1"; shift
+FPS="$1"; shift
+DEST_W="480";
+DEST_H="320";
+if [ $# -eq 5 ]; then
+	DEST_W="$1"; shift
+	DEST_H="$1"; shift
+fi
+
+aspect-adjust $SRC_W $SRC_H $DEST_W $DEST_H
+
+SIZE="$(aspect-adjust $SRC_W $SRC_H $DEST_W $DEST_H | tail -n 1)"
+ASPECT="${SRC_W}:${SRC_H}"
+BITRATE="768k"
+OUTPUT="$HOME/ipod/$INPUT_FILE.mp4"
+
+echo "-----------------------------------------------------"
+echo "Converting:  \`$INPUT'"
+echo "Source:      ${SRC_W}x${SRC_H}"
+echo "Destination: ${DEST_W}x${DEST_H}"
+echo
+echo "New FPS:     $FPS"
+echo "New Aspect:  $ASPECT"
+echo "New Size:    $SIZE"
+echo "-----------------------------------------------------"
+echo
+
+
+echo "Conducting Pass 1..."
+echo "====================================================="
+echo 'y' | \
+ffmpeg -i "$INPUT" -an -pass 1 -s "$SIZE" -r "$FPS" -vcodec libx264 -b "$BITRATE" \
+	-flags +loop -cmp +chroma -partitions 0 -me epzs -subq 1 -trellis 0 \
+	-refs 1 -coder 0 -me_range 16 -g 300 -keyint_min 25 -sc_threshold 40 \
+	-i_qfactor 0.71 -bt 768k -maxrate 10M -bufsize 10M \
+	-rc_eq 'blurCplx^(1-qComp)' -qcomp 0.6 -qmin 10 -qmax 51 -qdiff 4 \
+	-level 30 -aspect "$ASPECT" "$OUTPUT"
+PASS1_RESULT=$?
+
+echo "Conducting Pass 2..."
+echo "====================================================="
+echo 'y' | \
+ffmpeg -i "$INPUT" -acodec libfaac -ab 128k -r "$FPS" -pass 2 -s "$SIZE" \
+	-vcodec libx264 -b "$BITRATE" -flags +loop -cmp +chroma \
+	-partitions +parti4x4+partp8x8+partb8x8 -me umh -subq 5 -trellis 1 \
+	-refs 1 -coder 0 -me_range 16 -g 300 -keyint_min 25 -sc_threshold 40 \
+	-i_qfactor 0.71 -bt "$BITRATE" -maxrate 10M -bufsize 10M \
+	-rc_eq 'blurCplx^(1-qComp)' -qcomp 0.6 -qmin 10 -qmax 51 -qdiff 4 \
+	-level 30 -aspect "$ASPECT" "$OUTPUT"
+PASS2_RESULT=$?
+
+# mplayer -vo yuv4mpeg:file="$INPUT.y4m"
+
+if [[ $PASS1_RESULT -eq 0 && $PASS2_RESULT -eq 0 ]]; then
+	echo "Running AtomicParsley..."
+	echo "====================================================="
+	atomicparsley "$OUTPUT" --DeepScan --iPod-uuid 1200 --overWrite
+else
+	echo "Encoding failed."
+	exit 1
+fi

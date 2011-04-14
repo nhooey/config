@@ -1,0 +1,32 @@
+#!/usr/bin/perl
+# Detect windows carriage-returns in any file
+# Best used with `find -execdir`
+
+use strict;
+use File::Basename;
+
+my $progname = basename $0;
+
+if (scalar @ARGV < 1) {
+	print "usage: $progname <file> [file2] [file3] ...\n"
+		. "\n"
+		. "       find -regex '.*\\.\\(c\\|cc\\|cpp\\|h\\|hpp\\)'"
+		. " -exec $progname {} \\; \\\n"
+		. "           | xargs dos2unix\n";
+	exit 1;
+}
+
+foreach (@ARGV) {
+	my $file = $_;
+	my $fh;
+	die "Could not open file: \`$file\' for reading: "
+		unless (open FILE, '<', $file);
+	
+	while (<FILE>) {
+		my $line = $_;
+		if ($line =~ /\r/g) {
+			print "$file\n";
+			last;
+		};
+	}
+}

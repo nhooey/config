@@ -1,0 +1,5 @@
+#!/bin/bash
+# ati_remote
+# executes xmodmap to load ati remote wonder key bindings
+
+xmodmap ${HOME}/.xmodmap-ati_remote

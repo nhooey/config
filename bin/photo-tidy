@@ -1,0 +1,8 @@
+#!/bin/bash
+
+eval EXTENSIONS="jpg,JPG,gif,GIF,bmp,BMP,png,PNG,raw,RAW,avi,AVI"
+eval FILES=(*.{$EXTENSIONS})
+
+chmod a-x "${FILES[@]}" 2> /dev/null
+rename 's/^(IMG|MVI)_/\L$1/; s/\.([^.]+)$/.\L$1\E/' "${FILES[@]}" 2> /dev/null
+

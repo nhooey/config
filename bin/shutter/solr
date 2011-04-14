@@ -1,0 +1,11 @@
+#!/bin/bash
+
+JAVA="$HOME/code/oss/jdk1.6.0_24/bin/java"
+
+cd "$HOME/solr/servers"
+SERVER=$(hostname | perl -e 'print lc <>;')
+
+echo "cd \"$HOME/solr/servers\""
+echo "$JAVA -Dsolr.solr.home=\"$SERVER/solr\" -jar start.jar"
+echo
+$JAVA -Dsolr.solr.home="$SERVER/solr" -jar start.jar

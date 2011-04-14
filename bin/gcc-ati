@@ -1,0 +1,10 @@
+#!/bin/bash
+# gcc-ati
+# return the gcc that ATI uses internally
+
+GCC_ATI=/app/perforce/lnx-dk-nhooey/gcc/3.3.3/bin/gcc
+
+if [ -f $GCC_ATI ]
+then
+	ls --color=yes $GCC_ATI
+fi

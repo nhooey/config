@@ -1,0 +1,124 @@
+#!/bin/bash
+# cprel
+# Push files or directories to the same relative position on the other computer
+
+THISEXE=`basename $0`
+MKDIR_CMD_FILE=/tmp/cprel_mkdir_cmd
+
+# Set field separator to a newline so we can get sane parameters when
+# they have spaces in them
+IFS="
+"
+# Do not remove the above (") symbol
+
+
+if [ $# -lt 3 ]
+then
+	echo "usage: $THISEXE <source> <destination> [file1] [file2] ..."
+	exit 1
+fi
+
+# Get source and destination, then cut off those params
+# so we have all the files as the rest of the params
+SOURCE=$1
+DEST=$2
+shift
+shift
+
+
+# Specify whether the source and destination are remote or local
+if [ "`hostname`" = "$SOURCE" ]
+then
+	LOC_SOURCE="local"
+else
+	LOC_SOURCE="remote"
+fi
+
+if [ "`hostname`" = "$DEST" ]
+then
+	LOC_DEST="local"
+else
+	LOC_DEST="remote"
+fi
+
+# Change "here" to hostname of this system
+#if [ "$SOURCE" = "here" ]
+#then
+#	SOURCE=`hostname`
+#fi
+#if [ "$DEST" = "here" ]
+#then
+#	DEST=`hostname`
+#fi
+
+# Convert short computer names to full addresses
+if [ "$SOURCE" = "`hostname`" ]
+then
+	SOURCE="here"
+fi
+if [ "$DEST" = "`hostname`" ]
+then
+	DEST="here"
+fi
+
+echo "SOURCE = $SOURCE"
+echo "DEST = $DEST"
+
+case "$SOURCE" in
+	"p3"		) SOURCE="p3.friendlygeek.com:";;
+	"p4"		) SOURCE="p4.friendlygeek.com:";;
+	"inspiron"	) SOURCE="inspiron:";;
+	here		) SOURCE="";;
+	*			) echo "$0: invalid destination: $1"; exit 1;;
+esac
+
+# Convert short computer names to full addresses
+case "$DEST" in
+	"p3"		) DEST="p3.friendlygeek.com";;
+	"p4"		) DEST="p4.friendlygeek.com";;
+	"inspiron"	) DEST="inspiron";;
+	here		) DEST="";;
+	*			) echo "$0: invalid destination: $1"; exit 1;;
+esac
+
+# Iterate through all target files and directories
+MKDIR_CMD="echo -n"
+for i in $@
+do
+	DIRECTORY=`dirname $i`
+	if [ $DIRECTORY = "." ]
+	then
+		DIRECTORY=""
+	fi
+	
+	# If the path is absolute, don't put PWD in the dirname
+	if [[ ${DIRECTORY:0:1} != "/" ]]
+	then
+		echo "DIRECTORY=\"$PWD/$DIRECTORY"
+		DIRECTORY="$PWD/$DIRECTORY"
+	fi
+
+	if [ -d "$i" ]
+	then
+		echo "-d FILE=$DIRECTORY"
+		FILE="$DIRECTORY"
+	else
+		echo "!-d FILE=\"$DIRECTORY/'basename $i'"
+		FILE="$DIRECTORY/`basename $i`"
+	fi
+
+	MKDIR_CMD="$MKDIR_CMD; mkdir -p $DIRECTORY"
+	echo "mkdir -p [$DIRECTORY]"
+	echo "copy: [$FILE]"
+
+	# Make the command remote if the destination is remote
+	if [[ "$DEST" != "" ]]
+	then
+		MKDIR_CMD="rsh $DEST $MKDIR_CMD"
+	fi
+done
+
+# Make all the directories
+echo "Executing: $MKDIR_CMD"
+echo "$MKDIR_CMD" > $MKDIR_CMD_FILE
+. "$MKDIR_CMD_FILE"

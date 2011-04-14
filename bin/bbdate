@@ -1,0 +1,3 @@
+LOG_FILE=/tmp/bbdate.log
+echo `date +"%H:%M:%S"` | tee $LOG_FILE
+export BBDATE=`cat $LOG_FILE`

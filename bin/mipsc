@@ -1,0 +1,12 @@
+#!/bin/bash
+
+echo Compiling $1.mips...
+java mips.mak $1 $1
+
+echo
+echo $1.mips:
+echo --------------------
+cat $1.mips
+echo
+
+java mips.cpu $1

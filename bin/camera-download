@@ -1,0 +1,11 @@
+#!/bin/bash
+# camera-download
+# downloads to the current directory
+
+# Canon PowerShot S400
+gphoto2 --usbid 0x4a9:0x3075=0x4a9:0x3055 --get-all-files --get-all-audio-data
+error;
+sleep 5;
+error;
+sleep 5;
+error;

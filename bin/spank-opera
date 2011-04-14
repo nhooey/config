@@ -1,0 +1,24 @@
+#!/bin/bash
+
+MAX_CPU=99
+PNAME="operapluginwrap"
+PIDS=$(pgrep $PNAME)
+
+while true; do
+	if [ $(echo $PIDS | wc -l) -gt 0 ]; then
+		for i in $PIDS; do
+			echo
+			echo "pids: <$PIDS>"
+			CPU=$(top -b -n 1 -p $i | awk 'NR == 8 { print $9 }')
+			echo "pid: $i, cpu: $CPU"
+			if [ $CPU -gt $MAX_CPU ]; then
+				echo "killing $i"
+				kill $i
+				sleep 5
+			fi
+		done
+	fi
+
+	echo -n "."
+	sleep 10
+done

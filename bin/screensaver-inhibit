@@ -1,0 +1,11 @@
+#!/bin/bash
+
+while true; do
+	if pgrep -l gnome-screensaver; then
+		gnome-screensaver-command --poke
+	fi
+	if pgrep -l xscreensaver; then
+		xscreensaver-command -deactivate
+	fi
+	sleep 30s
+done

@@ -1,0 +1,12 @@
+#!/bin/bash
+# record-stop
+# toggles recording and stopping
+
+pgrep ecasound
+RESULT=$?
+
+if [ $RESULT -eq 0 ]; then
+	pkill ecasound
+else
+	record /tmp/record.ogg
+fi

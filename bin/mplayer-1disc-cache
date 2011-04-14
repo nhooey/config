@@ -1,0 +1,12 @@
+#!/bin/bash
+# mplayer-2disc-cache
+# copy movies from cd to /tmp and play them
+
+IFS=\n
+
+mkdir -p /tmp/movies/disc1
+
+cp /mnt/cdrw/*.avi /tmp/movies/disc1 -fv
+eject /dev/cdrw -v
+
+mplayer /tmp/movies/disc1/*.avi

@@ -1,0 +1,3 @@
+#!/bin/bash
+
+fsf -exec grep -Hn "$@" {} \;

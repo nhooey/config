@@ -1,0 +1,9 @@
+#!/bin/bash
+# uwhousing-map-house
+# maps directions from the house to the University of Waterloo
+
+# Google Maps Query:
+# http://maps.google.ca/maps?q=399+Erb+Street+West,+Waterloo,+ON+to+200+University+Avenue+West,+Waterloo,+ON&spn=0.024591,0.027356&hl=en
+
+HOUSE_STRING=`echo "$1" | sed -rs "s/ /+/g"`
+echo "<a href=\"http://maps.google.com/maps?q=${HOUSE_STRING}+to+200+University+Ave+West,+Waterloo,+ON&spn=0.050589,0.051940&hl=en\">$1</a><br>"

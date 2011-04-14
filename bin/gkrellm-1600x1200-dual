@@ -1,0 +1,4 @@
+#!/bin/bash
+
+gkrellm --geometry 0+1535 &
+gkrellm --geometry 0-0 &

@@ -3,7 +3,7 @@
 # for examples
 
 echo_dot_bashrc=''
-if [ -f "/tmp/echo-login-script" ]; then
+if [ -f "$HOME/.echo_login" ]; then
 	echo_dot_bashrc="echo '~/.bashrc'"
 fi
 
@@ -107,7 +107,7 @@ xterm|linux|screen|vt320|ansi)
 		SCREEN_WIN="[$WINDOW]"
 	fi
 
-	PS1='\[\033[00;31m\]$(r=$?; if test $r -ne 0; then echo "[$r]"; set ?=$r; unset r; fi)\[\033[00m\]${debian_chroot:+($debian_chroot)}\[\033[01;37m\]\u\[\033[01;30m\]@$(__host_ps1 "%s")\[\033[00;32m\]$SCREEN_WIN\[\033[00m\]$(__git_ps1_branch):\[\033[00;36m\]\w\[\033[00m\]
+	PS1='\[\033[00;31m\]$(r=$?; if test $r -ne 0; then echo "[$r]"; set ?=$r; unset r; fi)\[\033[00m\]${debian_chroot:+($debian_chroot)}\[\033[01;37m\]\u\[\033[01;30m\]@$(__host_ps1 "%s")$(__git_ps1_branch):\[\033[00;36m\]\w\[\033[00m\]
 \[\033[01;30m\]$(date +"%Y-%m-%d %H:%M:%S")\[\033[00m\] \[\033[00;34m\]\$\[\033[00m\] '
 	;;
 *)
@@ -157,7 +157,11 @@ if [ -f /etc/bash_completion ]; then
 fi
 
 # Neil Hooey
-export MANPAGER="most -s"
+if [ -f /usr/bin/most ]; then
+	export MANPAGER="/usr/bin/most -s"
+else
+	export MANPAGER="/usr/bin/less"
+fi
 export GREP_OPTIONS='--color=auto'
 export GREP_COLOR='0;36'
 export HISTCONTROL=erasedups
@@ -172,6 +176,7 @@ if [ $(__shutterstock_env) == 'dev' ]; then
 	eval $(perl -I $HOME/perl5/lib/perl5 -Mlocal::lib)
 fi
 alias mysql='mysql-shutterstock'
+alias config='git --git-dir=/home/neil/.config.git/ --work-tree=/home/neil'
 
 PATH="$HOME/bin/shutter:$HOME/bin:/usr/local/bin:$PATH"
 
@@ -183,11 +188,11 @@ elif [ -f "$HOME/.git-completion.bash" ]; then
 fi
 
 # Sorting Algorithms
-hostname=$(hostname)
-if [[ $hostname =~ '.*DEV-data.*' ]]; then
-	PERL5LIB="$HOME/git/search/lib"
-	echo "Overriding PERL5LIB to $PERL5LIB"
-	export PERL5LIB
-fi
+#hostname=$(hostname)
+#if [[ $hostname =~ '.*DEV-data.*' ]]; then
+#	PERL5LIB="$HOME/git/search/lib"
+#	echo "Overriding PERL5LIB to $PERL5LIB"
+#	export PERL5LIB
+#fi
 
 $echo_dot_bashrc

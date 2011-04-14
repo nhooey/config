@@ -1,0 +1,22 @@
+#!/bin/bash
+
+SPIN=1
+CHAR="/"
+
+function spin
+{
+	if [ $CHAR = "/" ]; then CHAR='-'; return 0; fi
+	if [ $CHAR = "-" ]; then CHAR="\\"; return 0; fi
+	if [ $CHAR = "\\" ]; then CHAR='|'; return 0; fi
+	if [ $CHAR = "|" ]; then CHAR='/'; return 0; fi
+	echo "$0: CHAR=$CHAR"
+
+	return
+}
+
+while [ "$SPIN" -eq 1 ]
+do
+	printf "%s\r" "$CHAR"
+	spin
+	sleep 1s
+done

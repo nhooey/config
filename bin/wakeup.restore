@@ -1,0 +1,6 @@
+#!/bin/bash
+# wakeup.restore
+# restore the wakeup script
+
+sleep 1s
+cp --force /home/neil/bin/wakeup.disabled /home/neil/bin/wakeup

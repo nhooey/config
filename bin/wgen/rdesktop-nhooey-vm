@@ -1,0 +1,2 @@
+#!/bin/bash
+rdesktop -g 1670x996 -u nhooey -d WGENHQ nhooey-vm

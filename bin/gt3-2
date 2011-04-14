@@ -1,0 +1,12 @@
+#!/bin/bash
+# gt3
+# Make three terminals
+
+# top left
+gnome-terminal --hide-menubar --geometry 110x42+1920+0 -t "[2] 1" &
+
+# top right
+gnome-terminal --hide-menubar --geometry 110x42+2720+0 -t "[2] 2" &
+
+# bottom left
+gnome-terminal --hide-menubar --geometry 110x31+1920-30 -t "[2] 3" &

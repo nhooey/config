@@ -1,0 +1,6 @@
+#!/bin/bash
+# ati-fglrx-fix
+# fix the old fglrx drivers
+
+cp -v /usr/src/kernel-source-2.6.8/drivers/char/drm/drm*.h /lib/modules/fglrx/build_mod
+cp -v ~neil/bin/make.sh /lib/modules/fglrx/build_mod

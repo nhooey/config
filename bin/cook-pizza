@@ -1,0 +1,17 @@
+#!/bin/bash
+# cook-pizza
+# tells you how to cook pizza
+
+. ~neil/bin/cooking
+
+SLEEP=5m
+MESSAGE='Check the pizza'
+bulletin
+
+SLEEP=2m
+MESSAGE='Check the pizza'
+bulletin
+
+SLEEP=2m
+MESSAGE='Check the pizza'
+bulletin

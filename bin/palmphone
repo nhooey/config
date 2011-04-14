@@ -1,0 +1,5 @@
+#!/bin/bash
+# palmphone
+# open up the AddressDB.pdb file in gvim
+
+gvim ~neil/palm/p0/AddressDB.pdb &

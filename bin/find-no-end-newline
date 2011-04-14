@@ -1,0 +1,33 @@
+#!/usr/bin/perl
+# find-no-end-newline
+# Find any file that doesn't end with a newline
+# Useful for getting rid of GNU compiler warnings
+# Best used with `find -execdir`
+
+use strict;
+use File::Basename;
+
+my $progname = basename $0;
+
+if (scalar @ARGV < 1) {
+	print "usage: $progname <file> [file2] [file3] ...\n"
+		. "\n"
+		. "       for i in \$(find -regex '.*\\.\\(c\\|cc\\|cpp\\|h\\|hpp\\)' \\\n"
+		. "           -exec $progname {} \\;); do\n"
+		. "               echo \"\$i\"; echo >> \"\$i\"\n"
+		. "           done\n";
+	exit 1;
+}
+
+foreach (@ARGV) {
+	my $file = $_;
+	my $fh;
+	die "Could not open file: \`$file\' for reading: "
+		unless (open FILE, '<', $file);
+	
+	my $line;
+	while (<FILE>) {
+		$line = $_;
+	}
+	print "$file\n" unless ($line =~ /^\n$/);
+}

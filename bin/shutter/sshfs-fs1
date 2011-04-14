@@ -1,0 +1,3 @@
+#!/bin/bash
+
+sshfs fs1:/home/neil -p 22022 ~/neil-fs1

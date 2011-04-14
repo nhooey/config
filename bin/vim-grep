@@ -1,0 +1,11 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+while (<>) {
+	my $grep_line = $_;
+	chomp $grep_line;
+	my ($file, $line) = ($grep_line =~ /^([^:]+):([0-9]+):/);
+	print "+$line $file\n";
+}

@@ -1,0 +1,6 @@
+#!/bin/bash
+# semaphore-v
+# Does a Verlagen to /tmp/semaphore
+
+SEMAPHORE=/tmp/semaphore-$1
+rm $SEMAPHORE

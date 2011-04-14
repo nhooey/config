@@ -1,0 +1,7 @@
+#!/bin/sh 
+cp /etc/resolv.conf ~/scratchbox/etc/resolv.conf
+cp /etc/resolv.conf ~/scratchbox/users/nhooey/targets/DIABLO_X86/etc/resolv.conf
+cp /etc/resolv.conf ~/scratchbox/users/nhooey/targets/DIABLO_ARMEL/etc/resolv.conf
+/usr/bin/Xephyr :2 -host-cursor -screen 800x480x16 -dpi 96 -ac -extension Composite &
+scratchbox
+kill -9 `pidof Xephyr`

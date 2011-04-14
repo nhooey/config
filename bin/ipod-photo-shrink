@@ -1,0 +1,123 @@
+#!/usr/bin/perl
+
+use strict;
+use File::Basename;
+use Shell("convert", "identify");
+use List::Util qw[min max];
+
+my $progname = basename $0;
+my $null_output = '> /dev/null 2>&1';
+
+sub check_args(@);
+sub check_convert();
+sub check_identify();
+sub resize_image($$);
+sub get_dimensions($);
+
+my $screen_w = 480;
+my $screen_h = 320;
+
+unless (check_convert and check_identify) {
+	printf STDERR "\n$progname: Error: Some of the tools needed to convert"
+		. " images are not installed or configured properly.\n";
+	exit 1;
+}
+
+my ($file_input, $file_output) = check_args @ARGV;
+resize_image($file_input, $file_output);
+
+sub resize_image($$)
+{
+	(my $file_input, my $file_output) = @_;
+
+	print "Resizing image: $file_input to $file_output\n";
+
+	(my $w, my $h) = get_dimensions($file_input);
+	if ($w and $h) {
+		my @ratios = (
+			$screen_w / $w, $screen_h / $h,
+			$screen_w / $h, $screen_h / $w
+		);
+		@ratios = sort {$b <=> $a} @ratios;
+		foreach my $ratio (@ratios) {
+				$ratio, $w, $w * $ratio, $h, $h * $ratio;
+			if (($ratio * $w <= $screen_w and $ratio * $h <= $screen_h)
+				or ($ratio * $h <= $screen_w and $ratio * $w <= $screen_h))
+			{
+				printf "Converting: %f\%\n", 100 * $ratio;
+				my $params = sprintf "\"%s\" -resize %f\% \"%s\"",
+					$file_input, 100 * $ratio, $file_output;
+				my $info = convert $params;
+				return 1;
+			}
+		}
+	} else {
+		return undef;
+	}
+}
+
+sub get_dimensions($)
+{
+	(my $file) = @_;
+
+	print "Getting dimensions for $file\n";
+	my $params = sprintf "\"%s\"", $file;
+	my $info = identify $params;
+	if ($info =~ /$file \w+ ([0-9]+)x([0-9]+)/) {
+		(my $w, my $h) = ($1, $2);
+		return ($w, $h);
+	} else {
+		print STDERR "$progname: Error: Image file: \`$file\' could not be"
+			. " identified.\n";
+		return $info;
+	}
+}
+
+# Check the argument list passed to the program and return params
+sub check_args (@)
+{
+	my @params = @_;
+	(my $file_input, my $file_output) = @_;
+
+	die "usage: $progname <input-file> <output-file>\n"
+		unless (scalar @params == 2);
+
+	die "$progname: File: \`$file_input' does not exist or is not readable.\n"
+		unless (-f $file_input and -r $file_input);
+
+	# If the output file is a directory...
+	if (-d $file_output) {
+		die "$progname: Directory: \`$file_output' can not be written to.\n"
+			unless (-w $file_input);
+		(my $file_new = $file_input) =~ s/\.[^\.]+$//g;
+		$file_new = basename $file_new;
+		$file_output = "$file_output/$file_new.jpg";
+	} else {
+		die "$progname: File: \`$file_output' can not be written to.\n"
+			unless (open FILE_OUTPUT, ">", $file_output and close FILE_OUTPUT);
+	}
+
+	return ($file_input, $file_output);
+}
+
+sub check_convert()
+{
+	unless (0 == system "convert -version $null_output") {
+		printf STDERR
+			"$progname: Error: ImageMagick's convert is not in path."
+			. " Try installing \"imagemagick\".\n";
+			return undef;
+	}
+	return 1;
+}
+
+sub check_identify()
+{
+	unless (0 == system "identify -version $null_output") {
+		printf STDERR
+			"$progname: Error: ImageMagick's identify is not in path."
+			. " Try installing \"imagemagick\".\n";
+			return undef;
+	}
+	return 1;
+}

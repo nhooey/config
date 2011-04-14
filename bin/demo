@@ -1,0 +1,18 @@
+sleep 5s
+smsbb Hello Marty
+speak Hello Marty
+sleep 3s
+smsbb How are you?
+speak How are you
+sleep 4s;
+smsbb That is good!
+speak That is good
+sleep 5s
+smsbb Are you sleepy?
+speak Are you sleepy
+sleep 4s
+smsbb "That is too bad. =("
+speak That is too bad
+sleep 5s
+smsbb Is it creepy when the computer talks?
+speak Is it creepy when the computer talks

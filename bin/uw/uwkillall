@@ -1,0 +1,21 @@
+#!/u5/nhooey/bin/bash
+# killall
+# kills anything with $1 as its name
+
+echo killall: killing the following processes:
+ps -U $USER | grep "$1"
+echo;
+
+for process in `ps -U $USER | grep "$1" | cut -c 1-6`
+do
+	echo "kill:     $process"; kill $process
+	if [ `ps -U $USER | grep $process > /dev/null; echo $?` = "0" ]
+	then
+		echo "kill -15: $process"; kill -15 $process
+
+		if [ `ps -U $USER | grep $process > /dev/null; echo $?` = "0" ] 
+		then
+			echo "kill -9:  $process"; kill -9 $process
+		fi
+	fi
+done

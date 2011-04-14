@@ -1,0 +1,15 @@
+rees.math
+laurent.math
+lassar.math
+mail.student.math
+cpu02.student.cs
+cpu04.student.cs
+cpu06.student.cs
+cpu08.student.cs
+cpu10.student.cs
+cpu12.student.cs
+cpu14.student.cs
+cpu16.student.cs
+cpu18.student.cs
+cpu20.student.cs
+cpu22.student.cs

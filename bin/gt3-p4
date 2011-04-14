@@ -1,0 +1,4 @@
+#!/bin/bash
+gnome-terminal --hide-menubar --geometry 96x42-0+0 &
+gnome-terminal --hide-menubar --geometry 76x26-134-58 &
+gnome-terminal --hide-menubar --geometry 125x75+0+0 &

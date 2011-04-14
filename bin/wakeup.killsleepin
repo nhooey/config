@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# Neil's restore wakeup command
+
+# Restore the wakeup command
+echo >> /tmp/wakeup.log
+vdate >> /tmp/wakeup.log
+echo "--- Slept in today" >> /tmp/wakeup.log
+wakeup.restore &

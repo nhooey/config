@@ -1,0 +1,37 @@
+#!/bin/bash
+# wma2mp3
+# convert filthy wma files to mp3
+
+current_directory=$( pwd )
+
+for FILE_NAME in *.[Ww][Mm][Aa]
+do
+
+	# remove spaces
+	echo "Removing spaces..."
+	echo "============================================"
+	NEW_FILE=`echo "$FILE_NAME" | tr ' ' '_'`
+	mv -v "$FILE_NAME" "$NEW_FILE"
+	FILE_NAME="$NEW_FILE"
+
+	# Rip with Mplayer / encode with LAME
+	echo "Encoding..."
+	echo "============================================"
+	mplayer -vo null -vc dummy -af resample=44100 -ao pcm -waveheader "$FILE_NAME" \
+		&& lame -m s audiodump.wav -o "$FILE_NAME"
+
+	# convert file names
+	echo "Converting file extensions from wma to mp3..."
+	echo "============================================"
+	NEW_FILE="`basename "$FILE_NAME" .wma`.mp3"
+	mv -v "$FILE_NAME" "$NEW_FILE"
+	FILE_NAME="$NEW_FILE"
+
+	rm -v audiodump.wav
+
+	# put spaces back
+	echo "Putting spaces back in file names..."
+	echo "============================================"
+	NEW_FILE="`echo "$FILE_NAME" | tr '_' ' '`"
+	mv -v "$FILE_NAME" "$NEW_FILE"
+done

@@ -1,0 +1,19 @@
+#!/usr/bin/perl
+# smscmd
+# execute a command, then send the last few lines and the result to the Blackberry
+
+
+$sms_url = "http://216.129.53.44:8080/cgi-bin/send_sm_rogers.new";
+$num = "6138644335";
+
+$cut = "cut -c -40";
+$tee = "tee";
+$tee_file = "/tmp/smscmd.log";
+$lynx = "lynx";
+
+$cmd = join(' ', @ARGV);
+system("$cmd 2>&1 | $tee $tee_file");
+
+$text="$cmd";
+
+#system("echo 'msisdn=$num&text=$text' | $lynx -post-data $sms_url &> /dev/null");

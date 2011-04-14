@@ -1,0 +1,15 @@
+#!/bin/bash
+# xorgconf
+# xorg.conf file manager, switches from dual left, dual right, and single
+
+EXE_FILE=`basename $0`
+
+case "$EXE_FILE" in
+	"xorg-bdr12"	) XFCFG="xorg.conf.big-desktop.right.1280";;
+	"xorg-bdr16"	) XFCFG="xorg.conf.big-desktop.right.1600";;
+	"xorg-bda16"	) XFCFG="xorg.conf.big-desktop.above.1600";;
+	"xorg-s19"		) XFCFG="xorg.1920x1200.single.conf";;
+	*			) echo "invalid executable name for this program."; exit 1;;
+esac
+
+sudo cp -v "/etc/X11/$XFCFG" /etc/X11/xorg.conf

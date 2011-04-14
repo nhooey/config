@@ -1,0 +1,4 @@
+#!/bin/bash
+# webpost
+
+rsync -rvtl ~neil/code/www/ p3.friendlygeek.com:/var/www/html/

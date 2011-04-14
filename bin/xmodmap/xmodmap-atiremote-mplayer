@@ -1,0 +1,24 @@
+! QUIT
+keycode 222 = Escape
+! PLAY
+keycode 168 = space
+! PAUSE
+keycode 110 = space
+! STOP
+keycode 232 = Escape
+! MUTE
+keycode 166 = w
+! FASTER
+keycode 233 = Prior
+! SLOWER
+keycode 152 = Next
+! VOLUME DOWN
+keycode 165 = KP_Divide
+! VOLUME UP
+keycode 158 = KP_Multiply
+! Mplayer mute (m)
+keycode 166 = m
+! Mplayer playlist -
+keycode 152 = less
+! Mplayer playlist +
+keycode 233 = greater

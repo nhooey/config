@@ -1,0 +1,8 @@
+echo Converting $1.sl to MIPS code...
+echo
+java Main $1
+echo
+echo $1.mips:
+echo --------------------
+cat $1.mips
+echo

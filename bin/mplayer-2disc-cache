@@ -1,0 +1,18 @@
+#!/bin/bash
+# mplayer-2disc-cache
+# copy movies from cd to /tmp and play them
+
+IFS=\n
+
+mkdir -p /tmp/movies/disc1
+mkdir -p /tmp/movies/disc2
+
+cp /mnt/cdrom/*.avi /tmp/movies/disc1 -fv
+eject /dev/cdrom -v
+
+mplayer /tmp/movies/disc1/*.avi &	# play in background, and copy disc2
+
+cp /mnt/cdrw/*.avi /tmp/movies/disc2 -fv
+eject /dev/cdrw -v
+
+mplayer /tmp/movies/disc2/*.avi

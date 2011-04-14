@@ -1,0 +1,6 @@
+#!/bin/bash
+# mkcd
+# make a directory and then cd to it
+
+mkdir "$1"
+cd "$1"

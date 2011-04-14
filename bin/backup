@@ -1,0 +1,19 @@
+#!/bin/bash
+# backup
+# backup a target
+
+BACKUP_DIR=/home/neil/backup
+
+for i in $@
+do
+	if [ -e "$i" ]
+	then
+		PWD_OLD=`pwd`
+		cd "`dirname $i`"
+		PWD_TARGET=`pwd`
+		mkdir -pv "$BACKUP_DIR/$PWD_TARGET"
+		rsync -rvtluog "$i" "$BACKUP_DIR/$PWD_TARGET"
+
+		cd "$PWD_OLD"
+	fi
+done

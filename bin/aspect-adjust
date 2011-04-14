@@ -1,0 +1,78 @@
+#!/usr/bin/perl
+
+use strict;
+use File::Basename;
+
+my $basename = basename($0);
+
+if (scalar @ARGV != 4) {
+	print "usage: $basename <src-width> <src-height> <dest-width> <dest-height>\n";
+	exit 1;
+}
+
+my $debug = 1;
+
+my $src_w = $ARGV[0]; shift;
+my $src_h = $ARGV[0]; shift;
+my $dest_w = $ARGV[0]; shift;
+my $dest_h = $ARGV[0]; shift;
+
+my $new_w = 0;
+my $new_h = 0;
+
+if    (($src_w <= $dest_w) && ($src_h <= $dest_h))
+{
+	print "Source Smaller\n" if $debug;
+	$new_w = $src_w;
+	$new_h = $src_h;
+}
+elsif (($src_w <= $dest_w) && ($src_h >  $dest_h))
+{
+	print "Source Taller\n" if $debug;
+	$new_w = $src_w * ($dest_h / $src_h);
+	$new_h = $dest_h;
+}
+elsif (($src_w >  $dest_w) && ($src_h <= $dest_h))
+{
+	print "Source Wider\n" if $debug;
+	$new_w = $dest_w;
+	$new_h = $src_h * ($dest_w / $src_w);
+}
+elsif (($src_w >  $dest_w) && ($src_h >  $dest_h))
+{
+	print "Source Bigger\n" if $debug;
+	my $w_aspect = $src_w / $dest_w;
+	my $h_aspect = $src_h / $dest_h;
+
+	if    ($h_aspect > $w_aspect)
+	{
+		print "Fit Height\n" if $debug;
+		$new_h = $dest_h;
+		$new_w = $src_w * ($dest_h / $src_h);
+	}
+	elsif ($w_aspect > $h_aspect)
+	{
+		print "Fit Width\n" if $debug;
+		$new_w = $dest_w;
+		$new_h = $src_h * ($dest_w / $src_w);
+	}
+	else
+	{
+		print "Fit Both\n" if $debug;
+		$new_w = $dest_w;
+		$new_h = $dest_h;
+	}
+}
+
+my $src_aspect = $src_w / $src_h;
+my $new_aspect = $new_w / $new_h;
+
+if ($debug)
+{
+	printf "Change:   %d x %d -> %d x %d = %d x %d\n", $src_w, $src_h, $dest_w, $dest_h, $new_w, $new_h;
+	printf "Aspect:   %f -> %f\n", $src_aspect, $new_aspect;
+	printf "New Size: %d x %d\n", $new_w, $new_h;
+	printf "\n";
+}
+
+printf "%dx%d\n", $new_w, $new_h;

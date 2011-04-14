@@ -1,0 +1,8 @@
+#!/bin/bash
+# To be run on neil-ubuntu
+
+while true; do
+	ssh -nXNT -p 22 192.168.2.8 -L 0.0.0.0:8092:dev-httpd01:8080 -o 'ConnectTimeout 5' 2> /dev/null
+	echo -n '[sandbox]'
+	sleep 1m
+done

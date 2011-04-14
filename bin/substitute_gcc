@@ -1,0 +1,20 @@
+#!/usr/bin/perl -w
+use strict;
+sub dosub {
+	my ($target, $source) = @_;
+	my ($key, $val, $remains) =
+		$source =~ /^(?:, )?(\w+) = (.*?)((, (\w+) = (.*?))*)$/;
+	if (defined $key) {
+		$target =~ s/\b\Q$key\E\b/$val/eg;
+	}
+	if (defined $remains) {
+		return dosub($target, $remains);
+	}
+	return $target;
+}
+
+while (<>)
+{
+	s/'(.*?) \[with (.*?)\]'/ "'" . dosub($1, $2) . "'"/eg;
+	print;
+}

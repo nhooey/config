@@ -1,0 +1,4 @@
+#!/bin/bash
+# To be run on fs1
+
+ssh -fXN -p 22 192.168.2.8 -L 22022:192.168.1.206:22  -o 'ConnectTimeout 5'

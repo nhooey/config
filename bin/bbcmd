@@ -1,0 +1,35 @@
+#!/bin/bash
+
+#STARTED=`date +"%b %e %G %H:%M:%S"`
+STARTED=`date +"%H:%M:%S"`
+if [ `id -u` -eq 0 ]; then
+	UID_SYMBOL='#'
+else
+	UID_SYMBOL='$'
+fi
+
+SAVED_USER=$USER
+SAVED_HOSTNAME=$HOSTNAME
+SAVED_PWD=$PWD
+
+COMMAND=""
+
+# Execute everything
+for i in $@; do
+	if [ "${COMMAND}" = "" ]; then
+		COMMAND="$1"
+	else
+		COMMAND="$COMMAND; $1"
+	fi
+	$1
+	shift
+done
+RESULT=$?
+
+# Send the message
+TEXT="($RESULT) $STARTED ${SAVED_USER}@${SAVED_HOSTNAME}:${SAVED_PWD}${UID_SYMBOL} ${COMMAND}"
+
+echo
+echo $TEXT
+
+bbsms $TEXT

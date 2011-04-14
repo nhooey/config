@@ -1,0 +1,2 @@
+sudo rmmod ohci_hcd && sudo modprobe -v ohci_hcd
+alert

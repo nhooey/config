@@ -1,0 +1,7 @@
+#!/bin/bash
+# gkrellm-p4
+
+#if rsh p4.friendlygeek.com echo
+#then
+	gkrellm -s p4.friendlygeek.com &
+#fi

@@ -1,0 +1,5 @@
+#!/bin/bash
+# acdsee
+# acdsee32 run by wine
+
+wine /mnt/win2k/graphics/ACDsee/ACDSee32.exe

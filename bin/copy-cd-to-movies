@@ -1,0 +1,17 @@
+#!/bin/bash
+
+while true; do
+	while true; do
+		if [ $(find /media/cdrom/ -type f | wc -l) -gt 0 ]; then
+			echo
+			break;
+		fi
+		echo -n "."
+		sleep 1
+	done
+	rsync -rv --progress /media/cdrom/* /mnt/sdb8/neil/movies/CDs/
+	alert
+	eject
+	echo "Please insert the next cd..."
+	alert
+done

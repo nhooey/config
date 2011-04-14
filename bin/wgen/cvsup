@@ -1,0 +1,34 @@
+#!/bin/bash
+# cvsup
+
+MCLASS_DIR="$1"
+WGEN_DIR="$HOME/code/wgen"
+CODE_DIR="$WGEN_DIR/$MCLASS_DIR"
+
+PRODUCTS="
+d2
+d2_prod
+r3d2
+r3d2_prod
+sync
+"
+
+if [[ $# -lt 1 || $# -gt 2 ]]; then
+    echo "usage: $(basename $0) <source-dir> [product]"
+    exit 1
+elif [ ! -d "$CODE_DIR" ]; then
+	echo "Error, could not find \`$MCLASS_DIR' in \`$WGEN_DIR'."
+    exit 1
+fi
+
+ROVER_CONFIG="r3d2_pda_maemo_dev"
+
+cd "$CODE_DIR"
+cvs -Q co mclass/release/tools
+python mclass/release/tools/rover/fetch.py "$ROVER_CONFIG"
+
+CVS_DIRS=$(cat "$CODE_DIR/mclass/release/tools/rover/config/$ROVER_CONFIG.csv" | \
+    perl -ne 'printf "%s\n", ((split(/,\s*/))[0])';)
+
+echo "cvs -Q up -d $CVS_DIRS"
+cvs -Q up -d $CVS_DIRS

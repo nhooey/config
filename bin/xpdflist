@@ -1,0 +1,14 @@
+#!/bin/bash
+# xpdflist
+# loads xpdf for every pdf in the directory specified in $1
+
+pwd_old=`pwd`
+cd "$1"
+
+for monkey in *.pdf
+do
+	echo Opening $monkey in xpdf
+	xpdf "$monkey"
+done
+
+cd "$pwd_old"

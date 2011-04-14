@@ -1,0 +1,22 @@
+#!/bin/bash
+# ice-reminder
+# remind everyone to make more ice in the house
+
+# See if xmms is running
+ps aux | grep xmms | grep -v grep
+XMMS_RUNNING=$?
+
+if [ $XMMS_RUNNING -eq 0 ]
+then
+	xmms --stop
+fi
+
+aumix -S
+aumix -v 100 -w 100
+speak "Can someone please empty the pots in the garage freezer, then fill them up again"
+aumix -L
+
+if [ $XMMS_RUNNING -eq 0 ]
+then
+	xmms --play
+fi

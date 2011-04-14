@@ -1,0 +1,9 @@
+#!/bin/bash
+
+JAVA="$HOME/code/oss/jdk1.6.0_24/bin/java"
+
+cd "$HOME/elasticsearch"
+echo "cd \"$HOME/solr/servers\""
+bin/elasticsearch -f
+echo
+echo "bin/elasticsearch -f"

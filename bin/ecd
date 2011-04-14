@@ -1,0 +1,5 @@
+#!/bin/bash
+# ecd
+# ejects the cd
+
+eject /dev/cdrom

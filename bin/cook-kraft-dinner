@@ -1,0 +1,43 @@
+#!/bin/bash
+# cook-kraft-dinner
+# tells you how to cook kraft dinner
+
+volup()
+{
+	aumix -S > /dev/null
+	aumix -v 90
+	aumix -w 90
+}
+
+voldown()
+{
+	aumix -L > /dev/null
+}
+
+volup
+beep -f 1000
+speak "Boil the water"
+voldown
+
+sleep 7m
+beep -f 1000
+volup
+speak "Dump in the noodles"
+voldown
+
+sleep 6m
+beep -f 1000
+volup
+speak "Get the butter, milk and cheese ready"
+voldown
+
+sleep 2m
+beep -f 1000
+volup
+speak "Mix the butter, then cheese, then milk"
+voldown
+
+sleep 1s
+volup
+speak "All done"
+voldown

@@ -1,0 +1,12 @@
+#!/bin/bash
+echo -n "Moving ARM's default Python... "
+if mv /scratchbox/tools/bin/python /scratchbox/tools/bin/python.old; then
+	echo 'Done!'
+fi
+$@
+RETURN=$?
+echo -n "Restoring ARM's default Python... "
+if cp /scratchbox/tools/bin/python.old /scratchbox/tools/bin/python; then
+	echo 'Done!'
+fi
+exit $RETURN

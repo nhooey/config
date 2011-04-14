@@ -1,0 +1,38 @@
+#!/bin/bash
+# swap
+# switches two files
+
+ls "$1"
+RESULT=$?
+if [ $RESULT -ne 0 ]; then
+	echo "Error, file: \"$1\" does not exist, or something..."
+	exit 1
+fi
+
+ls "$2"
+RESULT=$?
+if [ $RESULT -ne 0 ]; then
+	echo "Error, file: \"$2\" does not exist, or something..."
+	exit 1
+fi
+
+mv "$1" swap.temp
+RESULT=$?
+if [ $RESULT -ne 0 ]; then
+	echo "Error swapping file"
+	exit 1
+fi
+
+mv "$2" "$1"
+RESULT=$?
+if [ $RESULT -ne 0 ]; then
+	echo "Error swapping file"
+	exit 1
+fi
+
+mv swap.temp "$2"
+RESULT=$?
+if [ $RESULT -ne 0 ]; then
+	echo "Error swapping file"
+	exit 1
+fi

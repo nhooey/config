@@ -1,0 +1,3 @@
+#!/usr/bin/perl
+use Shell qw(ls);
+print ls('-l');\n

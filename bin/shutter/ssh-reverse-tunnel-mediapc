@@ -1,0 +1,6 @@
+#!/bin/bash
+while true; do
+	ssh -nXNT -R 22126:localhost:22 mediapc 2> /dev/null
+	echo -n '[mediapc]'
+	sleep 1m
+done

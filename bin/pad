@@ -1,0 +1,7 @@
+#!/bin/bash
+# pad
+# Pads the output of the $1 command so it looks pretty
+
+clear;
+$@
+echo;

@@ -1,0 +1,3 @@
+#!/bin/bash
+# x-dud
+xterm -e "dud \"$1\"; bash"

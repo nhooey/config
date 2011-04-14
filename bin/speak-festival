@@ -1,0 +1,5 @@
+#!/bin/bash
+# speak
+# pipe text to festival so the computer speaks
+
+echo "(SayText \"$*\")" | festival --pipe

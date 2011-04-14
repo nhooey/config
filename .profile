@@ -8,7 +8,7 @@
 #umask 022
 
 echo_dot_profile=''
-if [ -f "/tmp/echo-login-script" ]; then
+if [ -f "$HOME/.echo_login" ]; then
 	echo_dot_profile="echo '~/.profile'"
 fi
 

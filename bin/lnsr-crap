@@ -1,0 +1,15 @@
+#!/bin/bash
+# lnsr
+# 2004-01-19 01:39
+# Neil's Recursive Link Script - Wrapper Script
+# Makes a big symbolic link of an entire directory structure by making new
+# directories and putting the links in the relative locations
+
+# usage: lnsr source destination [v] [u]
+cd "$2"
+  if [ "$?" -ne 0 ] ; then
+	echo $0: cd says "\"$2\"" does not exist, creating directory;
+	mkdir $2;
+  fi
+
+lnsr-core "$1" "$2" "$3" "$4"

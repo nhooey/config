@@ -1,0 +1,17 @@
+#!/bin/bash
+# cook-mushroom-soup
+# tells you how to cook mushroom soup
+
+. ~neil/bin/cooking
+
+SLEEP=5m
+MESSAGE='Dont burn down the house, biatch'
+bulletin
+
+SLEEP=1m
+MESSAGE='Lick my choda'
+bulletin
+
+SLEEP=5s
+MESSAGE='and my anus'
+bulletin

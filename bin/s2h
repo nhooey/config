@@ -1,0 +1,35 @@
+#!/usr/bin/perl
+
+use File::Basename;
+
+my $basename = basename $0;
+
+my $secs_per_min = 60;
+my $secs_per_hour = $secs_per_min * 60;
+my $secs_per_day = $secs_per_hour * 24;
+my $secs_per_year = $secs_per_day * 365;
+
+sub print_usage
+{
+	print "usage: $basename <seconds>\n";
+}
+
+sub check_args
+{
+	if (scalar @_ != 1) {
+		print_usage();
+		exit 1;
+	}
+
+	return $_[0];
+}
+
+my $secs = check_args(@ARGV);
+
+my $h = int($secs / $secs_per_hour);
+$secs -= $h * $secs_per_hour;
+my $m = int($secs / $secs_per_min);
+$secs -= $m * $secs_per_min;
+my $s = $secs;
+
+printf "%02d:%02d:%02d\n", $h, $m, $s;

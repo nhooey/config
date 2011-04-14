@@ -1,0 +1,12 @@
+#!/bin/bash
+# sfcvs
+# Download a module from SourceForge's CVS server
+
+if [ "$1" = "" ]
+then
+	echo "Please specify a module to download..."
+	exit 1
+fi
+
+cvs -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/"$1" login
+cvs -z3 -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/"$1" co -P "$1"

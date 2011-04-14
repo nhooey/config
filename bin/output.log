@@ -1,0 +1,195 @@
++ QUIET=0
++ '[' '' = -q ']'
++ QUIET=0
++ INTERFACE=eth1
++ CURL_CMD_LINE='curl -d "userid=nhooey" -d "password=89ZJdb6" -d "mode=Connect" https://cn-libnaa.uwaterloo.ca/login/index.php'
++ PING_CMD_LINE='ping -W 1 -n -c 1 uwaterloo.ca > /dev/null'
++ IWLIST_OUTPUT=/tmp/iwlist.log
++ killall dhclient
++ echo 'UW Wireless Connector'
+UW Wireless Connector
++ echo ========================================
+========================================
++ true
++ connect
++ find_best_ap
++ echo 'Searching for the best wireless access point...'
+Searching for the best wireless access point...
++ iwlist eth1 scanning
++ egrep 'Extra: Signal:|Cell|Extra: Last beacon:'
++ cat /tmp/iwlist.log
++ echo
+
++ QUAL_PREV=0
++ QUAL_MAX_INDEX=1
++ QUAL_MAX=-10000
++ BEACON_MIN=-1
++ i=0
+++ cat /tmp/iwlist.log
+++ egrep 'Extra: Signal:'
+++ egrep -o '(-)*[0-9][0-9]*'
+++ cat /tmp/iwlist.log
+++ egrep -o '([A-Z0-9][A-Z0-9]:)([A-Z0-9][A-Z0-9]:)*([A-Z0-9][A-Z0-9])'
+++ head -n 1
+++ tail -n 1
++ BEST_AP_MAC_ADDRESS=
++ echo 'Best AP MAC:  '
+Best AP MAC:  
++ echo 'Best Quality: -10000 dBm'
+Best Quality: -10000 dBm
++ echo 'Best Beacon:  -1 ms'
+Best Beacon:  -1 ms
++ '[' '' = '' -o -1 -lt 0 ']'
++ echo
+
++ echo 'Failed to find a good Access Point'
+Failed to find a good Access Point
++ beep_failure
++ '[' 0 = 0 ']'
++ beep -f 100 -l 30
++ return 1
++ '[' 1 '!=' 0 ']'
++ find_best_ap
++ echo 'Searching for the best wireless access point...'
+Searching for the best wireless access point...
++ iwlist eth1 scanning
++ egrep 'Extra: Signal:|Cell|Extra: Last beacon:'
++ cat /tmp/iwlist.log
+          Cell 01 - Address: 00:01:F4:EC:83:16
+                    Extra: Signal: -48  dBm 
+                    Extra: Last beacon: 39ms ago
++ echo
+
++ QUAL_PREV=0
++ QUAL_MAX_INDEX=1
++ QUAL_MAX=-10000
++ BEACON_MIN=-1
++ i=0
+++ cat /tmp/iwlist.log
+++ egrep 'Extra: Signal:'
+++ egrep -o '(-)*[0-9][0-9]*'
++ for QUAL_CURRENT in '`cat $IWLIST_OUTPUT | egrep "Extra: Signal:" | egrep -o "(-)*[0-9][0-9]*"`'
++ let i+=1
++ '[' -48 -gt -10000 ']'
+++ cat /tmp/iwlist.log
+++ egrep 'Extra: Last beacon:'
+++ egrep -o '[0-9][0-9]*'
+++ head -n 1
+++ tail -n 1
++ LAST_BEACON=39
++ '[' 39 -lt 1000 ']'
++ QUAL_MAX_INDEX=1
++ QUAL_MAX=-48
++ BEACON_MIN=39
++ QUAL_PREV=-48
+++ cat /tmp/iwlist.log
+++ egrep -o '([A-Z0-9][A-Z0-9]:)([A-Z0-9][A-Z0-9]:)*([A-Z0-9][A-Z0-9])'
+++ head -n 1
+++ tail -n 1
++ BEST_AP_MAC_ADDRESS=00:01:F4:EC:83:16
++ echo 'Best AP MAC:  00:01:F4:EC:83:16'
+Best AP MAC:  00:01:F4:EC:83:16
++ echo 'Best Quality: -48 dBm'
+Best Quality: -48 dBm
++ echo 'Best Beacon:  39 ms'
+Best Beacon:  39 ms
++ '[' 00:01:F4:EC:83:16 = '' -o 39 -lt 0 ']'
++ return 0
++ '[' 0 '!=' 0 ']'
++ bind_adapter
++ echo
+
++ echo 'iwconfig eth1 ap 00:01:F4:EC:83:16'
+iwconfig eth1 ap 00:01:F4:EC:83:16
++ iwconfig eth1 ap 00:01:F4:EC:83:16
++ RESULT=0
++ '[' 0 -ne 0 ']'
++ dhclient eth1
+Internet Software Consortium DHCP Client 2.0pl5
+Copyright 1995, 1996, 1997, 1998, 1999 The Internet Software Consortium.
+All rights reserved.
+
+Please contribute if you find this software useful.
+For info, please visit http://www.isc.org/dhcp-contrib.html
+
+sit0: unknown hardware address type 776
+eth2: unknown hardware address type 24
+sit0: unknown hardware address type 776
+eth2: unknown hardware address type 24
+Listening on LPF/eth1/00:0c:f1:42:68:30
+Sending on   LPF/eth1/00:0c:f1:42:68:30
+Sending on   Socket/fallback/fallback-net
+DHCPREQUEST on eth1 to 255.255.255.255 port 67
+DHCPACK from 129.97.192.1
+SIOCADDRT: File exists
+bound to 129.97.192.148 -- renewal in 450 seconds.
++ return 0
++ find_router_ip
+++ ifconfig
+++ egrep '^eth1' -A 1
+++ tail -n 1
+++ egrep -o 'addr:([0-9][0-9]*\.){3}'
+++ egrep -o '([0-9][0-9]*\.){3}'
++ ROUTER_IP=129.97.192.1
++ authenticate
++ echo
+
++ echo -n 'Authenticating... '
+Authenticating... ++ curl -d '"userid=nhooey"' -d '"password=89ZJdb6"' -d '"mode=Connect"' https://cn-libnaa.uwaterloo.ca/login/index.php
+++ grep '<input type="submit"'
+++ egrep -o 'Connect|Disconnect'
++ AUTH_RESULT=Connect
++ '[' Connect = Connect ']'
++ echo Failed.
+Failed.
++ return 1
++ '[' 1 '!=' 0 ']'
++ beep_failure
++ '[' 0 = 0 ']'
++ beep -f 100 -l 30
++ return 1
++ connection_loop
++ true
++ sleep 1
++ ping -W 1 -n -c 1 uwaterloo.ca '>' /dev/null
+ping: unknown host >
++ PING_RESULT=2
++ '[' 2 -ne 0 ']'
++ PING_FAILURES=0
++ '[' 0 -lt 3 ']'
++ ping -W 1 -n -c 1 uwaterloo.ca '>' /dev/null
+ping: unknown host >
++ PING_RESULT=2
++ echo -n +
+++ '[' 2 -ne 0 ']'
++ let PING_FAILURES+=1
++ '[' 1 -lt 3 ']'
++ ping -W 1 -n -c 1 uwaterloo.ca '>' /dev/null
+ping: unknown host >
++ PING_RESULT=2
++ echo -n +
+++ '[' 2 -ne 0 ']'
++ let PING_FAILURES+=1
++ '[' 2 -lt 3 ']'
++ ping -W 1 -n -c 1 uwaterloo.ca '>' /dev/null
+ping: unknown host >
++ PING_RESULT=2
++ echo -n +
+++ '[' 2 -ne 0 ']'
++ let PING_FAILURES+=1
++ '[' 3 -lt 3 ']'
++ echo
+
++ echo 'Connection lost!'
+Connection lost!
++ beep_failure
++ '[' 0 = 0 ']'
++ beep -f 100 -l 30
++ return 1
++ true
++ connect
++ find_best_ap
++ echo 'Searching for the best wireless access point...'
+Searching for the best wireless access point...
++ iwlist eth1 scanning
++ egrep 'Extra: Signal:|Cell|Extra: Last beacon:'

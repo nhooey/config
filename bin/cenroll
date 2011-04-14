@@ -1,0 +1,20 @@
+#!/bin/bash
+# cenroll
+# enroll in a course at UW with curl
+
+USERID="nhooey"
+PASSWORD="89ZJdb6"
+COOKIE=/tmp/cookie.txt
+ADDRESS="https://uni.quest.uwaterloo.ca/servlets/iclientservlet/SA/?cmd=login&languageCd=ENG"
+OUTPUT="/tmp/quest.html"
+
+curl --location-trusted -k \
+	-b "$COOKIE" \
+	-c "$COOKIE" \
+	-d "userid=$USERID" \
+	-d "pwd=$PASSWORD" \
+	-d "httpPort=" \
+	-d "timezoneOffset=240" \
+	-d "submit=Submit" \
+	"$ADDRESS" \
+	| tee "$OUTPUT"

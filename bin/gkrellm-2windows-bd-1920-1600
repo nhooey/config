@@ -1,0 +1,2 @@
+gkrellm --geometry 10x10+1854+798 &
+gkrellm --geometry 10x10+3454+823 &

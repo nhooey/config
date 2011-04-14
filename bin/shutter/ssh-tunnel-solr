@@ -1,0 +1,8 @@
+#!/bin/bash
+# To be run on neil-ubuntu
+
+while true; do
+	ssh -nXNT -p 22 192.168.2.8 -L 0.0.0.0:8080:data2:8983 -o 'ConnectTimeout 5' 2> /dev/null
+	echo -n '[solr]'
+	sleep 1m
+done

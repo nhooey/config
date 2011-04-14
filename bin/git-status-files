@@ -1,0 +1,4 @@
+#!/bin/bash
+
+git status \
+	| perl -ne 'chomp; if (my ($file) = ($_ =~ /^#\t(?:\w+ )?(?:\w+:)?\s*([^ ]+)/)) { print "$file\n"; }'

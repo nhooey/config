@@ -1,0 +1,5 @@
+#!/bin/bash
+# record
+# records an ogg file from the mic
+
+ecasound -i:alsahw,0,0 -o:$1 -etf:1

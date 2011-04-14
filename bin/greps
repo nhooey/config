@@ -1,0 +1,19 @@
+#!/bin/bash
+
+if ! which find-source-files > /dev/null 2>&1; then
+	echo "$(basename $0): error: \`find-source-files' not found in path"
+	exit 1
+fi
+
+if [ "$(basename $0)" == "egreps" ]; then
+	GREP="egrep"
+else
+	GREP="grep"
+fi
+
+if [ -d "$1" ]; then
+	DIR="$1"
+	shift
+fi
+
+find-source-files | xargs $GREP $DIR $*

@@ -1,0 +1,533 @@
+#!/usr/bin/perl
+# ipod-convert
+#
+# Use ffmpeg and mplayer to convert a video file to h264 format and
+# also resize it to fit on the iPod Touch's screen, or any screen size
+# if supplied with screen dimension parameters
+#
+# Written by Neil Hooey <nhooey@gmail.com> (2008-06-21)
+# Version 1.0
+#
+# This software is distributed under the GNU General Public Licence (GPL)
+# Go look it up on the web if you don't know what it is. ;)
+
+use strict;
+use Getopt::Long;
+use POSIX;
+use File::Basename;
+use File::Temp qw/tempfile/;
+
+my %opts = ('input'   => (),
+            'output'  => "",
+			'verbose' => 0,
+			'debug'   => 0
+);
+my $result = GetOptions("input=s"  => \$opts{'input'},
+                        "output=s" => \%opts,
+						"verbose"  => \%opts,
+						"debug"    => \%opts
+);
+
+my @logfiles = ("ffmpeg2pass-0.log", "x264_2pass.log", "x264_2pass.log.temp");
+
+my $debug = 1;
+
+my $progname = basename $0;
+
+sub check_args (@);
+sub check_ffmpeg ();
+sub check_mplayer ();
+sub check_mencoder ();
+sub get_size ($);
+sub get_size_ffmpeg ($);
+sub get_size_mplayer ($);
+sub get_resize ($$$$);
+sub print_actions ($$$$$$$);
+sub ffmpeg_pass1 ($$$$$);
+sub ffmpeg_pass2 ($$$$$);
+sub mplayer_output ($$$);
+sub mencoder_pass1 ($$$$);
+sub mencoder_pass2 ($$$$);
+sub atomicparsley ($);
+
+my $default_w = 480;
+my $default_h = 320;
+
+my $dashline = "----------------------------------------"
+	. "----------------------------------------";
+
+my $ok_ffmpeg = check_ffmpeg;
+my $ok_mplayer = check_mplayer;
+my $ok_mencoder = check_mencoder;
+unless ($ok_ffmpeg or ($ok_mplayer and $ok_mencoder)) {
+	printf STDERR "\n$progname: Error: Some of the tools needed to encode"
+   		. " videos are not installed or configured properly.\n";
+	exit 1;
+}
+
+# Get the input file and source and destination sizes
+my ($file_input, $file_output, $dest_w, $dest_h)
+	= check_args @ARGV;
+my $file_vout = sprintf "%s%s", $file_output, ".y4m";
+my $file_aout = sprintf "%s%s", $file_output, ".wav";
+
+my ($src_w, $src_h) = get_size $file_input;
+die "$progname: Error: Unable to get size of file: \`$file_input'\n"
+	unless ($src_w and $src_h);
+
+my ($new_w, $new_h) = get_resize $src_w, $src_h, $dest_w, $dest_h;
+
+print_actions $file_input, $src_w, $src_h, $dest_w, $dest_h, $new_w, $new_h;
+
+print "\nEncoding with ffmpeg, first pass...\n$dashline\n";
+my $result = ffmpeg_pass1 $file_input, undef, $file_output, $new_w, $new_h;
+if ($result == 0) {
+	print "\nEncoding with ffmpeg, second pass...\n$dashline\n";
+	$result = ffmpeg_pass2 $file_input, undef, $file_output, $new_w, $new_h;
+}
+
+my $ffmpeg_result = $result;
+
+# <DISABLE>
+# Output intermediate files with mplayer
+if (0) {
+unless ($ffmpeg_result == 0) {
+	print "$dashline\nFailed.\n";
+	print "\nOutputting intermediate files with mplayer...\n$dashline\n";
+	$result = mplayer_output $file_input, $file_vout, $file_aout;
+}
+
+# Try encoding the intermediate files from mplayer with ffmpeg
+unless ($ffmpeg_result == 0) {
+	print "\nEncoding with ffmpeg, first pass...\n$dashline\n";
+	my $result = ffmpeg_pass1 $file_vout, $file_aout, $file_output,
+		$new_w, $new_h;
+	if ($result == 0) {
+		print "\nEncoding with ffmpeg, second pass...\n$dashline\n";
+		$result = ffmpeg_pass2 $file_vout, $file_aout, $file_output,
+			$new_w, $new_h;
+	}
+}
+}
+# </DISABLE>
+
+my $intermediate_result = $result;
+
+# If all else fails, try encoding with mencoder
+unless ($ffmpeg_result == 0 or $intermediate_result == 0) {
+	print "$dashline\nFailed.\n";
+	print "\nEncoding with mencoder, first pass...\n$dashline\n";
+	$result = mencoder_pass1 $file_input, $file_output, $new_w, $new_h;
+	if ($result == 0) {
+		print "\nEncoding with mencoder, second pass...\n$dashline\n";
+		$result = mencoder_pass2 $file_input, $file_output, $new_w, $new_h;
+	}
+}
+
+# Delete files we used
+unlink $file_vout, $file_aout;
+unlink @logfiles;
+
+# Use AtomicParsley to put some iPod video information in the file
+if ($result == 0) {
+	print "\n$progname: File \`$file_output' encoded successfully.\n";
+
+	$result = atomicparsley $file_output;
+	if ($result == 0) {
+		print "\n$dashline\n$progname: File \`$file_output'"
+			. "marked up successfully.\n";
+	} else {
+		printf STDERR "\n$progname: File \`$file_output' could not be marked up"
+			. " by AtomicParsley properly\n";
+	}
+} else {
+	die "\n$progname: File \`$file_output' could not be encoded by"
+		. " either ffmpeg or mencoder.\n";
+}
+
+if ($result == 0) {
+	print "\n$dashline\nVideo conversion successful.\n"
+		. "The file \`$file_input' has been converted to:\n"
+	   	. "    \`$file_output'\n";
+}
+
+exit 0;
+
+# Check if ffmpeg is installed, and has the right libraries enabled
+sub check_ffmpeg ()
+{
+	unless (0 == system "ffmpeg -version > /dev/null 2>&1") {
+		printf STDERR "$progname: Error: Cannot find ffmpeg in path\n";
+		return undef;
+	}
+
+	my $info = qx/ffmpeg -version 2>&1/;
+	my $ok_libx264 = ($info =~ /--enable-libx264|--enable-x264/);
+	my $ok_libfaac = ($info =~ /--enable-libfaac|--enable-[f]?aac/);
+
+	unless ($ok_libx264 and $ok_libfaac) {
+		printf STDERR "Error: ffmpeg is missing some configuration options.\n"
+			. "You must recompile ffmpeg with the following options passed\n"
+			. "to the \`configure' script in ffmpeg's source directory:\n"
+			. "    --enable-libfaac\n"
+			. "    --enable-libx264\n";
+		return undef;
+	}
+
+	return 1;
+}
+
+# Check if mplayer is installed
+sub check_mplayer ()
+{
+	unless (0 == system "which mplayer > /dev/null 2>&1") {
+		printf STDERR "$progname: Error: Cannot find mplayer in path\n";
+		return undef;
+	}
+
+	return 1;
+}
+
+# Check if mencoder is installed
+sub check_mencoder ()
+{
+	unless (0 == system "which mencoder > /dev/null 2>&1") {
+		printf STDERR "$progname: Error: Cannot find mencoder in path\n";
+		return undef;
+	}
+
+	return 1;
+}
+
+# Check the argument list passed to the program and return params
+sub check_args (@)
+{
+	my @params = @_;
+
+	die "usage: $progname <input-file> <output-file | output-dir>"
+		. " [<dest-width> <dest-height>]\n"
+		unless ((scalar @params == 2) or (scalar @params == 4));
+
+	my $file_input = $params[0];
+	my $file_output = $params[1];
+	
+	die "$progname: File: \`$file_input' does not exist or is not readable.\n"
+		unless (-f $file_input and -r $file_input);
+
+	# If the output file is a directory...
+	if (-d $file_output) {
+		die "$progname: Directory: \`$file_output' can not be written to.\n"
+			unless (-w $file_input);
+		(my $file_new = $file_input) =~ s/\.[^\.]+$//g;
+		$file_new = basename $file_new;
+		$file_output = "$file_output/$file_new.mp4";
+	} else {
+		die "$progname: File: \`$file_output' can not be written to.\n"
+			unless (open FILE_OUTPUT, ">", $file_output and close FILE_OUTPUT);
+	}
+
+	if (scalar @params == 2) {
+		return ($file_input, $file_output, $default_w, $default_h);
+	} elsif (scalar @params == 3) {
+		return ($file_input, $file_output, $params[1], $params[2]);
+	} else {
+		die "$progname: Something has gone very wrong with parameters.\n";
+	}
+}
+
+# Use either ffmpeg or mplayer to get the size of the video
+sub get_size ($)
+{
+	my $file_input = $_[0];
+
+	print "Checking file size for file: \`$file_input'\n";
+
+	my ($w, $h) = get_size_ffmpeg $file_input;
+	return ($w, $h) if ($w and $h);
+	my $ffmpeg_info = $w;
+
+	my ($w, $h) = get_size_mplayer $file_input;
+	return ($w, $h) if ($w and $h);
+	my $mplayer_info = $w;
+
+	print STDERR "$dashline\n" . "ffmpeg debugging information:\n"
+		. "$dashline\n" . "$ffmpeg_info" . "$dashline\n" if ($debug);
+	print STDERR "mplayer debugging information:\n"
+		. "$dashline\n" . "$mplayer_info" . "$dashline\n" if ($debug);
+
+	return undef;
+}
+
+# Get the size of the video with ffmpeg
+# Returns; $w and $w if success
+#          $info (ffmpeg output) if failed
+sub get_size_ffmpeg ($)
+{
+	my $file_input = $_[0];
+
+	print "Using ffmpeg to check size...\n";
+	my $info = qx/ffmpeg -i \"$file_input\" 2>&1/;
+
+	if ($info =~ /Stream.*Video:.*?([0-9]+x[0-9]+)/) {
+		(my $w, my $h) = split /x/, $1;
+		print "Video size: $w x $h\n" if ($debug);
+
+		# Check Pixel Aspect Ratio and multiply width
+		if ($info =~ /Stream.*Video:.*PAR ([0-9]+:[0-9]+)/) {
+			(my $par_w, my $par_h) = split /:/, $1;
+			print "Pixel Aspect Ratio: $par_w : $par_h\n" if ($debug);
+			$w = ceil($w * ($par_w / $par_h));
+			print "Adjusted size: $w x $h\n";
+		}
+		return ($w, $h);
+	} else {
+		print "$progname: Error: ffmpeg failed to get information "
+			. "about file: \`$file_input'\n";
+		return $info;
+	}
+}
+
+# Get the size of the video with mplayer
+# Returns; $w and $w if success
+#          $info (mplayer output) if failed
+sub get_size_mplayer ($)
+{
+	my $file_input = $_[0];
+
+	print "Using mplayer to check size...\n";
+	my $info = qx/mplayer -frames 1 \"$file_input\" 2>&1/;
+
+	if ($info =~ /^VO: .*=> ([0-9]+x[0-9]+) /m) {
+		(my $w, my $h) = split /x/, $1;
+		print "Video size: $w x $h\n" if ($debug);
+		return ($w, $h);
+	} else {
+		print STDERR "$progname: Error: mplayer failed to get information "
+			. "about file: \`$file_input'\n";
+		return $info;
+	}
+}
+
+# Use aspect-adjust to get the new video dimensions
+sub get_resize ($$$$)
+{
+	(my $src_w, my $src_h, my $dest_w, my $dest_h) = @_;
+
+	my $new_w = 0;
+	my $new_h = 0;
+
+	if    (($src_w <= $dest_w) && ($src_h <= $dest_h))
+	{
+		print "Source Smaller\n" if $debug;
+		$new_w = $src_w;
+		$new_h = $src_h;
+	}
+	elsif (($src_w <= $dest_w) && ($src_h >  $dest_h))
+	{
+		print "Source Taller\n" if $debug;
+		$new_w = $src_w * ($dest_h / $src_h);
+		$new_h = $dest_h;
+	}
+	elsif (($src_w >  $dest_w) && ($src_h <= $dest_h))
+	{
+		print "Source Wider\n" if $debug;
+		$new_w = $dest_w;
+		$new_h = $src_h * ($dest_w / $src_w);
+	}
+	elsif (($src_w >  $dest_w) && ($src_h >  $dest_h))
+	{
+		print "Source Bigger\n" if $debug;
+		my $w_aspect = $src_w / $dest_w;
+		my $h_aspect = $src_h / $dest_h;
+
+		if    ($h_aspect > $w_aspect)
+		{
+			print "Fit Height\n" if $debug;
+			$new_h = $dest_h;
+			$new_w = $src_w * ($dest_h / $src_h);
+		}
+		elsif ($w_aspect > $h_aspect)
+		{
+			print "Fit Width\n" if $debug;
+			$new_w = $dest_w;
+			$new_h = $src_h * ($dest_w / $src_w);
+		}
+		else
+		{
+			print "Fit Both\n" if $debug;
+			$new_w = $dest_w;
+			$new_h = $dest_h;
+		}
+	}
+
+	# Make sure dimensions are divisible by 2
+	$new_w = int($new_w / 2) * 2;
+	$new_h = int($new_h / 2) * 2;
+
+	my $src_aspect = $src_w / $src_h;
+	my $new_aspect = $new_w / $new_h;
+
+	if ($debug)
+	{
+		printf "Change:   %d x %d -> %d x %d = %d x %d\n",
+			$src_w, $src_h, $dest_w, $dest_h, $new_w, $new_h;
+		printf "Aspect:   %f -> %f\n", $src_aspect, $new_aspect;
+		printf "New Size: %d x %d\n", $new_w, $new_h;
+		printf "\n";
+	}
+
+	return (int $new_w, int $new_h);
+}
+
+# Print what is going to be done with resizing and encoding
+sub print_actions ($$$$$$$)
+{
+	die "$progname: Error: Wrong number of params passed to 'print_actions'\n"
+		unless (scalar @_ == 7);
+
+	my ($file_input, $src_w, $src_h, $dest_w, $dest_h, $new_w, $new_h)
+		= @_;
+	
+	my $aspect = $src_w / $src_h;
+	print "-----------------------------------------------------\n";
+	print "Converting:  \`$file_input'\n";
+	print "Source:      $src_w x $src_h\n";
+	print "Destination: $dest_w x $dest_h\n";
+	print "Aspect:      $aspect\n";
+	print "New Size:    $new_w x $new_h\n";
+	print "-----------------------------------------------------\n";
+
+	return;
+}
+
+# Encode with ffmpeg
+sub ffmpeg_pass1 ($$$$$)
+{
+	(my $file_vin, my $file_ain, my $file_output, my $new_w, my $new_h) = @_;
+
+	if ($file_vin) {
+		$file_vin = "-i \"$file_vin\"";
+	} else {
+		$file_vin = "";
+	}
+
+	if ($file_ain) {
+		$file_ain = "-i \"$file_ain\"";
+	} else {
+		$file_ain = "";
+	}
+
+	my $params = sprintf
+		"%s %s -s %dx%d -an -pass 1 -vcodec libx264 -vpre fastfirstpass"
+		. " -b 768k -bt 768k -threads 0"
+		. " -aspect %s \"%s\"",
+		$file_vin, $file_ain, $new_w, $new_h, "$new_w:$new_h", $file_output;
+	
+	print "ffmpeg $params\n\n" if ($debug);
+
+	return system "ffmpeg -y $params";
+}
+
+# Encode with ffmpeg
+sub ffmpeg_pass2 ($$$$$)
+{
+	(my $file_vin, my $file_ain, my $file_output, my $new_w, my $new_h) = @_;
+
+	if ($file_vin) {
+		$file_vin = "-i \"$file_vin\"";
+	} else {
+		$file_vin = "";
+	}
+
+	if ($file_ain) {
+		$file_ain = "-i \"$file_ain\"";
+	} else {
+		$file_ain = "";
+	}
+
+	my $params = sprintf
+		"%s %s -s %dx%d -acodec libfaac -ab 128k -pass 2 -vcodec libx264"
+		. " -vpre hq -b 768k -bt 768k -threads 0"
+		. " -aspect %s \"%s\"",
+		$file_vin, $file_ain, $new_w, $new_h, "$new_w:$new_h", $file_output;
+	
+	print "ffmpeg $params\n\n" if ($debug);
+
+	return system "ffmpeg -y $params";
+}
+
+# Output intermediate files with mplayer if ffmpeg can't encode original file
+sub mplayer_output ($$$)
+{
+	(my $file_input, my $file_vout, my $file_aout) = @_;
+
+	unless (open FILE, ">", $file_vout and close FILE) {
+		printf STDERR "$progname: Error: Could not open \`$file_vout'"
+			. " for writing.\n";
+		return undef;
+	}
+	unless (open FILE, ">", $file_aout and close FILE) {
+		printf STDERR "$progname: Error: Could not open \`$file_aout'"
+			. " for writing.\n";
+		return undef;
+	}
+
+	my $params = sprintf
+		"\"%s\" -vo yuv4mpeg:file=\"%s\" -ao pcm:file=\"%s\"",
+			$file_input, $file_vout, $file_aout;
+	
+	print "mplayer $params\n\n" if ($debug);
+
+	return system "mplayer $params";
+}
+
+# Encode with mencoder
+sub mencoder_pass1 ($$$$)
+{
+	(my $file_input, my $file_output, my $new_w, my $new_h) = @_;
+
+	# Include `-vf pp=fd` if interlaced
+	my $params = sprintf
+		"\"%s\" -nosound -ovc x264"
+		. " -x264encopts bitrate=768:vbv_maxrate=1500:vbv_bufsize=2000"
+		. ":cabac:me=umh:trellis=1:level_idc=30:global_header:threads=2"
+		. ":pass=1:turbo=2 -vf scale=%s,harddup"
+		. " -subfont-autoscale 1 -o \"%s\"",
+		$file_input, "$new_w:$new_h", $file_output;
+	
+	print "mencoder $params\n\n" if ($debug);
+
+	return system "yes | mencoder $params";
+}
+
+# Encode with mencoder
+sub mencoder_pass2 ($$$$)
+{
+	(my $file_input, my $file_output, my $new_w, my $new_h) = @_;
+
+	my $params = sprintf
+		"\"%s\" -oac faac -faacopts br=128:mpeg=4:object=2 -ovc x264"
+		. " -x264encopts bitrate=768:vbv_maxrate=1500:vbv_bufsize=2000"
+		. ":cabac:me=umh:subq=6:frameref=6:trellis=1:level_idc=30"
+		. ":global_header:threads=2:pass=2 -vf scale=%s,harddup"
+		. " -subfont-autoscale 1 -o \"%s\"",
+		$file_input, "$new_w:$new_h", $file_output;
+	
+	print "mencoder $params\n\n" if ($debug);
+
+	return system "yes | mencoder $params";
+}
+
+# Add iPod information to the output file
+sub atomicparsley ($)
+{
+	(my $file_output) = @_;
+
+	my $params = sprintf
+		"\"%s\" --DeepScan --iPod-uuid 1200 --overWrite",
+		$file_output;
+	
+	print "AtomicParsley $params\n\n" if ($debug);
+
+	return system "AtomicParsley $params";
+}

@@ -1,0 +1,51 @@
+#!/bin/bash
+# uw-load
+# display the load of the uw servers that I would connect to
+
+TMPFILE="/tmp/uwload.tmp"
+LOGFILE="/tmp/uwload.log"
+SERVERS="${HOME}/bin/uw-servers.txt"
+
+# remove the logfiles
+if [ -e ${TMPFILE} ]
+then
+	rm ${TMPFILE}
+fi
+
+# remove the logfiles
+if [ -e ${LOGFILE} ]
+then
+	rm ${LOGFILE}
+fi
+
+# find the loads
+echo "Finding server loads..."
+echo "========================================"
+for monkey in `cat ${SERVERS}`
+do
+	echo "Checking: ${monkey}"
+	LOAD=`rsh nhooey@${monkey}.uwaterloo.ca uptime`
+	echo "${LOAD}" >> ${TMPFILE}
+done
+
+# Grep out the loads from uptime's output
+cat ${TMPFILE} | egrep -o "average:.*$" | egrep -o "[0-9].*$" | column -t -s " " > ${TMPFILE}
+
+# Count the servers 
+LOADS=`wc -l ${TMPFILE} | egrep -o "[0-9][0-9]*"`
+let LOADS=${LOADS}+1
+
+# Print out the loads with server labels
+echo
+echo "Server Loads:"
+echo "========================================"
+i=1
+while [ ${i} -lt ${LOADS} ]
+do
+	SERVER=`head -n ${i} ${SERVERS} | tail -n 1`
+	LOAD=`head -n ${i} ${TMPFILE} | tail -n 1`
+	echo "${SERVER}: ${LOAD}" >> ${LOGFILE}
+	let i=${i}+1
+done
+
+cat ${LOGFILE} | column -t -s " "

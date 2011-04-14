@@ -1,0 +1,9 @@
+#!/bin/bash
+
+while true; do
+	echo "Waiting for Vim to initialize build..."
+	semp make-loop
+	make-svn $@ | tee /tmp/make-loop.log
+	semv make-loop
+	sleep 2
+done

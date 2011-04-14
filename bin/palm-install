@@ -1,0 +1,7 @@
+#!/bin/bash
+# palm-install
+# install a prc file onto the palm
+
+xterm -e 'pilot-xfer -i /home/neil/palm/install/*.p[r\|d][c\|b]; alert; read;'
+#rm /home/neil/palm/install/*.p[r\|d][c\|b]
+read

@@ -1,0 +1,22 @@
+#!/bin/bash
+
+if [ $# -ne 1 ]; then
+	echo "Usage: $(basename $0) <file-and-commit-message>"
+	exit 1
+fi
+
+if [ -f "/usr/local/src/git-1.7.1/contrib/completion/git-completion.bash" ]; then
+	source /usr/local/src/git-1.7.1/contrib/completion/git-completion.bash
+fi
+
+BRANCH=$(__git_ps1 | grep -v '|' | egrep -o '\w+')
+BRANCH=$(echo -n $BRANCH | tr -d "\n")
+
+if [ "x$BRANCH" = "x" ]; then
+	echo "Not in a regular branch."
+	exit 2
+fi
+
+echo "$BRANCH-$1" >> "$BRANCH-$1"
+git add "$BRANCH-$1"
+git commit -m "$BRANCH-$1"

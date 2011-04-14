@@ -1,0 +1,13 @@
+#!/bin/bash
+# cgrep
+# grep for c code
+
+EXENAME=`basename $0`
+
+if [ "$EXENAME" = "cgrep" ]
+then
+	grep $@ *.hpp *.cpp *.c *.h *.cc 2> /dev/null
+elif [ "$EXENAME" = "cegrep" ]
+then
+	egrep $@ *.hpp *.cpp *.c *.h *.cc 2> /dev/null
+fi

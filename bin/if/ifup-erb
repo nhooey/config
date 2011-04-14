@@ -1,0 +1,19 @@
+#!/bin/bash
+# ifup-erb
+# bring up the eth interface at 399 Erb West
+
+echo "Killing wireless..."
+ifconfig eth1 down
+cp -rvp /home/neil/bin/ifup-erb-resolv.conf /etc/resolv.conf
+
+echo "Bringing up eth0..."
+ifdown eth0
+ifup eth0
+
+RESULT=-1
+while [ $RESULT -ne 0 ]
+do
+	echo "Pinging google..."
+	ping -c 1 -w 1 google.com
+	RESULT=$?
+done	

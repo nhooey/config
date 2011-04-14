@@ -1,0 +1,8 @@
+echo FTP Log:
+echo -----------------------------------------------------------
+tail -n 2 /var/log/vsftpd.log
+echo;
+echo HTTP Log:
+echo -----------------------------------------------------------
+tail -n 2 /var/log/httpd/neil-access_log
+echo;

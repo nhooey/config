@@ -1,0 +1,4 @@
+#!/bin/bash
+
+cd /home/neil/vmware/WinXPpro
+vmplayer WinXPpro.vmx

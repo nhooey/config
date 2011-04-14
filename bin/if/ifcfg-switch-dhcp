@@ -1,0 +1,28 @@
+#!/bin/bash
+# ifcfg-switch-dhcp
+# 2003-12-07 22:41
+# Switches the network to DHCP instead of PPPoE
+
+ifcfg_backup=/home/neil/backup
+sysconfig=/etc/sysconfig
+dir1=networking/devices
+dir2=networking/profiles/default
+dir3=network-scripts
+
+# Shutdown the network
+ifdown eth0
+ifdown ppp0
+
+# Switch the appropriate files
+cp $ifcfg_backup/ifcfg-eth0.dhcp $sysconfig/$dir1/ifcfg-eth0
+cp $ifcfg_backup/ifcfg-eth0.dhcp $sysconfig/$dir2/ifcfg-eth0
+cp $ifcfg_backup/ifcfg-eth0.dhcp $sysconfig/$dir1/ifcfg-eth0
+rm $sysconfig/$dir1/ifcfg-ppp0
+rm $sysconfig/$dir2/ifcfg-ppp0
+rm $sysconfig/$dir3/ifcfg-ppp0
+
+cp /etc/ddclient.conf.ppp0 /etc/ddclient.conf
+
+# Restart the network
+ifup eth0
+service ddclient restart

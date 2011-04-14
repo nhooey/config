@@ -1,0 +1,5 @@
+#!/bin/bash
+# mplaycd
+# plays whatever movie is on the cd
+
+mplayer -fs /mnt/cdrom/*.{avi,mpg,mpeg,mov,asf,wmv}

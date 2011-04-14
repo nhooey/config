@@ -1,0 +1,17 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+$|++;
+
+use lib '/home/neil/code/task-deployment/lib';
+use lib '/home/neil/code/lib';
+
+use Shutterstock::Config env => 'integration';
+use TaskMaster::Base;
+
+my $task = TaskMaster::Base->new(
+	config_file => '/home/neil/code/task-deployment/test_environment/deployment_config.yaml',
+	email       => 'neil@shutterstock.com',
+);
+$task->run;

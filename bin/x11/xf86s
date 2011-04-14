@@ -1,0 +1,25 @@
+#!/bin/bash
+# xf86s
+# XFree86Config file manager, switches from dual left, dual right, and single
+
+EXE_FILE=`basename $0`
+
+case "$EXE_FILE" in
+	"xf86s"		) XFCFG="XF86Config-4.single";;
+	"xf86dl16"	) XFCFG="XF86Config-4.dual.left.1600";;
+	"xf86dr16"	) XFCFG="XF86Config-4.dual.right.1600";;
+	"xf86da16"	) XFCFG="XF86Config-4.dual.above.1600";;
+	"xf86dl12"	) XFCFG="XF86Config-4.dual.left.1280";;
+	"xf86dr12"	) XFCFG="XF86Config-4.dual.right.1280";;
+	"xf86da12"	) XFCFG="XF86Config-4.dual.above.1280";;
+	"xf86dl"	) XFCFG="XF86Config-4.dual.left.1600";;
+	"xf86dr"	) XFCFG="XF86Config-4.dual.right.1600";;
+	"xf86da"	) XFCFG="XF86Config-4.dual.above.1600";;
+	"xf86proj"	) XFCFG="XF86Config-4.projector";;
+	"xf86bdr12"	) XFCFG="xorg.conf.big-desktop.right.1280";;
+	"xf86bdr16"	) XFCFG="xorg.conf.big-desktop.right.1600";;
+	"xf86bda16"	) XFCFG="xorg.conf.big-desktop.above.1600";;
+	*			) echo "invalid executable name for this program."; exit 1;;
+esac
+
+sudo cp -v "/etc/X11/$XFCFG" /etc/X11/xorg.conf

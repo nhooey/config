@@ -1,0 +1,48 @@
+#!/bin/bash
+# cfdump
+# dumps the contents of the cf card, preserving attributes
+
+COPIED=false
+LOG_FILE=/tmp/mount.log
+
+for monkey in /dev/sd?1
+do
+	if [ -b "$monkey" ]
+	then
+		# mount and check success
+		mount -v "$monkey" > "$LOG_FILE" 2>&1
+		RESULT=$?
+		grep "already mounted" "$LOG_FILE"
+		RESULT_TEXT=$?
+		
+		# if mount succeeded
+		if [[ RESULT -eq 0 || RESULT_TEXT -eq 0 ]]
+		then
+			MOUNT_DIR="`egrep -o "/mnt/[[:alnum:]_-]+" "$LOG_FILE" | head -n 1`"
+			TARGET_DIR=/home/neil/tmp/`basename "$MOUNT_DIR"`
+			mkdir -p "$TARGET_DIR"
+
+			# copy all pictures and images
+			cp -rvp "$MOUNT_DIR"/dcim/*/*.jpg "$TARGET_DIR"
+			RESULT_JPG=$?
+			cp -rvp "$MOUNT_DIR"/dcim/*/*.avi "$TARGET_DIR"
+			RESULT_AVI=$?
+			cp -rvp "$MOUNT_DIR"/dcim/*/*.wav "$TARGET_DIR"
+			RESULT_WAV=$?
+			chown -Rc neil:neil "$TARGET_DIR"
+
+			if [[ RESULT_JPG -eq 0 || RESULT_AVI -eq 0 || RESULT_WAV -eq 0 ]]
+			then
+				COPIED=true
+			fi
+		fi
+	fi
+done
+
+if [ $COPIED = true ]
+then
+	beep -f 5000 -l 100
+	beep -f 10000 -l 100
+else
+	beep -f 100 -l 30
+fi
