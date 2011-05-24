@@ -1,0 +1,3 @@
+#!/bin/bash
+
+du --max-depth 1 $* | sort -nr | cut -f2- | xargs du -hs
