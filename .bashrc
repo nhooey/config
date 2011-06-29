@@ -62,6 +62,30 @@ function __host_ps1()
 	__color "$(hostname | egrep -o '^[^\.]+')"
 }
 
+function __get_perl5lib() {
+	REPO_DIR="$(__gitdir | sed -e 's/\/\?\.git//')"
+	if [ "x$REPO_DIR" == "x" ]; then
+		REPO_DIR="$(readlink -f $(pwd))"
+	fi
+	REPO_DIR="$(cd $REPO_DIR && pwd)"
+	CORRECT_LIB="$BASE_PERL5LIB:$REPO_DIR/lib:$REPO_DIR/lil_brother/lib"
+	echo -n $CORRECT_LIB
+}
+
+function ssperl5lib() {
+	export PERL5LIB="$(__get_perl5lib)"
+}
+
+function __perl5lib_ok() {
+	if [ "x$(__gitdir)" != "x" ]; then
+		if [ "$PERL5LIB" != "$(__get_perl5lib)" ]; then
+			tput setaf 1
+			echo -n '[p]'
+			tput sgr0
+		fi
+	fi
+}
+
 function __git_ps1_branch()
 {
 	if __gitdir > /dev/null 2>&1; then
@@ -91,7 +115,7 @@ xterm|linux|screen|vt320|ansi)
 		SCREEN_WIN="[$WINDOW]"
 	fi
 
-	PS1='\[\033[00;31m\]$(r=$?; if test $r -ne 0; then echo "[$r]"; set ?=$r; unset r; fi)\[\033[00m\]${debian_chroot:+($debian_chroot)}\[\033[01;37m\]\u\[\033[01;30m\]@$(__host_ps1 "%s")$(__git_ps1_branch):\[\033[00;36m\]\w\[\033[00m\]
+	PS1='\[\033[00;31m\]$(r=$?; if test $r -ne 0; then echo "[$r]"; set ?=$r; unset r; fi)\[\033[00m\]${debian_chroot:+($debian_chroot)}\[\033[01;37m\]\u\[\033[01;30m\]@$(__host_ps1 "%s")$(__perl5lib_ok)$(__git_ps1_branch):\[\033[00;36m\]\w\[\033[00m\]
 \[\033[01;30m\]$(date +"%Y-%m-%d %H:%M:%S")\[\033[00m\] \[\033[00;34m\]\$\[\033[00m\] '
 	;;
 *)
@@ -153,7 +177,8 @@ export HISTSIZE=1000000
 shopt -s histappend
 
 # Shutterstock
-export PERL5LIB=/home/neil/perl5/lib/perl5
+export BASE_PERL5LIB=/home/neil/perl5/lib/perl5
+export PERL5LIB="$BASE_PERL5LIB"
 export CVSROOT=/data/export/code/cvsroot
 export PERL_CPANM_OPT="--local-lib=~/perl5"
 if [ $(__shutterstock_env) == 'dev' ]; then
