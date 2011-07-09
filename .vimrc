@@ -50,6 +50,9 @@ set autowrite       " Automatically save before commands like :next and :make
 "set hidden         " Hide buffers when they are abandoned
 set mouse=a         " Enable mouse usage (all modes) in terminals
 
+" Remove mouse open from netrw
+let g:netrw_mousemaps = 0
+
 set hlsearch
 set shiftwidth=4
 set tabstop=4
@@ -227,6 +230,9 @@ vnoremap <c-c>3 :call VisualHighlight(3, 'yellow')<CR>
 "vnoremap <c-a>1 :execute '1match' none<CR>
 "vnoremap <c-a>2 :execute '2match' none<CR>
 "vnoremap <c-a>3 :execute '3match' none<CR>
+
+" Arduino specific settings
+au BufRead,BufNewFile *.pde set filetype=cpp
 
 " Mason specific settings
 " -----------------------------------------------------------------------------
