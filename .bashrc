@@ -166,6 +166,9 @@ alias l='ls -CF'
 if [ -f /etc/bash_completion ]; then
 	. /etc/bash_completion
 fi
+if [ -f /etc/bash_completion.d/git ]; then
+	. /etc/bash_completion.d/git
+fi
 
 # Neil Hooey
 if [ -f /usr/bin/most ]; then
