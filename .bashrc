@@ -68,7 +68,7 @@ function __get_perl5lib() {
 		REPO_DIR="$(readlink -f $(pwd))"
 	fi
 	REPO_DIR="$(cd $REPO_DIR && pwd)"
-	CORRECT_LIB="$BASE_PERL5LIB:$REPO_DIR/lib:$REPO_DIR/lil_brother/lib"
+	CORRECT_LIB="$BASE_PERL5LIB:$REPO_DIR/lib:$REPO_DIR/t/lib:$REPO_DIR/lil_brother/lib:$REPO_DIR/lil_brother/t/lib"
 	echo -n $CORRECT_LIB
 }
 
