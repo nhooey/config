@@ -77,6 +77,9 @@ function ssperl5lib() {
 }
 
 function __perl5lib_ok() {
+	if ! type -t __gitdir; then
+		return 1
+	fi
 	if [ "x$(__gitdir)" != "x" ]; then
 		if [ "$PERL5LIB" != "$(__get_perl5lib)" ]; then
 			tput setaf 1
