@@ -77,7 +77,7 @@ function ssperl5lib() {
 }
 
 function __perl5lib_ok() {
-	if ! type -t __gitdir; then
+	if ! type -t __gitdir > /dev/null; then
 		return 1
 	fi
 	if [ "x$(__gitdir)" != "x" ]; then
