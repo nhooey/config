@@ -111,9 +111,11 @@ function __git_ps1_branch()
 	fi
 }
 
+alias tmux='TERM=xterm-256color tmux'
+
 # set a fancy prompt (non-color, unless we know we "want" color)
 case "$TERM" in
-xterm|linux|screen|vt320|ansi)
+xterm|xterm-256color|linux|screen|vt320|ansi)
 	# Detect screen's window number
 	SCREEN_WIN=""
 	if [ "x$WINDOW" != "x" ]; then
