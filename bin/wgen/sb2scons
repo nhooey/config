@@ -1,0 +1,4 @@
+#!/bin/bash
+
+sb2 -L error -e scons "$@" 2>&1 | /usr/share/colormake/colormake.pl 
+exit ${PIPESTATUS[0]}

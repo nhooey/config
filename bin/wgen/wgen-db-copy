@@ -1,0 +1,2 @@
+#!/bin/bash
+cp -v ~/code/wgen/main/mclass/d2/pda/qtdemo/wgen.db /tmp/

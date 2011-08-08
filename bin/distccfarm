@@ -1,0 +1,4 @@
+#!/bin/bash
+# distccfarm
+# Montior the distcc farm at Xandros
+/usr/lib/j2re1.5-sun/bin/javaws http://desktop.ottawa.xandros.ca/~martinp/distccfarm/distccfarmclientapp.jnlp

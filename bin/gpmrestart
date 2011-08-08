@@ -1,0 +1,5 @@
+#!/bin/bash
+# gpmrestart
+# restart the gpm mouse server
+
+su -c "/sbin/service gpm restart"

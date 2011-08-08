@@ -1,0 +1,7 @@
+#!/bin/bash
+
+if ! /etc/init.d/ypbind status; then
+	sudo /etc/init.d/ypbind start
+fi
+
+exec ssh-agent bash

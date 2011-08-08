@@ -1,0 +1,85 @@
+#!/usr/bin/perl
+
+use strict;
+use File::Basename;
+
+my $progname = basename $0;
+
+sub usage();
+sub check_params();
+
+check_params();
+
+sub check_params()
+{
+	if (scalar @ARGV != 1) {
+		print usage();
+		exit 1;
+	}
+
+	my $file = @ARGV[0];
+	die "$progname: Could not open file: \`$file' for reading.\n"
+		unless (open FILE, $file);
+	
+	my @cvs_files = ();
+	my $line_num = 1;
+
+	while (<FILE>) {
+		my $line = $_;
+		chomp $line;
+		$line =~ s/^\s*(.*?)\s*$/\1/g;
+		next if ($line eq '');
+
+		(my $file, my $version_new) = ($line =~ /(.*)\s+(\d+(?:\.\d+)*)$/);
+		$file =~ s/^\///;
+		my $file_orig = $file;
+
+		die "$progname: Parse error on line $line_num.\n"
+			. "Lines must be in this format: File Version\n"
+			unless ($file and $version_new);
+
+		my $version_now = '';
+		my $last_try = 0;
+		while (1) {
+			my $cvs_output = `cvs status $file 2> /dev/null`;
+			($version_now)
+				= ($cvs_output =~ /Working revision:\s*(\d+(?:\.\d+)*)/);
+			
+			last unless ($version_now eq '');
+
+			last if ($last_try);
+
+			# Chop off greatest ancestor directory
+			$last_try = 1 unless ($file =~ s/^.*?\///);
+		}
+
+		if ($version_now eq '') {
+			printf "%-4s  %s -> %s  %s\n",
+				'Fail', 'N/A', $version_new, $file_orig;
+			next;
+		}
+
+		my $result = system "cvs up -j $version_now -j $version_new $file"
+			. " > /dev/null 2>&1";
+
+		my $str_result = 'Fail';
+		$str_result = 'Ok' if ($result == 0);
+		printf "%-4s  %s -> %s  %s\n",
+			$str_result, $version_now, $version_new, $file;
+
+		$line_num++;
+	}
+}
+
+sub usage()
+{
+	return "usage: $progname <list-of-files-and-versions.txt>\n"
+		.  "\n"
+		.  "Where the lines in the list are of this format:\n"
+		.  "File Version\n"
+		.  "\n"
+		.  "Hint: when your bug fix gets clobbered by some merge from"
+		.  " SoftServe, copy the list from the 'Checkins' link on the"
+		.  " FogBugz bug. Then paste it in a file and run this script"
+		.  " on it.\n";
+}

@@ -1,0 +1,43 @@
+#!/bin/bash
+# hillside
+# find hillside tickets on the hillside message board
+
+URL=http://www.hillside.on.ca/board/viewforum.php?f=10
+
+function signal_success ()
+{
+	date
+	xmms --pause
+	aumix -S
+	aumix -v 90 -w 90
+	alert
+	speak "Hillside Ticket for sale"
+	aumix -L > /dev/null 2>&1
+	xmms --play
+}
+
+while true
+do
+	echo -n "."
+
+	cp /tmp/curl-new.html /tmp/curl-old.html
+	curl "$URL" | grep "topictitle" | egrep -o "\" class=\"topictitle.*</a>" \
+		| egrep -o ">.*<" > /tmp/curl-new.html
+	RESULT=$?
+
+	if [ -f /tmp/curl-old.html ]
+	then
+		if [ $RESULT -eq 0 ]
+		then
+			diff /tmp/curl-old.html /tmp/curl-new.html
+			RESULT=$?
+
+			if [ $RESULT -ne 0 ]
+			then
+				signal_success
+			fi
+		fi
+	fi
+
+	sleep 3s
+done

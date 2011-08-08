@@ -1,0 +1,4 @@
+sleep "0.25s"
+
+display=:0.0
+xset dpms force off 2> /tmp/xset.log

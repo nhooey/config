@@ -1,0 +1,3 @@
+#!/bin/bash
+
+ssh -t fw2.shutterstock.com "bash -l -c \"ssh -t shuttervidworker bash\""

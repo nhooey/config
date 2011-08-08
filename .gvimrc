@@ -6,6 +6,8 @@ source ~/.vimrc
 " You can also specify a different font, overriding the default font
 if has('gui_gtk2')
 	set guifont=Bitstream\ Vera\ Sans\ Mono\ 9
+elseif has('gui_macvim')
+	set guifont=Bitstream\ Vera\ Sans\ Mono:h12
 else
 	set guifont=-misc-fixed-medium-r-normal--14-130-75-75-c-70-iso8859-1
 endif

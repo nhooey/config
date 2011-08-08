@@ -1,0 +1,5 @@
+#!/bin/bash
+# dud
+# does a du -chs on all directories
+
+du $@ `find -maxdepth 1 -type d | egrep -v "^\.$"`

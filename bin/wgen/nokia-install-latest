@@ -1,0 +1,11 @@
+#!/bin/bash
+
+DEB_PACKAGE="$(ls -t $(find -name '*armel.deb') | head -n 1)"
+
+if [ -f "$DEB_PACKAGE" ]; then
+	rsync --progress "$DEB_PACKAGE" nokia:/media/mmc2/ \
+		&& ssh nokia dpkg -i "/media/mmc2/$(basename $DEB_PACKAGE)"
+else
+	echo "Could not find debian package."
+	exit 1
+fi

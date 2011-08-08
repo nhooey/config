@@ -1,0 +1,17 @@
+#!/bin/bash
+# semaphore-p
+# Does a Progeren to /tmp/semaphore
+
+SEMAPHORE=/tmp/semaphore-$1
+
+# Busy wait until the semaphore is available
+if [ -f "$SEMAPHORE" ]
+then
+	while  (! semaphore-q $1)
+	do
+		sleep 1s
+	done
+fi
+
+# Progeren the semaphore
+echo "P" > "$SEMAPHORE"

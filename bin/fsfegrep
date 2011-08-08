@@ -1,0 +1,3 @@
+#!/bin/bash
+
+fsf -exec egrep -Hn "$@" {} \;

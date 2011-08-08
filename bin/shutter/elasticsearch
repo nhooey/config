@@ -1,0 +1,10 @@
+#!/bin/bash
+
+JAVA="$HOME/code/oss/jdk1.6.0_24/bin/java"
+
+dir="$HOME/elasticsearch"
+cd $dir
+echo "cd $dir"
+execute="bin/elasticsearch -f -Xmx5g -Xms4g"
+echo $execute
+$execute

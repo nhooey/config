@@ -1,0 +1,66 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use File::Basename;
+use File::Copy;
+use Cwd;
+use Getopt::Long;
+
+my $basename = basename $0;
+my $scour = "/home/neil/code/oss/scour/scour.py";
+my $omnigraffle_export = 'omnigraffle-export';
+
+my %argv = ();
+my $result = GetOptions(\%argv,
+	"omnigraffle=s",
+);
+
+exit 1 unless $result;
+
+unless (@ARGV >= 1 and @ARGV <= 2) {
+	my $spacenam = ' ' x length($basename);
+	warn "usage: $basename <source-dir> <dest-dir>\n"
+	   . "       $spacenam [--omnigraffle <omnigraffle-file>]\n";
+	exit 1;
+}
+
+$argv{'src-dir'}  = $ARGV[0];
+$argv{'dest-dir'} = $ARGV[1] || $argv{'src-dir'};
+
+chdir $argv{'src-dir'}
+	or die "Could not chdir to \`$argv{'src-dir'}\'\n";
+
+if ($argv{omnigraffle}) {
+	print "Running omnigraffle-export...\n";
+	my $cmd = "$omnigraffle_export -f svg '$argv{omnigraffle}' '$argv{'dest-dir'}'";
+	print "exec: $cmd\n" if $argv{verbose};
+	my $cmd_result = `$cmd`;
+	if (defined $cmd_result) {
+	} else {
+		die "$basename: omnigraffle-export failed.\n";
+	}
+}
+
+print getcwd(), "\n";
+my @files = glob '*.svg';
+
+# Cleanse files with scour
+printf "Running scour on %d images...\n", scalar(@files);
+for my $file (@files) {
+	my $dest_file = lc $file;
+	my ($idx) = $dest_file =~ /([0-9]+)\.\w+$/;
+	$dest_file =~ s/\s*([0-9]+)\.\w+$//;
+	$dest_file =~ s/[^\w]/_/g;
+	$dest_file = sprintf "%s_%02d.svg", $dest_file, $idx;
+
+	my $cmd = "$scour --enable-viewboxing --override-size -i '$file' -o '$dest_file'";
+	print "exec: $cmd\n" if $argv{verbose};
+	my $cmd_result = `$cmd 2> /dev/null`;
+	if (defined $cmd_result) {
+		unlink $file or die "Could not delete \`$file\': $!\n";
+	} else {
+		die "$basename: scour failed: $cmd_result\n";
+	}
+}

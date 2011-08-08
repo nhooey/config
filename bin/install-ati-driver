@@ -1,0 +1,16 @@
+#!/bin/bash
+
+rm /lib/modules/fglrx -rfv
+
+if [ $# -lt 1 ]; then
+	echo "usage: `basename $0` <ati_binary_installer_file>"
+	exit 1
+fi
+
+X_VERSION=x690 ./$1
+
+sed -rsi "s/^(static int errno)/\/\/\1/g" /lib/modules/fglrx/build_mod/firegl_agpgart/firegl_wrap.c
+cd /lib/modules/fglrx/build_mod
+sh make.sh
+cd ..
+sh make_install.sh

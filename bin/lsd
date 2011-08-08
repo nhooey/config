@@ -1,0 +1,19 @@
+#!/bin/bash
+# lsd
+# ls directories first, then files
+
+for monkey in *
+do
+	if [ -d "$monkey" ]
+	then
+		ls --color=yes -d $2 $3 $4 $5 $6 "$monkey"
+	fi
+done
+
+for monkey in -Xd *
+do
+	if [ ! -d "$monkey" ]
+	then
+		ls --color=yes $2 $3 $4 $5 $6 "$monkey"
+	fi
+done

@@ -1,0 +1,36 @@
+#!/bin/bash
+# cook-kraft-dinner
+# tells you how to cook kraft dinner
+
+volup()
+{
+	aumix -S > /dev/null
+	aumix -v 90
+}
+
+voldown()
+{
+	aumix -L > /dev/null
+}
+
+volup
+speak "Cooking sandwich"
+voldown
+
+sleep 4m
+volup
+beep -f 1000
+speak "Check sandwhich"
+voldown
+
+sleep 1m
+volup
+beep -f 1000
+speak "Check sandwhich"
+voldown
+
+sleep 1m
+volup
+beep -f 1000
+speak "Check sandwhich"
+voldown

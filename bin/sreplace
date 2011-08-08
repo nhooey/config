@@ -1,0 +1,17 @@
+#!/bin/bash
+# sreplace
+# A Search and Replace script
+
+if [ $# = 4 ]
+then
+	echo Searching $1 for:
+	echo $3
+	echo ... and replacing with:
+	echo $4
+	echo in the file: $2
+	cat $1 | awk '{gsub($3, $4); print}' > $2
+else
+	echo Usage: `basename $0` input_file output_file search replace
+fi
+
+

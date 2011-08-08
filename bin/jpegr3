@@ -1,0 +1,13 @@
+#!/bin/bash
+# jpegr3
+# rotates a jpeg 270 degrees right, but restores its modified time after
+
+if [ -f "$1" ]
+then
+	notouch "$1"
+	jpegtran -copy all -rotate 270 "$1" > "$1.jpegr" \
+		&& mv "$1.jpegr" "$1" \
+		&& untouch "$1"
+else
+	echo `basename "$0"`: "$1": file does not exist
+fi

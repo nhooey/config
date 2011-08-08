@@ -1,0 +1,51 @@
+#!/bin/bash
+# lnsr
+# 2004-01-19 01:39
+# Neil's Recursive Link Script - Core Script
+# Makes a big symbolic link of an entire directory structure by making new
+# directories and putting the links in the relative locations
+
+# usage: lnsr source destination [v] [u]
+pwd0=`pwd`
+
+cd "$1"
+  if [ "$?" -ne 0 ] ; then
+	echo $0: cd says "\"$1\"" is an invalid directory; exit "$?"; fi;
+pwd_source=`pwd`
+cd "$pwd0"
+cd "$2"
+  if [ "$?" -ne 0 ] ; then
+	echo $0: cd says "\"$2\"" is an invalid directory; exit "$?"; fi;
+pwd_dest=`pwd`
+
+# echo ------------------------
+# echo 1 = $1
+# echo 2 = $2
+# echo pwd0 = $pwd0
+# echo pwd_source = $pwd_source
+# echo pwd_dest = $pwd_dest
+# echo ------------------------
+
+cd "$pwd_source"
+
+for current in *
+do
+	if [ -d "$current" ]
+	then
+		if [ "$3" == "v" ] ; then
+			echo; echo +++ Recursing directory:"\"$current\""
+		fi
+		if [ "$4" == "u" ] ; then
+			mkdir "$pwd_dest/$current"
+			lnsr "$pwd_source/$current" "$pwd_dest/$current" "$3" "$4"
+		fi
+	else
+		if [ -f "$current" ]
+		then
+			if [ "$3" == "v" ] ; then
+				echo --- Linking file: "\"$current\""
+			fi
+			ln -s "$pwd_source/$current" "$pwd_dest/$current"
+		fi
+	fi
+done;

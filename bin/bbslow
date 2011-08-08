@@ -1,0 +1,4 @@
+#!/bin/bash
+export DISPLAY=:0.0
+dpms-off
+ssh p4 xmms --play --toggle-shuffle=on ~/music/slow.m3u

@@ -1,0 +1,26 @@
+#!/bin/bash
+
+MAX_CPU=95
+PNAMES="operapluginwrap trackerd npviewer.bin"
+
+while true; do
+	for PNAME in $PNAMES; do
+		PIDS=$(pgrep $PNAME)
+		if [ "x$PIDS" != "x" ]; then
+			for i in $PIDS; do
+				echo
+				echo "pids: <$PIDS> = $PNAME"
+				CPU="$(top -b -n 1 -p $i | awk 'NR == 8 { print $9 }')"
+				echo "pid: $i, cpu: $CPU"
+				if [[ "x$CPU" != "x" && $CPU -gt $MAX_CPU ]]; then
+					echo "killing $i"
+					kill $i
+					sleep 5
+				fi
+			done
+		fi
+	done
+
+	echo -n "."
+	sleep 10
+done

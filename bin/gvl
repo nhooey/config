@@ -1,0 +1,21 @@
+#!/bin/bash
+
+if [ -z "$EDITOR" ]; then
+	EDITOR=gvim
+fi
+
+# Read from standard in if there are no params
+if [ $# -eq 0 ]; then
+	read LINES
+else
+	LINES="$@"
+fi
+
+IFS="
+"
+
+i=0
+for LINE in "$LINES"; do
+	ELINE[i]=$(echo "$LINE" | sed -rs "s/([^:]+):([0-9]+):.*/\1 +\2/g")
+	let i += 1
+done

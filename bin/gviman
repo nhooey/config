@@ -1,0 +1,12 @@
+#!/bin/bash
+
+TMP="`mktemp`.gviman.man"
+ERR="/tmp/gviman.error"
+COLS="`vim --servername man --remote-expr \&columns 2> /dev/null`"
+
+if COLUMNS=$COLS man $* > "$TMP" 2> "$ERR"; then
+	gvim --servername man --remote-silent "$TMP"
+else
+	gvim --servername man --remote-silent "$ERR"
+	cat "$ERR"
+fi

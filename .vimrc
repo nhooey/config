@@ -50,6 +50,9 @@ set autowrite       " Automatically save before commands like :next and :make
 "set hidden         " Hide buffers when they are abandoned
 set mouse=a         " Enable mouse usage (all modes) in terminals
 
+" Remove mouse open from netrw
+let g:netrw_mousemaps = 0
+
 set hlsearch
 set shiftwidth=4
 set tabstop=4
@@ -62,6 +65,11 @@ set bs=2
 set wildmode=longest,list
 set smartcase
 set smartindent
+
+" No backup or swap files
+set nobackup
+set nowritebackup
+set noswapfile
 
 " Make the mouse behave like GVim, scrolling and clicking
 set ttymouse=xterm2
@@ -223,6 +231,9 @@ vnoremap <c-c>3 :call VisualHighlight(3, 'yellow')<CR>
 "vnoremap <c-a>2 :execute '2match' none<CR>
 "vnoremap <c-a>3 :execute '3match' none<CR>
 
+" Arduino specific settings
+au BufRead,BufNewFile *.pde set filetype=cpp
+
 " Mason specific settings
 " -----------------------------------------------------------------------------
 au BufRead,BufNewFile *.mh,*.md,*.mhtml,*.html,autohandler set filetype=mason
@@ -269,4 +280,23 @@ match comp /['"][\/]\?\w\+\.m[hd]\(tml\)\?['"]/
 " au FileChangedShell * Reload
 " -----------------------------------------------------------------------------
 
+" Highlight groups
+" -----------------------------------------------------------------------------
+"         |          |      |          |    |          |      |          |    |          |
 :if has("gui_running") | gui | endif
+highlight green        ctermbg=green     guibg=green     ctermfg=black     guifg=black
+highlight blue         ctermbg=blue      guibg=blue      ctermfg=black     guifg=black
+highlight red          ctermbg=red       guibg=red       ctermfg=black     guifg=black
+highlight yellow       ctermbg=yellow    guibg=yellow    ctermfg=black     guifg=black
+
+highlight clear DiffAdd
+highlight clear DiffChange
+highlight clear DiffText
+highlight clear DiffDelete
+
+highlight DiffAdd      ctermbg=black     guibg=#0c1427
+highlight DiffChange   ctermbg=darkblue  guibg=#0c1427
+highlight DiffText     ctermbg=black     guibg=#19316b
+highlight DiffDelete   ctermbg=none      guibg=#292929   ctermfg=black   guifg=black
+" -----------------------------------------------------------------------------
+

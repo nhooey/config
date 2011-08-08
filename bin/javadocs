@@ -1,0 +1,5 @@
+#!/bin/bash
+# javadocs
+# lynx up the java api documentation
+
+lynx /usr/java/docs/api/allclasses-noframe.html

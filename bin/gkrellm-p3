@@ -1,0 +1,6 @@
+#!/bin/bash
+
+#if rsh p3.friendlygeek.com
+#then
+	gkrellm -s p3.friendlygeek.com &
+#fi

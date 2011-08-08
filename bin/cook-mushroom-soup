@@ -1,0 +1,29 @@
+#!/bin/bash
+# cook-mushroom-soup
+# tells you how to cook mushroom soup
+
+. ~neil/bin/cooking
+
+SLEEP=30s
+MESSAGE='Start the soup'
+bulletin
+
+SLEEP=2m
+MESSAGE='Check the soup'
+bulletin
+
+SLEEP=2m
+MESSAGE='Check the soup'
+bulletin
+
+SLEEP=2m
+MESSAGE='Check the soup'
+bulletin
+
+SLEEP=2m
+MESSAGE='Check the soup'
+bulletin
+
+SLEEP=2m
+MESSAGE='Check the soup'
+bulletin

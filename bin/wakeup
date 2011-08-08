@@ -1,0 +1,50 @@
+#!/bin/bash
+
+# Neil's wakeup command
+VDATE=/home/neil/bin/vdate
+
+# replacing original crontab
+cp -fv /home/neil/backup/crontab.original /etc/crontab
+cp -fv /home/neil/backup/crontab.custom.bak /home/neil/backup/crontab.custom
+
+# not awake, so kill it
+rm /home/neil/bin/awake
+
+# updating the log
+echo >> /var/log/wakeup.log
+$VDATE >> /var/log/wakeup.log
+echo "-----------------------------------" >> /var/log/wakeup.log
+echo "Invoking wakeup alarm..."
+
+# wakeup
+su neil -c 'aumix -S'
+aumix -v 80
+aumix -w 80
+su neil -c '/home/neil/bin/mpgm3u "/home/neil/music/wakeup.m3u" -q' &
+
+sleep 10m
+
+if [ ! -e /home/neil/bin/awake ]
+then
+	echo "... snooze1" >> /var/log/wakeup.log
+	aumix -v 80
+	aumix -w 80
+fi
+
+sleep 10m
+
+if [ ! -e /home/neil/bin/awake ]
+then
+	echo "... snooze2" >> /var/log/wakeup.log
+	aumix -v 80
+	aumix -w 80
+fi
+
+sleep 10m
+
+if [ ! -e /home/neil/bin/awake ]
+then
+	echo "... snooze3" >> /var/log/wakeup.log
+	aumix -v 80
+	aumix -w 80
+fi

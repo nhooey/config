@@ -1,0 +1,4 @@
+#!/bin/bash
+# rpmqa
+# lists rpm -qa
+cat /var/log/rpmpkgs | grep -i "$*" | less

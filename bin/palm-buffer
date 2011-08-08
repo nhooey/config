@@ -1,0 +1,6 @@
+#!/bin/bash
+# palm-buffer
+# cue a pdb or prc for installing on the palm
+
+cp "$@" /home/neil/palm/install
+beep

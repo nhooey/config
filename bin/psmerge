@@ -1,0 +1,11 @@
+#!/bin/bash
+# psmerge
+# merges several ps files
+
+if [ -f $1 ]
+then
+	echo `basename $0`: file $1 exists, you might not want to \
+		write to it
+else
+	gs -q -dNOPAUSE -dBATCH -sDEVICE=pswrite -sOutputFile="$@"
+fi

@@ -1,0 +1,8 @@
+#!/bin/bash
+# snooze
+# turn off the damn alarm
+
+killall mpg123
+# killall wakeup doesn't work since it's run by root
+echo "awake" > /home/neil/bin/awake
+aumix -L

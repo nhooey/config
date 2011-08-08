@@ -1,0 +1,15 @@
+#!/bin/bash
+# vmake
+# verbose make, print out success or failure to demystify the ugly gcc output
+
+make $@;
+MAKE_RESULT=$?
+
+echo
+
+if [ $MAKE_RESULT -eq 0 ]
+then
+	echo "*** Success ***"
+else
+	echo "=== Failure ==="
+fi

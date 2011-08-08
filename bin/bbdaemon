@@ -1,0 +1,12 @@
+#!/bin/bash
+
+MSG_SUBJ="/tmp/bbnotify-subj.txt"
+MSG_BODY="/tmp/bbnotify-body.txt"
+
+while true; do
+	sleep 1s
+	if [[ -f "$MSG_SUBJ" && -f "$MSG_BODY" ]]; then
+		bbnotify "$(cat $MSG_SUBJ)" "$(cat $MSG_BODY)"
+		rm "$MSG_SUBJ" "$MSG_BODY"
+	fi
+done

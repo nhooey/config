@@ -1,0 +1,13 @@
+#!/bin/bash
+# wakeup-custom
+# copies crontab.custom to /etc/crontab, then replaces it after wakeup
+vi /home/neil/backup/crontab.custom
+echo Copying /home/neil/backup/crontab.custom to /etc/crontab...
+echo Enter root password:
+su -c "cp -fv /home/neil/backup/crontab.custom /etc/crontab"
+echo
+echo updated /etc/crontab:
+echo ---------------
+tail -n 2 /etc/crontab
+echo ---------------
+

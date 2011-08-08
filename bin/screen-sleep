@@ -1,0 +1,6 @@
+#!/bin/bash
+
+export DISPLAY=:0.0
+xscreensaver-command -activate
+sleep '0.25s'
+xset dpms force off

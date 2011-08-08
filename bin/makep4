@@ -1,0 +1,4 @@
+#!/bin/bash
+
+rsync -rvtl `pwd` p4:`pwd`/.. 1> /dev/null
+rsh p4 "cd `pwd`; ./cmake $@"

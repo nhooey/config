@@ -1,0 +1,14 @@
+#!/bin/bash
+# palm-update
+# install a prc file onto the palm
+
+pdir=/home/neil/palm
+
+# move the backups down the line
+rm $pdir/p4 -rf
+mv $pdir/p3 $pdir/p4
+mv $pdir/p2 $pdir/p3
+mv $pdir/p1 $pdir/p2
+cp -rv $pdir/p0 $pdir/p1
+
+pilot-xfer -u $pdir/p0; alert; read

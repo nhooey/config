@@ -1,0 +1,34 @@
+#!/bin/bash
+# listka
+# kill a list of stuff with skill using grep and cut
+
+echo listka: Press any key to super-kill the following processes:
+echo
+
+#
+ps auxfw | grep -i "$1" | egrep -iv "listka|grep" > /tmp/${USER}-listka.before
+cat -n /tmp/${USER}-listka.before
+
+echo
+echo Press any key to continue, or CTRL+C to cancel...
+read
+
+for monkey in `cat /tmp/${USER}-listka.before | cut -c 10-15`
+do
+	echo listka: super-killing "$monkey"
+	skill "$monkey"
+done
+
+# see what processes are left
+ps auxfw | grep -i "$1" | egrep -iv "listka|grep" > /tmp/${USER}-listka.after
+numProcesses=`wc -l /tmp/${USER}-listka.after | cut -b 1-7`
+
+if [ "$numProcesses" -gt 0 ]
+then
+	echo
+	echo listka: The following processes could not be killed:
+	echo
+	cat -n /tmp/${USER}-listka.after
+fi
+
+rm /tmp/${USER}-listka*

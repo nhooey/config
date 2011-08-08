@@ -1,0 +1,72 @@
+#!/bin/bash
+
+if [[ $# -lt 2 || $# -gt 3 ]]; then
+	echo "usage: $(basename $0) <mclass-parent-1> <mclass-parent-2> [build-dir]"
+	exit 1
+fi
+
+DIR1="$HOME/code/wgen/$1/mclass/d2"
+DIR2="$HOME/code/wgen/$2/mclass/d2"
+BUILD_DIR="debug-DIABLO_X86"
+if [ $# -eq 3 ]; then
+	BUILD_DIR="$3"
+fi
+
+SHOULD_EXIT=0
+for i in $DIR1 $DIR2; do
+	if [ ! -d "$i" ]; then
+		echo "$0: Directory: \`$i' does not exist."
+		SHOULD_EXIT=1
+	fi
+
+	for qtdir in pda pda/qt; do
+		TEST_DIR="$i/$qtdir/$BUILD_DIR"
+		if [ ! -d "$TEST_DIR" ]; then
+			echo "$0: Directory: \`$TEST_DIR' does not exist."
+			SHOULD_EXIT=1
+		fi
+	done
+done
+
+if [[ $SHOULD_EXIT -eq 1 ]]; then
+	exit 1
+fi
+
+OBJECT_FILES="
+	pda/qt/$BUILD_DIR/*.o*
+	pda/qt/$BUILD_DIR/mvc/QtViewFactory.o*
+	pda/qt/$BUILD_DIR/view/common/D2Style.o*
+	pda/qt/$BUILD_DIR/view/splash/QtSplashView.o*
+	pda/qt/$BUILD_DIR/view/classlist/*.o*
+	pda/qt/$BUILD_DIR/view/common/*.o*
+	pda/qt/$BUILD_DIR/view/studentsummary/*.o*
+	pda/$BUILD_DIR/controller2/HomeController.o*  
+	pda/$BUILD_DIR/controller2/ClassListController.o*
+	pda/$BUILD_DIR/controller2/StudentSummaryController.o*
+	pda/$BUILD_DIR/view2/splash/*.o* 
+	pda/$BUILD_DIR/view2/studentsummary/*.o*
+	pda/$BUILD_DIR/view2/classlist/*.o*
+"
+
+echo "Generating objdumps..."
+
+for d2dir in $DIR1 $DIR2; do
+	for file in $OBJECT_FILES; do
+		if [ -f "$file" ]; then
+			echo "objdump -Ct $d2dir/$file"
+			objdump -Ct "$d2dir/$file" > "$d2dir/$file.objdump"
+		fi
+	done
+done
+
+echo
+echo "Diffing files..."
+
+for file in $OBJECT_FILES; do
+	OBJDUMP1="$DIR1/$file.objdump"
+	OBJDUMP2="$DIR2/$file.objdump"
+	if [[ -f "$OBJDUMP1" && -f "$OBJDUMP2" ]]; then
+		echo "gvimdiff -f $OBJDUMP1..."
+		gvimdiff -f "$OBJDUMP1" "$OBJDUMP2"
+	fi
+done

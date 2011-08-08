@@ -1,0 +1,38 @@
+#!/bin/bash
+# cooking
+# include file for cooking scripts
+
+volup()
+{
+	ps aux | egrep "^neil[ ][ ]*.*[0-9]:[0-9][0-9] xmms$"
+	if [ $? -eq 0 ]
+	then
+		xmms --pause
+		sleep 1s
+	fi
+	aumix -S > /dev/null
+	aumix -v 95
+	aumix -w 95
+}
+
+voldown()
+{
+	ps aux | egrep "^neil[ ][ ]*.*[0-9]:[0-9][0-9] xmms$"
+	if [ $? -eq 0 ]
+	then
+		xmms --play
+	fi
+	aumix -L > /dev/null
+}
+
+bulletin ()
+{
+	sleep ${SLEEP}
+	DATE=`date +%H:%M:%S`
+	volup
+	speak Cooking Bulletin
+	echo -n "${DATE}: "
+	echo  ${MESSAGE}
+	speak ${MESSAGE}
+	voldown
+}

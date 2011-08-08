@@ -1,0 +1,10 @@
+#!/bin/bash
+# http-access
+# show how many clients have accessed something
+
+cat /var/log/httpd/neil-access_log* \
+	| grep "$1" \
+	| cut -d ' ' -f 1 \
+	| grep -v 127.0.0.1 \
+	| uniq \
+	| nl;

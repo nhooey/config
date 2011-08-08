@@ -1,0 +1,13 @@
+#!/bin/bash
+
+semv make-loop
+echo "Waiting for build to finish..."
+sleep 2
+while ! semq make-loop; do
+	echo -n "."
+	sleep 1
+done
+semp make-loop
+cp /tmp/make-loop.log /tmp/vim-make-loop.log
+rm /tmp/make-loop.log
+strip-colors /tmp/vim-make-loop.log

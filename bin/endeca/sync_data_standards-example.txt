@@ -1,0 +1,2 @@
+perl /nfs/automation/ReleaseEng/bin/sync_data_standards.pl --dataset pf --type inputs --version 6.0.0pre --archos sparc_64-solaris --upload "nhooey 03-31-2008: Uploading pf 6.0.0pre indexed data"
+KwaL!ty

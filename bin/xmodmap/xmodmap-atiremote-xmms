@@ -1,0 +1,40 @@
+! ATI Remote xmodmap configuration file
+! The names of ATI Remote buttons are in comments
+! These names are arbitrarily and logically chosen by Neil
+
+! Previous Track
+keycode 0x98 =	XF86AudioPrev
+! Play
+keycode 0xa8 =	XF86AudioPlay
+! Next Track
+keycode 0xe9 =	XF86AudioNext
+! Record
+keycode 0xb1 =	XF86AudioMedia
+! Stop
+keycode 0xe8 =	XF86AudioStop
+! Pause
+keycode 0x6e =	XF86AudioPause
+! "Timer" symbol left of the "ok" button
+keycode 0x92 =	
+! "Maximize" symbol right of the "ok" button
+keycode 0x8c =	
+! "List" symbol left of 0
+keycode 0x9e =	
+! "Checkbox" symbol right of 0
+! This is locked as: KP_Enter
+! TV button
+keycode 0x9f =	
+! DVD button
+keycode 0x97 =	
+! WEB button
+keycode 0xb2 =	
+! "Book" button
+keycode 0xe6 =
+! "Hand" button
+keycode 0x88 =
+! Mute
+keycode 0xa0 =	XF86AudioMute
+! Volume Down
+keycode 0xae =	XF86AudioLowerVolume
+! Volume Up
+keycode 0xb0 =	XF86AudioRaiseVolume

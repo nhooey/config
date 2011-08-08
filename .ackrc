@@ -5,3 +5,4 @@
 --pager=less -FRX -x4
 --ignore-dir=neil
 --ignore-dir=task-deployment/test_environment
+--sort-files

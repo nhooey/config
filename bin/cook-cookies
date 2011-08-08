@@ -1,0 +1,30 @@
+#!/bin/bash
+# cook-cookies
+# tells you how to cook cookies
+
+. ~neil/bin/cooking
+
+#SLEEP=7m
+#MESSAGE='Check the cookies'
+#bulletin
+
+SLEEP=7m
+MESSAGE='Check the cookies'
+bulletin
+
+SLEEP=2m
+MESSAGE='Cockfoster, could you, fetch the cookies? Quick smart dear boy, I sense seapage'
+bulletin
+
+SLEEP=2m
+MESSAGE='The cookies are in peril!'
+bulletin
+
+SLEEP=2m
+MESSAGE='The cookies are in peril!'
+bulletin
+
+SLEEP=2m
+MESSAGE='The cookies are in peril!'
+bulletin
+

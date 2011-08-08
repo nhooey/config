@@ -1,7 +1,7 @@
 # .bash_profile
 
 echo_dot_bashprofile=''
-if [ -f "/tmp/echo-login-script" ]; then
+if [ -f "$HOME/.echo_login" ]; then
 	echo_dot_bashprofile="echo '~/.bash_profile'"
 fi
 
@@ -20,9 +20,13 @@ fi
 # User specific environment and startup programs
 
 PATH=$HOME/bin:$HOME/bin/shutter:$PATH
-alias config='git --git-dir=/home/neil/.config.git/ --work-tree=/home/neil'
 
 export PATH
 unset USERNAME
 
+export CLICOLOR=1
+
 $echo_dot_bashprofile
+
+# MacPorts: adding an appropriate PATH variable for use with MacPorts.
+export PATH=/opt/local/bin:/opt/local/sbin:$PATH

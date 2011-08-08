@@ -1,0 +1,37 @@
+#!/bin/bash
+# svnbackup
+# Copies all modified files to a specified destination directory
+
+
+EXENAME=`basename $0`
+
+if [ $# -lt 0 ] || [ $# -gt 2 ]; then
+	echo "$EXENAME: usage: $EXENAME [src] [dest]"
+	exit 1
+fi
+
+SRC="$1"
+SRCDIR="`dirname $SRC`"
+DEST="$2"
+DESTFILE="`basename $DEST`"
+
+if ! test -a "$SRC"; then
+	echo "$EXENAME: error: \"$SRC\" does not exist."
+	exit 1
+elif ! test -a "$DEST"; then
+	echo "$EXENAME: error: \"$DEST\" does not exist."
+	exit 1
+elif ! test -w "$DEST"; then
+	echo "$EXENAME: error: \"$DEST\" is not writeable."
+	exit 1
+fi
+
+mkdir -pv "$DEST/$SRCDIR"
+
+SVN_MOD_FILES=$(cd $SRCDIR; svn diff | egrep -v "^\?" | egrep -o "")
+
+if test -d "$DEST"; then            # If the dest is a directory
+	cp -v "$SRC" "$DEST/$SRCDIR"
+else                                # If it's a file or something else
+	cp -v "$SRC" "$DEST"
+fi

@@ -1,0 +1,89 @@
+#!/bin/bash
+
+START_DIR=$(pwd)
+BASENAME=$(basename $0)
+
+SVN_FINISHED_TEXT="--- SVN Checkout Complete ---"
+
+if [[ $# -lt 2 || $# -gt 2 ]]; then
+	echo "usage: $BASENAME <src-dir> <dest-dir> "
+	exit 1
+fi
+
+SRC_DIR="$1"
+shift
+DEST_DIR="$1"
+shift
+
+if [ ! -d "$SRC_DIR" ]; then
+	echo "$BASENAME: <src-dir> '$SRC_DIR' not a directory."
+	exit 1
+fi
+
+DEST_DIR_EXISTED=1
+if mkdir -p "$DEST_DIR"; then
+	DEST_DIR_EXISTED=0
+fi
+	
+(
+	if ! cd "$DEST_DIR"; then
+		echo "$BASENAME: Cannot cd to directory '$DEST_DIR' for some reason."
+		exit 1
+	fi
+)
+
+LOG_SVN_STAT=$(mktemp)
+echo "Invoking: svn stat -v $@"
+echo "Writing results to: '$LOG_SVN_STAT'"
+{ cd "$SRC_DIR"; svn stat -v $@ > "$LOG_SVN_STAT"; } &
+SVN_PID=$!
+
+function detect_files
+{
+	printf "Files detected: $(wc -l $LOG_SVN_STAT | cut -d ' ' -f1)\r"
+	return
+}
+
+# Wait for svn stat to finish
+while kill -0 $SVN_PID > /dev/null 2>&1; do
+	detect_files
+	sleep 1
+done
+detect_files
+printf "\n"
+
+LOG_SVN_FILES=$(mktemp)
+echo
+echo "Removing unknown files and non-checked-out files..."
+echo "Writing results to: '$LOG_SVN_FILES'"
+cat "$LOG_SVN_STAT" \
+	| egrep -v "^[\?\!]" \
+	| sed -e "s/^[AM]/ /g" \
+	| egrep -v "\.$" \
+	| sed -e "s/[ ]\+/ /g" \
+	| cut -d ' ' -f 5 \
+	> "$LOG_SVN_FILES"
+
+printf "Files detected: $(wc -l $LOG_SVN_FILES | cut -d ' ' -f1)\n"
+
+echo
+echo "Copying files to new repository..."
+for i in $(cat "$LOG_SVN_FILES"); do
+	if [ -d "$SRC_DIR/$i" ]; then
+		mkdir -pv "$DEST_DIR/$i"
+	elif [ -f "$SRC_DIR/$i" ]; then
+		echo cp -v "$SRC_DIR/$i" "$DEST_DIR/$i"
+	else
+		echo "Not a directory or file: $SRC_DIR/$i"
+	fi
+done
+
+echo
+echo "Copying '.svn' directories..."
+( cd "$SRC_DIR"; pwd; find -type d -name ".svn" -exec cp -rv {} "$START_DIR/$DEST_DIR/{}" \; )
+
+echo
+echo "Done duplicating repository \'$SRC_DIR\' -> \'$DEST_DIR\'"
+
+rm "$LOG_SVN_STAT"
+rm "$LOG_SVN_FILES"

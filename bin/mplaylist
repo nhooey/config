@@ -1,0 +1,14 @@
+#!/bin/bash
+# mplaylist
+# plays every video in $1 with mplayer
+
+if [ -d "$1" ]
+then
+	cd "$1"
+	shift
+fi
+
+ls *.vob *.VOB *.AVI *.MPG *.ASF *.ASX *.MOV *.MPEG *.WMV *.avi *.mpg *.mpeg *.asf \
+*.asx *.mov *.wmv > mplayer-temp-playlist.mpl 2>/dev/null
+mplayer -stop-xscreensaver $@ -playlist mplayer-temp-playlist.mpl
+rm mplayer-temp-playlist.mpl

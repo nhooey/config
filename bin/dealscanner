@@ -1,0 +1,77 @@
+#!/usr/bin/perl
+# dealscanner
+# Scans websites for changes in prices
+
+use LWP::Simple;
+use Mail::Sendmail;
+
+my $html_output = '/tmp/dealscanner-output-';
+
+$regex_dell = qr/<div class=\"para_marketingprice_(simple|to)\">\$([\.,0-9]+)</;
+
+my @names = (
+	'Dell 30" LCD',
+	'Dell 24" LCD',
+);
+
+my @addresses = (
+	'http://accessories.us.dell.com/sna/ProductDetail.aspx?sku=222-0863&c=ca&l=en&cs=cadhs1&brandid=56&page=productlisting.aspx',
+	'http://accessories.us.dell.com/sna/productdetail.aspx?c=ca&l=en&s=dhs&cs=CADHS1&sku=320-4335',
+);
+
+my @old_prices = (
+	2199.00,
+	949.00,
+);
+
+my @regexs = (
+	$regex_dell,
+	$regex_dell,
+);
+
+my $message = "";
+
+# Download the web pages with prices
+sub get_pages
+{
+	for ($i = 0; $i < $#addresses+1; $i++)
+	{
+		$pages[$i] = get($addresses[$i]);
+		$message .= "Failed to acquire page for \"$names[$i]\"\n\n" unless defined $pages[$i];
+	}
+}
+
+# Extract the prices
+sub find_prices
+{
+	for ($i = 0; $i < $#addresses+1; $i++)
+	{
+		if ($pages[$i] =~ /$regexs[$i]/gc)
+		{
+			$new_prices[$i] = "$2";
+			$new_prices[$i] =~ s/,//g;
+		}
+		else
+		{
+			$new_prices[$i] = $old_prices[$i];
+			$message = "${message}$names[$i]: Price not found\n\n";
+		}
+			
+		if ($old_prices[$i] != $new_prices[$i])
+		{
+			$message .= "$names[$i]: \$$old_prices[$i] => \$$new_prices[$i]\nURL: $addresses[$i]\n\n";
+		}
+	}
+}
+
+get_pages;
+find_prices;
+
+if ($message ne '')
+{
+	print "$message";
+}
+else
+{
+	print "No price changes\n";
+}

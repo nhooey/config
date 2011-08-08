@@ -1,0 +1,18 @@
+#!/bin/bash
+# bbnotify
+
+BBEMAIL="nhooey.blackberry@gmail.com"
+EMAIL_SCRIPT="ruby-email"
+
+if [[ $# -lt 1 || $# -gt 2 ]]; then
+	echo "usage: $(basename $0) <subject> <body>"
+	echo "usage: $(basename $0) <subject> (body piped to stdin)"
+	exit 1
+fi
+
+if [ $# -eq 2 ]; then
+	exec $EMAIL_SCRIPT $BBEMAIL "$1" "$2"
+elif [ $# -eq 1 ]; then
+	echo "Waiting for input from stdin..."
+	exec $EMAIL_SCRIPT $BBEMAIL "$1"
+fi

@@ -1,0 +1,2 @@
+mplayer /mnt/cdrom/*.avi -fs -stop_xscreensaver
+mplayer /mnt/cdrw/*.avi -fs -stop_xscreensaver

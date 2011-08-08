@@ -1,0 +1,3 @@
+#!/bin/bash
+
+ack --group --color "$@" | less -FR

@@ -1,0 +1,4 @@
+aumix -S
+aumix -v 90 -w 90
+mpg123 "/home/neil/music/Dave Matthews Band/Dave Matthews Band - Before These Crowded Streets"/*
+aumix -L

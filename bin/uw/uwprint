@@ -1,0 +1,5 @@
+#!/bin/bash
+# uwprint
+# sent to ~/print on uw servers
+
+rsync -rvtl "$@" nhooey@uw:~/print

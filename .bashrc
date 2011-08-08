@@ -3,7 +3,7 @@
 # for examples
 
 echo_dot_bashrc=''
-if [ -f "/tmp/echo-login-script" ]; then
+if [ -f "$HOME/.echo_login" ]; then
 	echo_dot_bashrc="echo '~/.bashrc'"
 fi
 
@@ -12,6 +12,8 @@ if [ -f ~/.installation_environment ]; then
 fi
 
 $echo_dot_bashrc
+
+PATH="/opt/local/libexec/gnubin:$HOME/bin/shutter:$HOME/bin:$HOME/.gem/ruby/1.8/bin:/usr/local/bin:$PATH"
 
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
@@ -57,29 +59,42 @@ function __color()
 
 function __host_ps1()
 {
-	__color "$(hostname)"
-#	if [[ $hostname =~ '.*DEV.*' ]]; then
-#		tput setaf 4
-#	elif [[ $hostname =~ '.*QA.*' ]]; then
-#		tput setaf 2
-#	elif [[ $hostname =~ 'neil-ubuntu' ]]; then
-#		tput setaf 5
-#	elif [[ $hostname =~ 'worker-DEV' ]]; then
-#		tput setaf 2
-#	elif [[ $hostname =~ 'lvs[0-9]c' ]]; then
-#		tput setaf 1
-#	elif [[ $hostname =~ '(shutter)?worker[0-9]*' ]]; then
-#		tput setaf 3
-#	fi
-#
-#	printf "$1" "$hostname"
-#	tput sgr0
+	__color "$(hostname | egrep -o '^[^\.]+')"
+}
+
+HOSTNAME_COLOR=$(__host_ps1)
+
+function __get_perl5lib() {
+	REPO_DIR="$(__gitdir | sed -e 's/\/\?\.git//')"
+	if [ "x$REPO_DIR" == "x" ]; then
+		REPO_DIR="$(readlink -f $(pwd))"
+	fi
+	REPO_DIR="$(cd $REPO_DIR && pwd)"
+	CORRECT_LIB="$BASE_PERL5LIB:$REPO_DIR/lib:$REPO_DIR/t/lib:$REPO_DIR/lil_brother/lib:$REPO_DIR/lil_brother/t/lib"
+	echo -n $CORRECT_LIB
+}
+
+function ssperl5lib() {
+	export PERL5LIB="$(__get_perl5lib)"
+}
+
+function __perl5lib_ok() {
+	if ! type -t __gitdir > /dev/null; then
+		return 1
+	fi
+	if [ "x$(__gitdir)" != "x" ]; then
+		if [ "$PERL5LIB" != "$(__get_perl5lib)" ]; then
+			tput setaf 1
+			echo -n '[p]'
+			tput sgr0
+		fi
+	fi
 }
 
 function __git_ps1_branch()
 {
 	if __gitdir > /dev/null 2>&1; then
-		__color "[$(basename $(dirname $(echo $(cd $(__gitdir); pwd))))]"
+		__color "[$(basename "$(dirname "$(echo $(cd "$(__gitdir)"; pwd))")")]"
 	fi
 	if __git_ps1 > /dev/null 2>&1; then
 		if [[ $(__git_ps1) =~ '\|' ]]; then
@@ -96,16 +111,18 @@ function __git_ps1_branch()
 	fi
 }
 
+alias tmux='TERM=xterm-256color tmux'
+
 # set a fancy prompt (non-color, unless we know we "want" color)
 case "$TERM" in
-xterm|linux|screen|vt320|ansi)
+xterm|xterm-256color|linux|screen|vt320|ansi)
 	# Detect screen's window number
 	SCREEN_WIN=""
 	if [ "x$WINDOW" != "x" ]; then
 		SCREEN_WIN="[$WINDOW]"
 	fi
 
-	PS1='\[\033[00;31m\]$(r=$?; if test $r -ne 0; then echo "[$r]"; set ?=$r; unset r; fi)\[\033[00m\]${debian_chroot:+($debian_chroot)}\[\033[01;37m\]\u\[\033[01;30m\]@$(__host_ps1 "%s")\[\033[00;32m\]$SCREEN_WIN\[\033[00m\]$(__git_ps1_branch):\[\033[00;36m\]\w\[\033[00m\]
+	PS1='\[\033[00;31m\]$(r=$?; if test $r -ne 0; then echo "[$r]"; set ?=$r; unset r; fi)\[\033[00m\]${debian_chroot:+($debian_chroot)}\[\033[01;37m\]\u\[\033[01;30m\]@$HOSTNAME_COLOR$(__perl5lib_ok)$(__git_ps1_branch):\[\033[00;36m\]\w\[\033[00m\]
 \[\033[01;30m\]$(date +"%Y-%m-%d %H:%M:%S")\[\033[00m\] \[\033[00;34m\]\$\[\033[00m\] '
 	;;
 *)
@@ -153,36 +170,48 @@ alias l='ls -CF'
 if [ -f /etc/bash_completion ]; then
 	. /etc/bash_completion
 fi
+if [ -f /etc/bash_completion.d/git ]; then
+	. /etc/bash_completion.d/git
+fi
 
 # Neil Hooey
-export MANPAGER="/usr/bin/most -s"
+if [ -f /usr/bin/most ]; then
+	export MANPAGER="/usr/bin/most -s"
+else
+	export MANPAGER="/usr/bin/less"
+fi
 export GREP_OPTIONS='--color=auto'
 export GREP_COLOR='0;36'
 export HISTCONTROL=erasedups
-export HISTSIZE=10000
+export HISTSIZE=1000000
 shopt -s histappend
 
 # Shutterstock
-export PERL5LIB=/home/ssuser/lib
+export BASE_PERL5LIB=/home/neil/perl5/lib/perl5
+export PERL5LIB="$BASE_PERL5LIB"
 export CVSROOT=/data/export/code/cvsroot
+export PERL_CPANM_OPT="--local-lib=~/perl5"
 if [ $(__shutterstock_env) == 'dev' ]; then
 	eval $(perl -I $HOME/perl5/lib/perl5 -Mlocal::lib)
 fi
-alias mysql='mysql-shutterstock'
 
 PATH="$HOME/bin/shutter:$HOME/bin:/usr/local/bin:$PATH"
 
 # Git
 if [ -f "/usr/local/src/git-1.7.1/contrib/completion/git-completion.bash" ]; then
 	source /usr/local/src/git-1.7.1/contrib/completion/git-completion.bash
+elif [ -f "$HOME/.git-completion.bash" ]; then
+	source "$HOME/.git-completion.bash"
 fi
 
+alias config='git --git-dir=/home/neil/.config.git/ --work-tree=/home/neil'
+
 # Sorting Algorithms
-hostname=$(hostname)
-if [[ $hostname =~ '.*DEV-data.*' ]]; then
-	PERL5LIB="$HOME/git/search/lib"
-	echo "Overriding PERL5LIB to $PERL5LIB"
-	export PERL5LIB
-fi
+#hostname=$(hostname)
+#if [[ $hostname =~ '.*DEV-data.*' ]]; then
+#	PERL5LIB="$HOME/git/search/lib"
+#	echo "Overriding PERL5LIB to $PERL5LIB"
+#	export PERL5LIB
+#fi
 
 $echo_dot_bashrc

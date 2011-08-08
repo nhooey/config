@@ -1,0 +1,7 @@
+#!/bin/bash
+# error
+# plays a noise
+
+play "/home/neil/sounds/Utopia Critical Stop.wav"
+play "/home/neil/sounds/Utopia Critical Stop.wav"
+play "/home/neil/sounds/Utopia Critical Stop.wav"

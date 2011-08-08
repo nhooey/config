@@ -1,0 +1,23 @@
+#!/usr/bin/perl
+
+use File::Basename;
+
+my $progname = basename $0;
+my $notify = 'notify-send';
+
+my $ofh = select STDOUT;
+$| = 1;
+select $ofh;
+
+die "$progname: Could not find \`$notify\' in the path.\n"
+	unless system "which $notify" == 0;
+
+my $mins = 20;
+
+while (1) {
+	system "$notify 'Take a Break' 'Focus on something far for 20 seconds.'";
+	for (my $sec = $mins * 60; $sec >= 0; $sec--) {
+		printf "%02d:%02d\r", $sec / 60, $sec % 60;
+		sleep 1;
+	}
+}

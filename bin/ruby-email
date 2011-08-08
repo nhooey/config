@@ -1,0 +1,42 @@
+#!/usr/bin/ruby
+
+debug = true
+basename = File.basename($0)
+
+prefix = {
+	:to => "To: ",
+	:subject => "Subject: ",
+	:content => "Content-Type: text; charset=\"us-ascii\""
+}
+
+fields = {
+	:to => "",
+	:subject => "",
+	:body => ""
+}
+
+if (ARGV.size < 2 or ARGV.size > 3) then
+	print "usage: #{basename} <to> <subject> <body>\n"
+	print "       #{basename} <to> <subject> < <body-text-file>\n"
+	exit 1
+end
+
+fields[:to] = ARGV[0]
+fields[:subject] = ARGV[1]
+
+if (ARGV.size == 3) then 
+	fields[:body] = ARGV[2]
+elsif (ARGV.size == 2) then
+	fields[:body] = $stdin.readlines.to_s
+end
+
+email =  "#{prefix[:to]}#{fields[:to]}\n"
+email += "#{prefix[:subject]}#{fields[:subject]}\n"
+email += "#{fields[:body]}"
+
+if debug then
+	print "Sending email...\n"
+	puts email
+end
+
+IO.popen("sendmail #{fields[:to]}","w") do |io| io.puts email end

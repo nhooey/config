@@ -1,0 +1,8 @@
+#!/bin/bash
+# mplistwin
+# mplayer plays all movies in a window
+
+cd "$1"
+ls *.AVI *.MPG *.ASF *.ASX *.MOV *.MPEG *.WMV *.avi *.mpg *.mpeg *.asf *.asx *.mov *.wmv > /tmp/mplayer-temp-playlist.mpl
+mplayer -playlist /tmp/mplayer-temp-playlist.mpl
+rm /tmp/mplayer-temp-playlist.mpl

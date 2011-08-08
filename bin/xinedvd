@@ -1,0 +1,9 @@
+#!/bin/bash
+# xinedvd
+# plays all the vobs in the typical dvdrip directory
+
+cd "$1"
+pwd0=`pwd`
+
+ls "$pwd0/vob/001/"*.vob > /tmp/xinedvd_playlist.txt
+xine -P /tmp/xinedvd_playlist.txt --fullscreen

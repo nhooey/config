@@ -1,0 +1,10 @@
+#!/bin/bash
+
+if [[ $? -lt 0 || $? -gt 1 ]]; then
+	echo "usage: $(basename $0) [file]"
+	exit 1
+fi
+
+FILE="$1"
+
+sed $FILE -e "s/\o33\[[0-9][0-9]m//g"

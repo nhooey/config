@@ -1,0 +1,18 @@
+#!/bin/bash
+# fadeout
+# gradually turn down the volume after time intervals to fade the music out
+
+i=100
+
+if [ $# -gt 0 ]
+then
+	while [ $i != 0 ]
+	do
+		sleep $1
+		aumix -v-1
+		aumix -w-1
+		echo $i
+		let i-=1
+	done
+fi
+

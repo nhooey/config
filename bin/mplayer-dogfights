@@ -1,0 +1,3 @@
+#!/bin/bash
+
+mplayer -vf crop=716:360:2:63 "$@"

@@ -1,0 +1,5 @@
+#!/bin/bash
+# scp-uw
+# scp stuff to my uw account
+
+scp "$1" nhooey@rees.math.uwaterloo.ca:~/"$2" -R

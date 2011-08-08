@@ -1,0 +1,4 @@
+#!/bin/bash
+# x-mplist
+
+xterm -geometry 80x39+0+0 -e "mplistwin \"$1\""

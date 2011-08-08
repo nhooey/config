@@ -1,0 +1,29 @@
+#!/bin/bash
+
+if [[ $# -gt 1 || $# -lt 1 ]]; then
+	echo "usage: $(basename $0) <dir>"
+	exit 1
+fi
+
+DIR="$1"
+cd "$DIR"
+
+if ! which renrot > /dev/null; then
+	echo "$(basename $0): error: renrot could not be found in the path."
+	exit 1
+fi
+
+eval IMG_EXTENSIONS="jpg,JPG,gif,GIF,bmp,BMP,png,PNG,raw,RAW"
+eval MVI_EXTENSIONS="avi,AVI"
+
+eval IMG_FILES=(*.{$IMG_EXTENSIONS})
+eval MVI_FILES=(*.{$MVI_EXTENSIONS})
+
+chmod a-x "${IMG_FILES[@]}" "${MVI_FILES[@]}" 2> /dev/null
+rename 's/^(IMG|MVI)_/\L$1/; s/\.([^.]+)$/.\L$1\E/' "${IMG_FILES[@]}" "${MVI_FILES[@]}" 2> /dev/null
+
+eval IMG_FILES=(*.{$IMG_EXTENSIONS})
+eval MVI_FILES=(*.{$MVI_EXTENSIONS})
+
+renrot --name-template '%Y-%m-%d_%H.%M.%S_%i' "${IMG_FILES[@]}"
+renrot --name-template '%Y-%m-%d_%H.%M.%S_mvi-%C' "${MVI_FILES[@]}"
