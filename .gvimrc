@@ -34,6 +34,3 @@ set guioptions-=T
 :setglobal guioptions-=r
 :setglobal guioptions-=b
 :setglobal guioptions-=h
-
-" Set ASCII tab labels
-:setglobal guioptions-=e
