@@ -26,3 +26,11 @@ endif
 colorscheme gneil
 
 set guioptions-=T
+
+" Prevent window from resizing on focus
+:setglobal guioptions-=L
+:setglobal guioptions-=l
+:setglobal guioptions-=R
+:setglobal guioptions-=r
+:setglobal guioptions-=b
+:setglobal guioptions-=h
