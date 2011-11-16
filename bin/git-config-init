@@ -1,4 +1,9 @@
 #!/bin/bash
+# config.git initialization script
+#
+# Run this to automatically install:
+#     WARNING: WILL OVERWRITE YOUR .bashrc AND OTHER IMPORTANT FILES!
+#     curl -L https://raw.github.com/nhooey/config/master/bin/git-config-init | bash
 
 "Initializing config.git..."
 
