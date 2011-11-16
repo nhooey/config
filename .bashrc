@@ -195,7 +195,7 @@ shopt -s histappend
 PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
 
 # Shutterstock
-export BASE_PERL5LIB=/home/neil/perl5/lib/perl5
+export BASE_PERL5LIB=$HOME/perl5/lib/perl5
 export PERL5LIB="$BASE_PERL5LIB"
 export CVSROOT=/data/export/code/cvsroot
 export PERL_CPANM_OPT="--local-lib=~/perl5"
@@ -212,7 +212,7 @@ elif [ -f "$HOME/.git-completion.bash" ]; then
 	source "$HOME/.git-completion.bash"
 fi
 
-alias config='git --git-dir=/home/neil/.config.git/ --work-tree=/home/neil'
+alias config="git --git-dir=$HOME/.config.git/ --work-tree=$HOME"
 
 if [ -f "$HOME/.shutterstockrc" ]; then
 	. "$HOME/.shutterstockrc"
