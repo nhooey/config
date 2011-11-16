@@ -1,0 +1,14 @@
+#!/bin/bash
+
+"Initializing config.git, press return to continue..."
+read
+
+cd ~
+mv .bash_profile .bash_profile.bk
+git clone git://github.com/nhooey/config.git config.git
+mv config.git/.git .config.git
+shopt -s dotglob
+mv -i config.git/* .
+rmdir config.git
+
+echo "Now log out and log in..."
