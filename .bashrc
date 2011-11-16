@@ -205,6 +205,7 @@ export GREP_COLOR='0;36'
 export HISTCONTROL=erasedups
 export HISTSIZE=1000000
 shopt -s histappend
+PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
 
 # Shutterstock
 export BASE_PERL5LIB=/home/neil/perl5/lib/perl5
