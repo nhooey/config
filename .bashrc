@@ -11,6 +11,10 @@ if [ -f ~/.installation_environment ]; then
 	. ~/.installation_environment
 fi
 
+if [ -f "$HOME/bin/visible-term-color.sh" ]; then
+	. "$HOME/bin/visible-term-color.sh"
+fi
+
 $echo_dot_bashrc
 
 PATH="/opt/local/libexec/gnubin:$HOME/bin/shutter:$HOME/bin:$HOME/.gem/ruby/1.8/bin:/usr/local/bin:$PATH"
@@ -54,7 +58,7 @@ umask 002
 
 function __color()
 {
-	visible-term-color "$(($(echo $1 | cksum | cut -c1-3) % 256))" "$1"
+	__visible_term_color "$(($(echo $1 | cksum | cut -c1-3) % 256))" "$1"
 }
 
 function __host_ps1()
@@ -63,6 +67,8 @@ function __host_ps1()
 }
 
 HOSTNAME_COLOR=$(__host_ps1)
+UNIQUE_ID="$(hostname):$(tty)"
+mkdir $HOME/.bashrc.variables 2> /dev/null
 
 function __get_perl5lib() {
 	REPO_DIR="$(__gitdir | sed -e 's/\/\?\.git//')"
@@ -91,24 +97,38 @@ function __perl5lib_ok() {
 	fi
 }
 
+function __color_pwd()
+{
+	__color $(pwd | sed -e "s,^$HOME,~,")
+}
+
 function __git_ps1_branch()
 {
-	if __gitdir > /dev/null 2>&1; then
-		__color "[$(basename "$(dirname "$(echo $(cd "$(__gitdir)"; pwd))")")]"
-	fi
-	if __git_ps1 > /dev/null 2>&1; then
-		if [[ $(__git_ps1) =~ '\|' ]]; then
-			tput setaf 1
-			__git_ps1 "[%s]"
-			tput sgr0
-		elif [[ $(__git_ps1) =~ ':' ]]; then
-			tput setaf 2
-			__git_ps1 "[%s]"
-			tput sgr0
-		else
-			__color "$(__git_ps1 "[%s]")"
-		fi
-	fi
+	GITDIR=$(__gitdir 2> /dev/null)
+	GITDIR_SUCCESS=$?
+
+	# Colourize the git directory if it exists
+#	if [ $GITDIR_SUCCESS -eq 0 ]; then
+#		__color "[$(basename "$(dirname "$(echo $(cd "$GITDIR"; pwd))")")]"
+#	fi
+
+	GIT_PS1=$(__git_ps1 "[%s]" 2> /dev/null)
+	GIT_PS1_SUCCESS=$?
+
+#	if [[ $GIT_PS1 != "" ]]; then
+#		if [[ $GIT_PS1 =~ '\|' ]]; then
+#			tput setaf 1
+#			echo $GIT_PS1
+#			tput sgr0
+#		elif [[ $GIT_PS1 =~ ':' ]]; then
+#			tput setaf 2
+#			echo $GIT_PS1
+#			tput sgr0
+#		else
+			GIT_PS1_COLOR=$(__color "$GIT_PS1")
+			echo $GIT_PS1_COLOR
+#		fi
+#	fi
 }
 
 alias tmux='TERM=xterm-256color tmux'
@@ -122,7 +142,7 @@ xterm|xterm-256color|linux|screen|vt320|ansi)
 		SCREEN_WIN="[$WINDOW]"
 	fi
 
-	PS1='\[\033[00;31m\]$(r=$?; if test $r -ne 0; then echo "[$r]"; set ?=$r; unset r; fi)\[\033[00m\]${debian_chroot:+($debian_chroot)}\[\033[01;37m\]\u\[\033[01;30m\]@$HOSTNAME_COLOR$(__perl5lib_ok)$(__git_ps1_branch):\[\033[00;36m\]\w\[\033[00m\]
+	PS1='\[\033[00;31m\]$(r=$?; if test $r -ne 0; then echo "[$r]"; set ?=$r; unset r; fi)\[\033[00m\]${debian_chroot:+($debian_chroot)}\[\033[01;37m\]\u\[\033[01;30m\]@$HOSTNAME_COLOR$(__git_ps1_branch):$(__color_pwd)
 \[\033[01;30m\]$(date +"%Y-%m-%d %H:%M:%S")\[\033[00m\] \[\033[00;34m\]\$\[\033[00m\] '
 	;;
 *)
