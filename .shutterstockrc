@@ -1,0 +1,37 @@
+function perl5lib_service {
+	SERVICE=$1
+	echo "/usr/lib64/perl5/site_perl/5.8.8/x86_64-linux-thread-multi:$HOME/git/shutterstock-service-$SERVICE/lib:$HOME/git/shutterstock-service-$SERVICE/blib/lib:/opt/repos/shutterstock/lib:$HOME/code/ss/lib:$HOME/local-lib/shutterstock-service-$SERVICE/lib/perl5:$HOME/local-lib/shutterstock-service-$SERVICE/lib/perl5/x86_64-linux-thread-multi:/opt/local-lib/shutterstock-service-$SERVICE/lib/perl5:/opt/local-lib/shutterstock-service-$SERVICE/lib/perl5/x86_64-linux-thread-multi"
+}
+
+function dancer_confdir {
+	ENVIRONMENT=$1
+	if [ -z $ENVIRONMENT ]; then
+		export DANCER_ENVIRONMENT=development
+	else
+		export DANCER_ENVIRONMENT=$ENVIRONMENT
+	fi
+	echo "Setting DANCER_ENVIRONMENT=$DANCER_ENVIRONMENT"
+}
+
+function bash_path {
+	SERVICE=$1
+	PATH="$PATH:/opt/local-lib/shutterstock-service-$SERVICE/bin"
+	echo "Setting PATH=$PATH"
+	export PATH
+}
+
+function perl5lib_service_search {
+	ENVIRONMENT=$1
+	bash_path search
+	dancer_confdir $ENVIRONMENT
+	export PERL5LIB="$(perl5lib_service search)"
+	echo "Setting PERL5LIB=$PERL5LIB"
+}
+
+function perl5lib_service_indexing {
+	ENVIRONMENT=$1
+	bash_path indexing
+	dancer_confdir $ENVIRONMENT
+	export PERL5LIB="$(perl5lib_service indexing)"
+	echo "Setting PERL5LIB=$PERL5LIB"
+}

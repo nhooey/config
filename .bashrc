@@ -206,6 +206,10 @@ fi
 
 alias config='git --git-dir=/home/neil/.config.git/ --work-tree=/home/neil'
 
+if [ -f "$HOME/.shutterstockrc" ]; then
+	. "$HOME/.shutterstockrc"
+fi
+
 # Sorting Algorithms
 #hostname=$(hostname)
 #if [[ $hostname =~ '.*DEV-data.*' ]]; then
