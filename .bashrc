@@ -216,7 +216,7 @@ if [ $(__shutterstock_env) == 'dev' ]; then
 	eval $(perl -I $HOME/perl5/lib/perl5 -Mlocal::lib)
 fi
 
-PATH="$HOME/bin/shutter:$HOME/bin:/usr/local/bin:$PATH"
+PATH="$HOME/bin/shutter:$HOME/bin:/usr/local/bin:/sbin:/usr/sbin:$PATH"
 
 # Git
 if [ -f "/usr/local/src/git-1.7.1/contrib/completion/git-completion.bash" ]; then
