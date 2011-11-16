@@ -2,6 +2,7 @@
 alias ll='ls -l'
 alias la='ls -A'
 alias l='ls -CF'
+alias ls='ls --color=always'
 
 alias config='git --git-dir=/home/neil/.config.git/ --work-tree=/home/neil'
 
