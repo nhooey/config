@@ -5,12 +5,16 @@
 #     WARNING: WILL OVERWRITE YOUR .bashrc AND OTHER IMPORTANT FILES!
 #     curl -L https://raw.github.com/nhooey/config/master/bin/git-config-init | bash
 
+if [ -z $REPO ]; then
+	REPO='git://github.com/nhooey/config.git'
+fi
+
 echo "Initializing config.git..."
 
 cd ~
 mv -fv .bash_profile .bash_profile.bk
 rm -rf config.git
-git clone git://github.com/nhooey/config.git config.git
+git clone $REPO config.git
 mv -fv config.git/.git .config.git
 shopt -s dotglob
 yes | mv -fvi config.git/* .
