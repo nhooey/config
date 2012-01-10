@@ -5,7 +5,7 @@
 #     WARNING: WILL OVERWRITE YOUR .bashrc AND OTHER IMPORTANT FILES!
 #     curl -L https://raw.github.com/nhooey/config/master/bin/git-config-init | bash
 
-"Initializing config.git..."
+echo "Initializing config.git..."
 
 cd ~
 mv -fv .bash_profile .bash_profile.bk
