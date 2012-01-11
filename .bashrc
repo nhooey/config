@@ -135,7 +135,7 @@ function __git_ps1_branch()
 alias tmux='TERM=xterm-256color tmux'
 
 # Fix ncurses refresh inside tmux
-if [ -n $TMUX ]; then
+if [ -n $TMUX ] && infocmp screen-256color > /dev/null 2>&1; then
 	export TERM='screen-256color'
 fi
 
