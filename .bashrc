@@ -135,7 +135,7 @@ alias tmux='TERM=xterm-256color tmux'
 
 # set a fancy prompt (non-color, unless we know we "want" color)
 case "$TERM" in
-xterm|xterm-256color|linux|screen|vt320|ansi)
+xterm*|linux|screen*|vt320|ansi)
 	# Detect screen's window number
 	SCREEN_WIN=""
 	if [ "x$WINDOW" != "x" ]; then
@@ -155,7 +155,7 @@ esac
 
 # If this is an xterm set the title to user@host:dir
 case "$TERM" in
-xterm*|rxvt*|screen)
+xterm*|rxvt*|screen*)
 	PROMPT_COMMAND='history -a; history -n; echo -ne "\033]0;${USER}@${HOSTNAME}: ${PWD/$HOME/~}\007"'
 	;;
 *)
