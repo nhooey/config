@@ -131,7 +131,13 @@ function __git_ps1_branch()
 #	fi
 }
 
+# Enable 256 colours in tmux
 alias tmux='TERM=xterm-256color tmux'
+
+# Fix ncurses refresh inside tmux
+if [ -n $TMUX ]; then
+	export TERM='screen-256color'
+fi
 
 # set a fancy prompt (non-color, unless we know we "want" color)
 case "$TERM" in
