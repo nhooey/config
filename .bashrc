@@ -63,7 +63,7 @@ function __color()
 
 function __host_ps1()
 {
-	__color "$(hostname | egrep -o '^[^\.]+')"
+	__color "$(virtual-host)"
 }
 
 HOSTNAME_COLOR=$(__host_ps1)
