@@ -12,8 +12,13 @@ fi
 echo "Initializing config.git..."
 
 cd ~
-mv -fv .bash_profile .bash_profile.bk
-rm -rf config.git
+
+# Backup previous config.git stuff
+mkdir backup-config.git
+for file in bin .bash_profile .git .config.git; do
+	mv -fv "$file" backup-config.git/
+done
+
 git clone $REPO config.git
 mv -fv config.git/.git .config.git
 shopt -s dotglob
