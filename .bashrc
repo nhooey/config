@@ -224,6 +224,11 @@ if [ -f "$HOME/.shutterstockrc" ]; then
 	. "$HOME/.shutterstockrc"
 fi
 
+COLORS="$HOME/.dircolors"
+if [ -f $COLORS ]; then
+	eval `dircolors --sh "$COLORS" 2>/dev/null`
+fi
+
 # Sorting Algorithms
 #hostname=$(hostname)
 #if [[ $hostname =~ '.*DEV-data.*' ]]; then
