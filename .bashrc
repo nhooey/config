@@ -61,9 +61,19 @@ function __color()
 	__visible_term_color "$(($(echo $1 | cksum | cut -c1-3) % 256))" "$1"
 }
 
+function __virtual_host()
+{
+	VHOST=$(echo $HOSTNAME | cut -f 1-2 -d.)
+	if [[ $1 && $1 -gt 0 ]]; then
+		printf "%-$1s\n" $VHOST
+	else
+		echo $VHOST
+	fi
+}
+
 function __host_ps1()
 {
-	__color "$(virtual-host)"
+	__color "$(__virtual_host)"
 }
 
 HOSTNAME_COLOR=$(__host_ps1)
