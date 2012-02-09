@@ -1,0 +1,13 @@
+#!/bin/bash
+
+volume="/Volumes/neil@dev/"
+echo "Unmounting $volume ..."
+sudo diskutil unmount force $volume
+
+echo "Making directory: $volume ..."
+mkdir $volume
+
+echo "Mounting volume..."
+sshfs nhooey@dev-code01:/home/nhooey -o reconnect $volume || exit 1
+
+echo "Mounted."

@@ -1,0 +1,40 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+use English;
+use Term::ANSIColor;
+
+$OUTPUT_AUTOFLUSH = 1;
+
+my ($regex, $filename) = @ARGV;
+
+my $fh;
+if (defined $filename) {
+	open($fh, '<', $filename);
+} else {
+	open($fh, '<-');
+}
+
+my $color   = color 'green';
+my $uncolor = color 'reset';
+
+my $num_lines_read = 0;
+for my $line (<$fh>) {
+	chomp $line;
+
+	$num_lines_read++;
+	my $str_lines = sprintf "lines: %9d", $num_lines_read;
+	my $len_str_lines = length $str_lines;
+	print "$str_lines\r";
+
+	if ($line =~ /$regex/) {
+		my @matches = $line =~ /($regex)/g;
+		for my $match (@matches) {
+			$line =~ s/$match/${color}$match${uncolor}/g;
+		}
+		printf "%-${len_str_lines}s\n", $line;
+	}
+}
+
+print "\n";
