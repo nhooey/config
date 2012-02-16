@@ -1,0 +1,10 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use JSON;
+
+while (<>) {
+	print JSON->new->pretty->encode(from_json $_);
+}
