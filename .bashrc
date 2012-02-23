@@ -11,6 +11,10 @@ if [ -f ~/.installation_environment ]; then
 	. ~/.installation_environment
 fi
 
+if [ -f "$HOME/.bash_aliases" ]; then
+	. "$HOME/.bash_aliases"
+fi
+
 if [ -f "$HOME/bin/visible-term-color.sh" ]; then
 	. "$HOME/bin/visible-term-color.sh"
 fi
