@@ -234,6 +234,10 @@ if [ -f "$HOME/.shutterstockrc" ]; then
 	. "$HOME/.shutterstockrc"
 fi
 
+if which sinit > /dev/null 2>&1; then
+	sinit
+fi
+
 COLORS="$HOME/.dircolors"
 if [ -f $COLORS ]; then
 	eval `dircolors --sh "$COLORS" 2>/dev/null`
