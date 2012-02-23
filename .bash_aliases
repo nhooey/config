@@ -10,6 +10,11 @@ if [ -f '/usr/local/Cellar/coreutils/8.12/aliases' ]; then
 	. '/usr/local/Cellar/coreutils/8.12/aliases'
 fi
 
+ANT="$HOME/code/oss/apache-ant-1.8.2/bin/ant"
+if [ -f $ANT ]; then
+	alias ant="JAVA_HOME=$HOME/code/oss/jdk1.6.0_24 $ANT"
+fi
+
 # enable color support of ls and also add handy aliases
 if [ "$TERM" != "dumb" ]; then
 	eval "`dircolors -b`"
