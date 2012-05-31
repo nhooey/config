@@ -306,5 +306,8 @@ highlight DiffDelete   ctermbg=none      guibg=#292929   ctermfg=black   guifg=b
 
 highlight Pmenu        ctermbg=grey      guibg=#202020   ctermfg=white      guifg=gray
 highlight PmenuSel     ctermbg=red       guibg=#661717   ctermfg=white      guifg=white    gui=bold
+
+highlight netrwDir     guifg=#7070FF
+
 " -----------------------------------------------------------------------------
 
