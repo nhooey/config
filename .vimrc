@@ -53,8 +53,6 @@ set mouse=a         " Enable mouse usage (all modes) in terminals
 " Remove mouse open from netrw
 let g:netrw_mousemaps = 0
 
-let g:fuf_maxMenuWidth = 200
-
 set hlsearch
 set shiftwidth=4
 set tabstop=4
@@ -102,6 +100,11 @@ nn mp :clist<CR>
 nn gb :blast<CR>
 nn do :diffget 1<CR>
 nn dp :diffget 3<CR>
+
+" FuzzyFinder
+nn <Tab>   :FufFile<CR>
+nn <S-Tab> :FufFile **/<CR>
+let g:fuf_maxMenuWidth = 200
 
 " for yaml, always use two spaces to indent
 autocmd FileType yaml,yml set expandtab tabstop=2 shiftwidth=2
