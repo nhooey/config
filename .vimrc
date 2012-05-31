@@ -53,6 +53,8 @@ set mouse=a         " Enable mouse usage (all modes) in terminals
 " Remove mouse open from netrw
 let g:netrw_mousemaps = 0
 
+let g:fuf_maxMenuWidth = 200
+
 set hlsearch
 set shiftwidth=4
 set tabstop=4
@@ -298,5 +300,8 @@ highlight DiffAdd      ctermbg=black     guibg=#0c1427
 highlight DiffChange   ctermbg=darkblue  guibg=#0c1427
 highlight DiffText     ctermbg=black     guibg=#19316b
 highlight DiffDelete   ctermbg=none      guibg=#292929   ctermfg=black   guifg=black
+
+highlight Pmenu        ctermbg=grey      guibg=#202020   ctermfg=white      guifg=gray
+highlight PmenuSel     ctermbg=red       guibg=#661717   ctermfg=white      guifg=white    gui=bold
 " -----------------------------------------------------------------------------
 
