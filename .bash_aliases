@@ -6,6 +6,8 @@ alias ls='ls --color=always'
 
 alias config='git --git-dir=/home/neil/.config.git/ --work-tree=/home/neil'
 
+alias tree='tree -C | less -R'
+
 if [ -f '/usr/local/Cellar/coreutils/8.12/aliases' ]; then
 	. '/usr/local/Cellar/coreutils/8.12/aliases'
 fi
