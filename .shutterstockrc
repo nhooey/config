@@ -1,6 +1,6 @@
 function perl5lib_service {
 	SERVICE=$1
-	echo "/usr/lib64/perl5/site_perl/5.8.8/x86_64-linux-thread-multi:$HOME/git/shutterstock-service-$SERVICE/lib:$HOME/git/shutterstock-service-$SERVICE/blib/lib:/opt/repos/shutterstock/lib:$HOME/code/ss/lib:$HOME/local-lib/shutterstock-service-$SERVICE/lib/perl5:$HOME/local-lib/shutterstock-service-$SERVICE/lib/perl5/x86_64-linux-thread-multi:/opt/local-lib/shutterstock-service-$SERVICE/lib/perl5:/opt/local-lib/shutterstock-service-$SERVICE/lib/perl5/x86_64-linux-thread-multi"
+	echo "/usr/lib64/perl5/site_perl/5.8.8/x86_64-linux-thread-multi:$HOME/git/github/shuttercorp/shutterstock/shutterstock-service-$SERVICE/lib:$HOME/git/github/shuttercorp/shutterstock/shutterstock-service-$SERVICE/blib/lib:$HOME/local-lib/shutterstock-service-$SERVICE/lib/perl5:$HOME/local-lib/shutterstock-service-$SERVICE/lib/perl5/x86_64-linux-thread-multi:/opt/apps/shutterstock-service-$SERVICE/deps/lib/perl5:/opt/apps/shutterstock-service-$SERVICE/deps/lib/perl5/x86_64-linux-thread-multi"
 }
 
 function dancer_confdir {
