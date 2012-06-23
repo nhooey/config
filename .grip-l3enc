@@ -1,0 +1,4 @@
+GRIP 2
+exe l3enc
+cmdline -br %b %w %m
+extension mp3

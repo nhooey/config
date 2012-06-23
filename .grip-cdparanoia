@@ -1,0 +1,3 @@
+GRIP 2
+exe /usr/bin/cdparanoia
+cmdline -d %c %t:[.%s]-%t:[.%e] %w

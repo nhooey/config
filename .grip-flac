@@ -1,0 +1,4 @@
+GRIP 2
+exe flac
+cmdline -V -o %m %w
+extension flac

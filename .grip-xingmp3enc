@@ -1,0 +1,4 @@
+GRIP 2
+exe xingmp3enc
+cmdline -B %b -Q %w
+extension mp3

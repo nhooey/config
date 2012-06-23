@@ -1,0 +1,3 @@
+GRIP 2
+exe cdda2wav
+cmdline -D %C -x -H -t %t -O wav %w

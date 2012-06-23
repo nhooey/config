@@ -1,0 +1,4 @@
+GRIP 2
+exe /usr/bin/oggenc
+cmdline -o %m -a %a -l %d -t %n -d %y -G %g -b %b %w
+extension ogg

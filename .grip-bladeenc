@@ -1,0 +1,4 @@
+GRIP 2
+exe bladeenc
+cmdline -%b -QUIT %w %m
+extension mp3
