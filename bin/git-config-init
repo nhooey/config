@@ -16,13 +16,13 @@ cd ~
 # Backup previous config.git stuff
 mkdir backup-config.git
 for file in bin .bash_profile .git .config.git; do
-	mv -fv "$file" backup-config.git/
+	mv -f "$file" backup-config.git/
 done
 
 git clone $REPO config.git
-mv -fv config.git/.git .config.git
+mv -f config.git/.git .config.git
 shopt -s dotglob
-yes | mv -fvi config.git/* .
+yes | mv -fi config.git/* .
 rm -rf config.git
 
 echo "Now log out and log in..."
