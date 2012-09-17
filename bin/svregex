@@ -1,0 +1,51 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use File::Basename qw( basename );
+
+my $basename = basename $0;
+
+sub usage {
+	print STDERR "usage: $basename <supervisor-cmd> <regex>\n";}
+if (@ARGV != 2) {
+	usage();
+	exit 1;
+}
+
+my $cmd   = shift @ARGV;
+my $regex = shift @ARGV;
+
+my $supervisor_status = `sudo supervisorctl status | egrep $regex`;
+chomp $supervisor_status;
+
+my @programs;
+
+for my $line (split("\n", $supervisor_status)) {
+	my ($item, $status, $details) = $line =~ /^([^\s]+)\s+([^\s]+)\s+(.*)$/;
+
+	push @programs, { item => $item, status => $status, details => $details };
+}
+
+my $full_cmd;
+
+if ($cmd eq 'status') {
+	print "$supervisor_status\n";
+	exit 0;
+} elsif ($cmd eq 'restart' || $cmd eq 'start' || $cmd eq 'stop') {
+	my @items = map { $_->{item} } @programs;
+	$full_cmd = sprintf("sudo supervisorctl %s \\\n    %s", $cmd, join(" \\\n    ", @items));
+} elsif ($cmd eq 'remove') {
+	my @groups = map { (split(':', $_->{item}))[0] } @programs;
+	$full_cmd = sprintf("sudo supervisorctl %s \\\n    %s", $cmd, join(" \\\n    ", @groups));
+} else {
+	print "$basename: Unrecognized command: '$cmd'\n";
+	exit 1;
+}
+
+print "Press enter to run:\n\n$full_cmd\n";
+my $input;
+read STDIN, $input, 1;
+
+system $full_cmd;
