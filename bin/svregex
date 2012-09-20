@@ -4,8 +4,12 @@ use strict;
 use warnings;
 
 use File::Basename qw( basename );
+use English;
+
+$OUTPUT_AUTOFLUSH = 1;
 
 my $basename = basename $0;
+my $sleep_time = 10;
 
 sub usage {
 	print STDERR "usage: $basename <supervisor-cmd> <regex>\n";}
@@ -53,5 +57,13 @@ read STDIN, $input, 1;
 for my $cmd (@full_cmds) {
 	print "$cmd\n";
 	system $cmd;
+	if (@full_cmds > 1) {
+		print "Sleeping for $sleep_time seconds: [";
+		for (1 .. $sleep_time) {
+			print '.';
+			sleep 1;
+		}
+		print "]\n";
+	}
 	print "\n";
 }
