@@ -54,11 +54,13 @@ printf "Press enter to run:\n\n%s\n", join("\n", @full_cmds);
 my $input;
 read STDIN, $input, 1;
 
-for my $cmd (@full_cmds) {
+for (my $i=0; $i < @full_cmds; $i++) {
+	my $cmd = $full_cmds[$i];
 	print "$cmd\n";
 	system $cmd;
-	if (@full_cmds > 1) {
-		print "Sleeping for $sleep_time seconds: [";
+
+	if ($i < $#full_cmds) {
+		print "\nSleeping for $sleep_time seconds: [";
 		for (1 .. $sleep_time) {
 			print '.';
 			sleep 1;
