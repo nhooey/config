@@ -31,4 +31,7 @@ shopt -s dotglob
 yes | mv -fi config.git/* .
 rm -rf config.git
 
+
+git --git-dir=$HOME/.config.git/ --work-tree=$HOME remote set-url --push origin git@github.shuttercorp.net:nhooey/config.git
+
 echo "Now log out and log in..."
