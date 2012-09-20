@@ -28,24 +28,30 @@ for my $line (split("\n", $supervisor_status)) {
 	push @programs, { item => $item, status => $status, details => $details };
 }
 
-my $full_cmd;
+my @full_cmds;
 
 if ($cmd eq 'status') {
 	print "$supervisor_status\n";
 	exit 0;
 } elsif ($cmd eq 'restart' || $cmd eq 'start' || $cmd eq 'stop') {
 	my @items = map { $_->{item} } @programs;
-	$full_cmd = sprintf("sudo supervisorctl %s \\\n    %s", $cmd, join(" \\\n    ", @items));
+	@full_cmds = map {
+		sprintf("sudo supervisorctl %s %s", $cmd, $_);
+	} @items;
 } elsif ($cmd eq 'remove') {
 	my @groups = map { (split(':', $_->{item}))[0] } @programs;
-	$full_cmd = sprintf("sudo supervisorctl %s \\\n    %s", $cmd, join(" \\\n    ", @groups));
+	@full_cmds = [ sprintf("sudo supervisorctl %s \\\n    %s", $cmd, join(" \\\n    ", @groups)) ];
 } else {
 	print "$basename: Unrecognized command: '$cmd'\n";
 	exit 1;
 }
 
-print "Press enter to run:\n\n$full_cmd\n";
+printf "Press enter to run:\n\n%s\n", join("\n", @full_cmds);
 my $input;
 read STDIN, $input, 1;
 
-system $full_cmd;
+for my $cmd (@full_cmds) {
+	print "$cmd\n";
+	system $cmd;
+	print "\n";
+}
