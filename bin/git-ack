@@ -1,0 +1,3 @@
+#!/bin/bash
+
+ack $* $(git ls-files)
