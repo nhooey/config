@@ -21,7 +21,9 @@ fi
 
 $echo_dot_bashrc
 
-PATH="/opt/local/libexec/gnubin:$HOME/bin/shutter:$HOME/bin:$HOME/perl5/bin:$HOME/.gem/ruby/1.8/bin:/usr/local/bin:$PATH"
+RUBY_PATH="/usr/local/Cellar/ruby/1.9.2-p290/bin"
+
+PATH="/opt/local/libexec/gnubin:$HOME/bin/shutter:$HOME/bin:$HOME/perl5/bin:$RUBY_PATH:/usr/local/bin:$PATH"
 
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return

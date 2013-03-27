@@ -8,6 +8,6 @@ echo "Making directory: $volume ..."
 mkdir $volume
 
 echo "Mounting volume..."
-sshfs nhooey@dev-code01:/home/nhooey -o reconnect $volume || exit 1
+sshfs nhooey@dev-code02:/home/nhooey -o reconnect $volume || exit 1
 
 echo "Mounted."
