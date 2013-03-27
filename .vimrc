@@ -23,6 +23,15 @@ syntax on
 " turn on this option as well
 "set background=dark
 
+" Vundle
+set nocompatible
+filetype off
+set rtp+=~/.vim/bundle/vundle/
+call vundle#rc()
+Bundle 'gmarik/vundle'
+Bundle 'FuzzyFinder'
+filetype plugin indent on
+
 " Uncomment the following to have Vim jump to the last position when
 " reopening a file
 if has("autocmd")
