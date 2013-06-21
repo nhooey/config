@@ -4,7 +4,7 @@ alias la='ls -A'
 alias l='ls -CF'
 alias ls='ls --color=always'
 
-alias config='git --git-dir=/home/neil/.config.git/ --work-tree=/home/neil'
+alias config="git --git-dir=$HOME/.config.git/ --work-tree=$HOME"
 
 alias tree='tree -C | less -R'
 
