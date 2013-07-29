@@ -7,10 +7,6 @@ if [ -f "$HOME/.echo_login" ]; then
 	echo_dot_bashrc="echo '~/.bashrc'"
 fi
 
-if [ -f ~/.installation_environment ]; then
-	. ~/.installation_environment
-fi
-
 if [ -f "$HOME/.bash_aliases" ]; then
 	. "$HOME/.bash_aliases"
 fi
@@ -20,10 +16,6 @@ if [ -f "$HOME/bin/visible-term-color.sh" ]; then
 fi
 
 $echo_dot_bashrc
-
-RUBY_PATH="/usr/local/Cellar/ruby/1.9.2-p290/bin"
-
-PATH="/opt/local/libexec/gnubin:$HOME/bin/shutter:$HOME/bin:$HOME/perl5/bin:$RUBY_PATH:/usr/local/bin:$PATH"
 
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
@@ -39,25 +31,6 @@ shopt -s checkwinsize
 
 # make less more friendly for non-text input files, see lesspipe(1)
 [ -x /usr/bin/lesspipe ] && eval "$(lesspipe)"
-
-# set variable identifying the chroot you work in (used in the prompt below)
-if [ -z "$debian_chroot" ] && [ -r /etc/debian_chroot ]; then
-	debian_chroot=$(cat /etc/debian_chroot)
-fi
-
-function __shutterstock_env()
-{
-	hostname="$(hostname)"
-	if [[ $hostname =~ '.*DEV.*' ]]; then
-		echo 'dev'
-	elif [[ $hostname =~ '.*QA.*' ]]; then
-		echo 'qa'
-	elif [[ $hostname =~ '(worker[0-9]?|lvs[0-9]c)' ]]; then
-		echo 'prod'
-	else
-		echo 'unknown'
-	fi
-}
 
 # Inherit owner and group for new files
 umask 002
@@ -85,33 +58,6 @@ function __host_ps1()
 HOSTNAME_COLOR=$(__host_ps1)
 UNIQUE_ID="$(hostname):$(tty)"
 mkdir $HOME/.bashrc.variables 2> /dev/null
-
-function __get_perl5lib() {
-	REPO_DIR="$(__gitdir | sed -e 's/\/\?\.git//')"
-	if [ "x$REPO_DIR" == "x" ]; then
-		REPO_DIR="$(readlink -f $(pwd))"
-	fi
-	REPO_DIR="$(cd $REPO_DIR && pwd)"
-	CORRECT_LIB="$BASE_PERL5LIB:$REPO_DIR/lib:$REPO_DIR/t/lib:$REPO_DIR/lil_brother/lib:$REPO_DIR/lil_brother/t/lib"
-	echo -n $CORRECT_LIB
-}
-
-function ssperl5lib() {
-	export PERL5LIB="$(__get_perl5lib)"
-}
-
-function __perl5lib_ok() {
-	if ! type -t __gitdir > /dev/null; then
-		return 1
-	fi
-	if [ "x$(__gitdir)" != "x" ]; then
-		if [ "$PERL5LIB" != "$(__get_perl5lib)" ]; then
-			tput setaf 1
-			echo -n '[p]'
-			tput sgr0
-		fi
-	fi
-}
 
 function __color_pwd()
 {
@@ -172,9 +118,6 @@ xterm*|linux|screen*|vt320|ansi)
 	;;
 esac
 
-# Comment in the above and uncomment this below for a color prompt
-#PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
-
 # If this is an xterm set the title to user@host:dir
 case "$TERM" in
 xterm*|rxvt*|screen*)
@@ -216,45 +159,18 @@ export HISTSIZE=1000000
 shopt -s histappend
 PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
 
-# Shutterstock
-export BASE_PERL5LIB=$HOME/perl5/lib/perl5
-export PERL5LIB="$BASE_PERL5LIB"
-export CVSROOT=/data/export/code/cvsroot
-export PERL_CPANM_OPT="--local-lib=~/perl5"
-if [ $(__shutterstock_env) == 'dev' ]; then
-	eval $(perl -I $HOME/perl5/lib/perl5 -Mlocal::lib)
-fi
-
-PATH="$HOME/bin/shutter:$HOME/bin:/usr/local/bin:/sbin:/usr/sbin:$PATH"
+PATH="$HOME/bin/vine:$HOME/bin:/usr/local/bin:/sbin:/usr/sbin:$PATH"
 
 # Git
-if [ -f "/usr/local/src/git-1.7.1/contrib/completion/git-completion.bash" ]; then
-	source /usr/local/src/git-1.7.1/contrib/completion/git-completion.bash
-elif [ -f "$HOME/.git-completion.bash" ]; then
+if [ -f "$HOME/.git-completion.bash" ]; then
 	source "$HOME/.git-completion.bash"
 fi
 
 alias config="git --git-dir=$HOME/.config.git/ --work-tree=$HOME"
 
-if [ -f "$HOME/.shutterstockrc" ]; then
-	. "$HOME/.shutterstockrc"
-fi
-
-if which sinit > /dev/null 2>&1; then
-	sinit
-fi
-
 COLORS="$HOME/.dircolors"
 if [ -f $COLORS ]; then
 	eval `dircolors --sh "$COLORS" 2>/dev/null`
 fi
-
-# Sorting Algorithms
-#hostname=$(hostname)
-#if [[ $hostname =~ '.*DEV-data.*' ]]; then
-#	PERL5LIB="$HOME/git/search/lib"
-#	echo "Overriding PERL5LIB to $PERL5LIB"
-#	export PERL5LIB
-#fi
 
 $echo_dot_bashrc
