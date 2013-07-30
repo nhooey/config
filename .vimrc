@@ -23,13 +23,28 @@ syntax on
 " turn on this option as well
 "set background=dark
 
+colorscheme torte
+
+if has("gui_macvim")
+	set macmeta
+endif
+
 " Vundle
 set nocompatible
 filetype off
 set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
 Bundle 'gmarik/vundle'
+Bundle 'L9'
 Bundle 'FuzzyFinder'
+Bundle 'nhooey/tabname'
+Bundle 'sollidsnake/vterm'
+Bundle 'vim-scripts/DetectIndent'
+Bundle 'vim-scripts/Align'
+Bundle 'mileszs/ack.vim'
+Bundle 'vim-scripts/vcscommand.vim'
+Bundle 'tpope/vim-fugitive'
+
 filetype plugin indent on
 
 " Uncomment the following to have Vim jump to the last position when
@@ -80,26 +95,21 @@ set nobackup
 set nowritebackup
 set noswapfile
 
-" Make the mouse behave like GVim, scrolling and clicking
-set ttymouse=xterm2
-
 " Always sync syntax highlighting at least 200 lines back
 syntax sync minlines=800
 
 " Use 256 Colors
 set t_Co=256
 
+" Window key bindings
+nn <M-k> <C-w>k
+nn <M-j> <C-w>j
+nn <M-h> <C-w>h
+nn <M-l> <C-w>l
+
 " Make shift-insert work like in Xterm
 map  <S-Insert> <MiddleMouse>
 map! <S-Insert> <MiddleMouse>
-
-" Source a global configuration file if available
-" XXX Deprecated, please move your changes here in /etc/vim/vimrc
-if filereadable("/etc/vim/vimrc.local")
-	source /etc/vim/vimrc.local
-endif
-
-colorscheme neil
 
 " Buffer navigation shortcuts
 nn mk :cprev<CR>
@@ -248,75 +258,41 @@ vnoremap <c-c>3 :call VisualHighlight(3, 'yellow')<CR>
 " Arduino specific settings
 au BufRead,BufNewFile *.pde set filetype=cpp
 
-" Mason specific settings
-" -----------------------------------------------------------------------------
-au BufRead,BufNewFile *.mh,*.md,*.mhtml,*.html,autohandler set filetype=mason
-highlight comp ctermfg=green guifg=green
-match comp /['"][\/]\?\w\+\.m[hd]\(tml\)\?['"]/
-" -----------------------------------------------------------------------------
-
 " Undo reloading of a file
 " -----------------------------------------------------------------------------
-" function! s:ReloadFilePreserveUndo()
-" 	" Load content of new file into a list of lines. Note that without last
-" 	" argument (1) it may fail to load file that does not contain "\n"
-" 	" character, and may consume last "\n" character
-" 	try
-" 		let filecontents=readfile(expand('%'), 1)
-" 	catch
-" 		" We return 0 on error
-" 		return 0
-" 	endtry
-" 	" Get the number of lines
-" 	let fclen=len(filecontents)
-" 	" If number of lines was reduced
-" 	if fclen<line('$')
-" 		" Delete some last lines to “black hole” register in order to leave
-" 		" registers untouched
-" 		execute fclen.",$d _"
-" 		" Join previous change with call setline() so that reloading can be
-" 		" undone in one step
-" 		undojoin
-" 	endif
-" 	" Overwrite lines with new contents. That does not move cursor.
-" 	" It returns 0 on success, so we need to invert that
-" 	let r=!setline(1, filecontents)
-" 	" Indicate that file was not modified: buffer contents after reload is equal
-" 	" to file contents
-" 	set nomodified
-" 	return r
-" endfunction
-" 
+function! s:ReloadFilePreserveUndo()
+	" Load content of new file into a list of lines. Note that without last
+	" argument (1) it may fail to load file that does not contain "\n"
+	" character, and may consume last "\n" character
+	try
+		let filecontents=readfile(expand('%'), 1)
+	catch
+		" We return 0 on error
+		return 0
+	endtry
+	" Get the number of lines
+	let fclen=len(filecontents)
+	" If number of lines was reduced
+	if fclen<line('$')
+		" Delete some last lines to “black hole” register in order to leave
+		" registers untouched
+		execute fclen.",$d _"
+		" Join previous change with call setline() so that reloading can be
+		" undone in one step
+		undojoin
+	endif
+	" Overwrite lines with new contents. That does not move cursor.
+	" It returns 0 on success, so we need to invert that
+	let r=!setline(1, filecontents)
+	" Indicate that file was not modified: buffer contents after reload is equal
+	" to file contents
+	set nomodified
+	return r
+endfunction
+"
 " " Defined the editor command 'Reload' to call ReloadFilePreserveUndo
 " command -nargs=0 Reload call s:ReloadFilePreserveUndo()
-" 
+"
 " " Automatically reload files when they change externally
-" au FileChangedShell * Reload
+au FileChangedShell * Reload
 " -----------------------------------------------------------------------------
-
-" Highlight groups
-" -----------------------------------------------------------------------------
-"         |          |      |          |    |          |      |          |    |          |
-:if has("gui_running") | gui | endif
-highlight green        ctermbg=green     guibg=green     ctermfg=black     guifg=black
-highlight blue         ctermbg=blue      guibg=blue      ctermfg=black     guifg=black
-highlight red          ctermbg=red       guibg=red       ctermfg=black     guifg=black
-highlight yellow       ctermbg=yellow    guibg=yellow    ctermfg=black     guifg=black
-
-highlight clear DiffAdd
-highlight clear DiffChange
-highlight clear DiffText
-highlight clear DiffDelete
-
-highlight DiffAdd      ctermbg=black     guibg=#0c1427
-highlight DiffChange   ctermbg=darkblue  guibg=#0c1427
-highlight DiffText     ctermbg=black     guibg=#19316b
-highlight DiffDelete   ctermbg=none      guibg=#292929   ctermfg=black   guifg=black
-
-highlight Pmenu        ctermbg=grey      guibg=#202020   ctermfg=white      guifg=gray
-highlight PmenuSel     ctermbg=red       guibg=#661717   ctermfg=white      guifg=white    gui=bold
-
-highlight netrwDir     guifg=#7070FF
-
-" -----------------------------------------------------------------------------
-
