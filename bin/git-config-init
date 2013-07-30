@@ -34,4 +34,7 @@ rm -rf config.git
 
 git --git-dir=$HOME/.config.git/ --work-tree=$HOME remote set-url --push origin git@github.shuttercorp.net:nhooey/config.git
 
+# Install Vundle for Vim
+git clone https://github.com/gmarik/vundle.git ~/.vim/bundle/vundle; vim +BundleInstall +qall
+
 echo "Now log out and log in..."
