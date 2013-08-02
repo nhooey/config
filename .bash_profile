@@ -21,6 +21,7 @@ fi
 
 unset USERNAME
 
+export EDITOR=vim
 export CLICOLOR=1
 
 if [ -f "$HOME/.bash_aliases" ]; then
