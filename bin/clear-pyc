@@ -1,0 +1,2 @@
+#!/bin/bash
+find $(git ls-files | grep '/' | sed -e 's/\(.*\)\/.*/\1/g' | sort | uniq) -name '*.pyc' -exec rm -fv {} \;
