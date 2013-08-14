@@ -44,6 +44,8 @@ Bundle 'vim-scripts/Align'
 Bundle 'mileszs/ack.vim'
 Bundle 'vim-scripts/vcscommand.vim'
 Bundle 'tpope/vim-fugitive'
+Bundle 'chrisbra/NrrwRgn'
+Bundle 'thisivan/vim-bufexplorer'
 
 filetype plugin indent on
 
