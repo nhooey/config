@@ -75,6 +75,7 @@ set smartcase       " Do smart case matching
 set autowrite       " Automatically save before commands like :next and :make
 "set hidden         " Hide buffers when they are abandoned
 set mouse=a         " Enable mouse usage (all modes) in terminals
+set laststatus=2
 
 " Remove mouse open from netrw
 let g:netrw_mousemaps = 0
