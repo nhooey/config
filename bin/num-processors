@@ -1,3 +1,12 @@
 #!/bin/bash
 
-printf "%2d\n" $(grep processor /proc/cpuinfo | wc -l)
+processors=0
+
+uname=`uname`
+if [[ "$uname" == 'Linux' ]]; then
+	processors="$(grep processor /proc/cpuinfo | wc -l)"
+elif [[ "$uname" == 'Darwin' ]]; then
+	processors="$(sysctl hw.ncpu | awk '{print $2}')"
+fi
+
+printf "%2d\n" $processors 
