@@ -24,6 +24,17 @@ syntax on
 "set background=dark
 
 colorscheme torte
+hi Pmenu    guifg=white guibg=darkblue
+hi PmenuSel	guifg=white guibg=blue
+
+set cursorline
+augroup CursorLine
+	au!
+	au VimEnter,WinEnter,BufWinEnter * setlocal cursorline
+	au WinLeave * setlocal nocursorline
+augroup END
+hi CursorLine   cterm=NONE ctermbg=darkred ctermfg=white guibg=darkred guifg=white
+hi CursorColumn cterm=NONE ctermbg=darkred ctermfg=white guibg=darkred guifg=white
 
 if has("gui_macvim")
 	set macmeta
