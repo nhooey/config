@@ -33,12 +33,15 @@ augroup CursorLine
 	au VimEnter,WinEnter,BufWinEnter * setlocal cursorline
 	au WinLeave * setlocal nocursorline
 augroup END
-hi CursorLine   cterm=NONE ctermbg=darkred ctermfg=white guibg=darkred guifg=white
-hi CursorColumn cterm=NONE ctermbg=darkred ctermfg=white guibg=darkred guifg=white
+hi CursorLine   cterm=NONE ctermbg=darkred  guibg=darkred
+hi CursorColumn cterm=NONE ctermbg=darkred  guibg=darkred
+hi SignColumn              ctermbg=darkgrey guibg=#222222
 
 if has("gui_macvim")
 	set macmeta
 endif
+
+set guifont=Menlo:h10
 
 " Vundle
 set nocompatible
@@ -57,6 +60,9 @@ Bundle 'vim-scripts/vcscommand.vim'
 Bundle 'tpope/vim-fugitive'
 Bundle 'chrisbra/NrrwRgn'
 Bundle 'thisivan/vim-bufexplorer'
+Bundle 'airblade/vim-gitgutter'
+Bundle 'lepture/vim-jinja'
+Bundle 'epmatsw/ag.vim'
 
 filetype plugin indent on
 
@@ -138,6 +144,8 @@ nn dp :diffget 3<CR>
 nn <Tab>   :FufFile<CR>
 nn <S-Tab> :FufFile **/<CR>
 let g:fuf_maxMenuWidth = 200
+
+
 
 " for yaml, always use two spaces to indent
 autocmd FileType yaml,yml set expandtab tabstop=2 shiftwidth=2
@@ -305,7 +313,7 @@ function! s:ReloadFilePreserveUndo()
 endfunction
 "
 " " Defined the editor command 'Reload' to call ReloadFilePreserveUndo
-" command -nargs=0 Reload call s:ReloadFilePreserveUndo()
+command! -nargs=0 Reload call s:ReloadFilePreserveUndo()
 "
 " " Automatically reload files when they change externally
 au FileChangedShell * Reload
