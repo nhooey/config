@@ -71,6 +71,7 @@ filetype plugin indent on
 if has("autocmd")
 	au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$")
 	\| exe "normal g'\"" | endif
+    au BufReadPost * :DetectIndent
 endif
 
 " Uncomment the following to have Vim load indentation rules according to the
