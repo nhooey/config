@@ -130,7 +130,7 @@ xterm*|linux|screen*|vt320|ansi)
 		SCREEN_WIN="[$WINDOW]"
 	fi
 
-	PS1='\[\033[00;31m\]$(r=$?; if test $r -ne 0; then echo "[$r]"; set ?=$r; unset r; fi)\[\033[00m\]${debian_chroot:+($debian_chroot)}\[\033[01;37m\]\u\[\033[01;30m\]@$HOSTNAME_COLOR$(__git_ps1_branch):$(__color_pwd)
+	PS1='\[\033[40;1;41m\]$(r=$?; if test $r -ne 0; then echo "[$r]"; set ?=$r; unset r; fi)\[\033[00m\]${debian_chroot:+($debian_chroot)}\[\033[01;37m\]\u\[\033[01;30m\]@$HOSTNAME_COLOR$(__git_ps1_branch):$(__color_pwd)
 \[\033[01;30m\]$(date +"%Y-%m-%d %H:%M:%S")\[\033[00m\] \[\033[00;34m\]\$\[\033[00m\] '
 	;;
 *)
