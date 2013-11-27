@@ -41,8 +41,6 @@ if has("gui_macvim")
 	set macmeta
 endif
 
-set guifont=Menlo:h10
-
 " Vundle
 set nocompatible
 filetype off
