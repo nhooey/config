@@ -1,0 +1,4 @@
+#!/bin/bash
+
+branch=$(git rev-parse --abbrev-ref HEAD)
+git diff $* $(git merge-base "master" "$branch") "$branch"
