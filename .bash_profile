@@ -191,6 +191,6 @@ if [ -f $COLORS ]; then
 	eval `dircolors --sh "$COLORS" 2>/dev/null`
 fi
 
-export PATH="$HOME/bin/vine:$HOME/bin:/usr/local/bin:/sbin:/usr/sbin:$PATH"
+export PATH="$HOME/bin/vine:$HOME/bin:$(brew --prefix coreutils)/libexec/gnubin:/usr/local/bin:/sbin:/usr/sbin:/usr/local/share/npm/bin:$PATH"
 
 $echo_dot_bashprofile
