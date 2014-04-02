@@ -1,0 +1,16 @@
+#!/bin/bash
+
+program="$(basename $0)"
+branch="$(git rev-parse --abbrev-ref HEAD)"
+merged=0
+suffix=""
+if git branch --contains $branch | egrep '^..master$' > /dev/null; then
+    suffix="~1"
+fi
+
+
+IFS='-' read -ra arr <<< "$program"
+method=${arr[1]}
+
+echo git $method $* "$(git merge-base "master" "$branch")${suffix}..$branch" $*
+git $method "$(git merge-base "master" "$branch")${suffix}..$branch" $*
