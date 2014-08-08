@@ -191,6 +191,13 @@ if [ -f $COLORS ]; then
 	eval `dircolors --sh "$COLORS" 2>/dev/null`
 fi
 
-export PATH="$HOME/bin/vine:$HOME/bin:$(brew --prefix coreutils)/libexec/gnubin:/usr/local/bin:/sbin:/usr/sbin:/usr/local/share/npm/bin:$PATH"
+if [[ $OSTYPE == darwin* ]]; then
+	PATH_BREW="$(brew --prefix coreutils)/libexec/gnubin"
+	PATH_GEM="$(gem env | grep 'EXECUTABLE DIRECTORY' | egrep -o '[^ ]+$')"
+fi
+
+export PATH="$HOME/bin/vine:$HOME/bin:$PATH_BREW:$PATH_GEM:/usr/local/bin:/sbin:/usr/sbin:/usr/local/share/npm/bin:$PATH"
+
+export MANPATH="$(brew --prefix)/opt/coreutils/libexec/gnuman"
 
 $echo_dot_bashprofile
