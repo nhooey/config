@@ -201,3 +201,8 @@ export PATH="$HOME/bin/vine:$HOME/bin:$PATH_BREW:$PATH_GEM:/usr/local/bin:/sbin:
 export MANPATH="$(brew --prefix)/opt/coreutils/libexec/gnuman"
 
 $echo_dot_bashprofile
+
+# dottools: add distribution binary directories to PATH
+if [ -r "$HOME/.tools-cache/setup-dottools-path.sh" ]; then
+  . "$HOME/.tools-cache/setup-dottools-path.sh"
+fi
