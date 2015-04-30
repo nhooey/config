@@ -81,7 +81,7 @@ mkdir $HOME/.bashrc.variables 2> /dev/null
 
 function __color_pwd()
 {
-	__color $(pwd | sed -e "s,^$HOME,~,")
+	__color "$(pwd | sed -e "s,^$HOME,~,")"
 }
 
 function __git_ps1_branch()
