@@ -27,3 +27,5 @@ if [ "$TERM" != "dumb" ]; then
 	alias dir='ls --color=auto --format=vertical'
 	alias vdir='ls --color=auto --format=long'
 fi
+
+alias ag="ag --color-line-number='0;34' --color-match='0;35' --color-path='0;32'"
