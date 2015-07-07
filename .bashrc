@@ -4,7 +4,7 @@
 
 echo_dot_bashrc=''
 if [ -f "$HOME/.echo_login" ]; then
-	echo_dot_bashrc="echo '~/.bashrc'"
+    echo_dot_bashrc="echo '~/.bashrc'"
 fi
 
 $echo_dot_bashrc '>>'

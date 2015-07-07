@@ -9,7 +9,7 @@
 
 echo_dot_profile=''
 if [ -f "$HOME/.echo_login" ]; then
-	echo_dot_profile="echo '~/.profile'"
+    echo_dot_profile="echo '~/.profile'"
 fi
 
 $echo_dot_profile '>>'
@@ -23,7 +23,7 @@ fi
 if [ -n "$BASH_VERSION" ]; then
     # include .bashrc if it exists
     if [ -f ~/.bashrc ]; then
-		. ~/.bashrc
+        . ~/.bashrc
     fi
 fi
 
