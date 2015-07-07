@@ -2,10 +2,10 @@
 
 echo_dot_bashprofile=''
 if [ -f "$HOME/.echo_login" ]; then
-	echo_dot_bashprofile="echo '~/.bash_profile'"
+	echo_dot_bashprofile="echo '~/.bash_profile' $*"
 fi
 
-$echo_dot_bashprofile
+$echo_dot_bashprofile '>>'
 
 # Run stuff that's not on every machine
 if [ -f ~/.bash_local ]; then
@@ -31,8 +31,6 @@ fi
 if [ -f "$HOME/bin/visible-term-color.sh" ]; then
 	. "$HOME/bin/visible-term-color.sh"
 fi
-
-$echo_dot_bashrc
 
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
@@ -200,9 +198,9 @@ export PATH="$HOME/bin/vine:$HOME/bin:$PATH_BREW:$PATH_GEM:/usr/local/bin:/sbin:
 
 export MANPATH="$(brew --prefix)/opt/coreutils/libexec/gnuman"
 
-$echo_dot_bashprofile
-
 # dottools: add distribution binary directories to PATH
 if [ -r "$HOME/.tools-cache/setup-dottools-path.sh" ]; then
   . "$HOME/.tools-cache/setup-dottools-path.sh"
 fi
+
+$echo_dot_bashprofile '<<'

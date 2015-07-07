@@ -12,7 +12,7 @@ if [ -f "$HOME/.echo_login" ]; then
 	echo_dot_profile="echo '~/.profile'"
 fi
 
-$echo_dot_profile
+$echo_dot_profile '>>'
 
 # set PATH so it includes user's private bin if it exists
 if [ -d ~/bin ] ; then
@@ -27,4 +27,4 @@ if [ -n "$BASH_VERSION" ]; then
     fi
 fi
 
-$echo_dot_profile
+$echo_dot_profile '<<'
