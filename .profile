@@ -7,7 +7,7 @@
 # the default umask is set in /etc/profile
 #umask 022
 
-echo_dot_profile=''
+echo_dot_profile=':'
 if [ -f "$HOME/.echo_login" ]; then
     echo_dot_profile="echo '~/.profile'"
 fi
