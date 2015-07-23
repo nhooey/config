@@ -2,7 +2,14 @@
 
 processors=0
 
-uname=`uname`
+uname_file=/tmp/uname
+uname=""
+if [ ! -f /tmp/uname ]; then
+	uname > $uname_file
+fi
+
+uname=$(cat $uname_file)
+
 if [[ "$uname" == 'Linux' ]]; then
 	processors="$(grep processor /proc/cpuinfo | wc -l)"
 elif [[ "$uname" == 'Darwin' ]]; then
