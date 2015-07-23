@@ -323,3 +323,5 @@ command! -nargs=0 Reload call s:ReloadFilePreserveUndo()
 " " Automatically reload files when they change externally
 au FileChangedShell * Reload
 " -----------------------------------------------------------------------------
+
+let NERDTreeIgnore = ['\.pyc$']
