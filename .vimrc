@@ -36,6 +36,8 @@ augroup END
 hi CursorLine   cterm=NONE ctermbg=darkred  guibg=darkred
 hi CursorColumn cterm=NONE ctermbg=darkred  guibg=darkred
 hi SignColumn              ctermbg=darkgrey guibg=#222222
+hi Pmenu        ctermfg=15 ctermbg=13       guibg=DarkBlue
+hi PmenuSel     ctermfg=15 ctermbg=0        guibg=Blue
 
 if has("gui_macvim")
 	set macmeta
