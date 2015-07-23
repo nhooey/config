@@ -62,7 +62,11 @@ Bundle 'chrisbra/NrrwRgn'
 Bundle 'thisivan/vim-bufexplorer'
 Bundle 'airblade/vim-gitgutter'
 Bundle 'lepture/vim-jinja'
-Bundle 'epmatsw/ag.vim'
+Bundle 'rking/ag.vim'
+Bundle 'scrooloose/nerdtree'
+Bundle 'wookiehangover/jshint.vim'
+Bundle 'vim-scripts/gitignore'
+Bundle 'puppetlabs/puppet-syntax-vim'
 
 filetype plugin indent on
 
