@@ -25,13 +25,13 @@ syntax on
 
 colorscheme torte
 hi Pmenu    guifg=white guibg=darkblue
-hi PmenuSel	guifg=white guibg=blue
+hi PmenuSel    guifg=white guibg=blue
 
 set cursorline
 augroup CursorLine
-	au!
-	au VimEnter,WinEnter,BufWinEnter * setlocal cursorline
-	au WinLeave * setlocal nocursorline
+    au!
+    au VimEnter,WinEnter,BufWinEnter * setlocal cursorline
+    au WinLeave * setlocal nocursorline
 augroup END
 hi CursorLine   cterm=NONE ctermbg=darkred  guibg=darkred
 hi CursorColumn cterm=NONE ctermbg=darkred  guibg=darkred
@@ -40,7 +40,7 @@ hi Pmenu        ctermfg=15 ctermbg=13       guibg=DarkBlue
 hi PmenuSel     ctermfg=15 ctermbg=0        guibg=Blue
 
 if has("gui_macvim")
-	set macmeta
+    set macmeta
 endif
 
 " Vundle
@@ -73,8 +73,8 @@ filetype plugin indent on
 " Uncomment the following to have Vim jump to the last position when
 " reopening a file
 if has("autocmd")
-	au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$")
-	\| exe "normal g'\"" | endif
+    au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$")
+    \| exe "normal g'\"" | endif
     au BufReadPost * :DetectIndent
 endif
 
@@ -82,9 +82,9 @@ endif
 " detected filetype. Per default Debian Vim only load filetype specific
 " plugins.
 if has("autocmd")
-	filetype on
-	filetype plugin on
-	filetype indent on
+    filetype on
+    filetype plugin on
+    filetype indent on
 endif
 
 " The following are commented out as they cause vim to behave a lot
@@ -166,19 +166,19 @@ set tags=tags,lib/tags,task-deployment/lib/tags
 highlight QuestionableWhitespace ctermbg=black guibg=#333333
 autocmd BufNewFile,BufRead * call HighlightWhitespace()
 function! HighlightWhitespace()
-	if &expandtab
-		" highlight tabs not at the beginning of the line (but allow # for
-		" comments and % for mason), and trailing whitespace not followed by
-		" the cursor (maybe think about highlighting leading spaces not in
-		" denominations of tabstop?)
-		match QuestionableWhitespace /\(^[%#]\?\t*\)\@<!\t\|[ \t]\+\(\%#\)\@!$/
-	else
-		" highlight any leading spaces (TODO: ignore spaces in formatted
-		" assignment statements), " tabs not at the beginning of the line (but
-		" allow # for comments and % for mason), " and trailing whitespace not
-		" followed by the cursor
-		match QuestionableWhitespace /^ \+\|\(^[%#]\?\t*\)\@<!\t\|[ \t]\+\(\%#\)\@!$/
-	endif
+    if &expandtab
+        " highlight tabs not at the beginning of the line (but allow # for
+        " comments and % for mason), and trailing whitespace not followed by
+        " the cursor (maybe think about highlighting leading spaces not in
+        " denominations of tabstop?)
+        match QuestionableWhitespace /\(^[%#]\?\t*\)\@<!\t\|[ \t]\+\(\%#\)\@!$/
+    else
+        " highlight any leading spaces (TODO: ignore spaces in formatted
+        " assignment statements), " tabs not at the beginning of the line (but
+        " allow # for comments and % for mason), " and trailing whitespace not
+        " followed by the cursor
+        match QuestionableWhitespace /^ \+\|\(^[%#]\?\t*\)\@<!\t\|[ \t]\+\(\%#\)\@!$/
+    endif
 endfunction
 " -----------------------------------------------------------------------------
 
@@ -187,12 +187,12 @@ noremap <F3> :FufFile **/<CR>
 
 " Remap tab to autocomplete words when not at the beginning of a line
 function! InsertTabWrapper()
-	let col = col('.') - 1
-	if !col || getline('.')[col - 1] !~ '\k'
-		return "\<tab>"
-	else
-		return "\<c-p>"
-	endif
+    let col = col('.') - 1
+    if !col || getline('.')[col - 1] !~ '\k'
+        return "\<tab>"
+    else
+        return "\<c-p>"
+    endif
 endfunction
 inoremap <tab> <c-r>=InsertTabWrapper()<cr>
 
@@ -200,33 +200,33 @@ inoremap <tab> <c-r>=InsertTabWrapper()<cr>
 " -----------------------------------------------------------------------------
 " see http://www.perlmonks.org/?node_id=561215 for more info
 function! ToggleComment()
-	let comment_start = '#'
-	let comment_end   = ''
+    let comment_start = '#'
+    let comment_end   = ''
 
-	if &filetype == 'sql'
-		let comment_start = '--'
-	endif
-	if &filetype == 'vim'
-		let comment_start = '"'
-	endif
-	if &filetype == 'css'
-		let comment_start = '\/\* '
-		let comment_end   = ' \*\/'
-	endif
-	if &filetype == 'javascript'
-		let comment_start = '\/\/'
-	endif
+    if &filetype == 'sql'
+        let comment_start = '--'
+    endif
+    if &filetype == 'vim'
+        let comment_start = '"'
+    endif
+    if &filetype == 'css'
+        let comment_start = '\/\* '
+        let comment_end   = ' \*\/'
+    endif
+    if &filetype == 'javascript'
+        let comment_start = '\/\/'
+    endif
 
-	" if the comment start is at the beginning of the line and isn't followed
-	" by a space (i.e. the most likely form of an actual comment, to keep from
-	" uncommenting real comments
-	if getline('.') =~ ('^' . comment_start . '\( \w\)\@!')
-		execute 's/^' . comment_start . '//'
-		execute 's/' . comment_end . '$//'
-	else
-		s/^/\=comment_start/
-		s/$/\=comment_end/
-	endif
+    " if the comment start is at the beginning of the line and isn't followed
+    " by a space (i.e. the most likely form of an actual comment, to keep from
+    " uncommenting real comments
+    if getline('.') =~ ('^' . comment_start . '\( \w\)\@!')
+        execute 's/^' . comment_start . '//'
+        execute 's/' . comment_end . '$//'
+    else
+        s/^/\=comment_start/
+        s/$/\=comment_end/
+    endif
 endfunction
 map <silent> X :call ToggleComment()<cr>j
 " -----------------------------------------------------------------------------
@@ -234,29 +234,29 @@ map <silent> X :call ToggleComment()<cr>j
 " Super Star Search
 " -----------------------------------------------------------------------------
 function! CmdLine(str)
-	exe "menu Foo.Bar :" . a:str
-	emenu Foo.Bar
-	unmenu Foo
+    exe "menu Foo.Bar :" . a:str
+    emenu Foo.Bar
+    unmenu Foo
 endfunction
 
 " From an idea by Michael Naumann
 function! VisualSearch(direction) range
-	let l:saved_reg = @"
-	execute "normal! vgvy"
+    let l:saved_reg = @"
+    execute "normal! vgvy"
 
-	let l:pattern = escape(@", '\\/.*$^~[]')
-	let l:pattern = substitute(l:pattern, "\n$", "", "")
+    let l:pattern = escape(@", '\\/.*$^~[]')
+    let l:pattern = substitute(l:pattern, "\n$", "", "")
 
-	if a:direction == 'b'
-		execute "normal ?" . l:pattern . "^M"
-	elseif a:direction == 'gv'
-		call CmdLine("vimgrep " . '/'. l:pattern . '/' . ' **/*.')
-	elseif a:direction == 'f'
-		execute "normal /" . l:pattern . "^M"
-	endif
+    if a:direction == 'b'
+        execute "normal ?" . l:pattern . "^M"
+    elseif a:direction == 'gv'
+        call CmdLine("vimgrep " . '/'. l:pattern . '/' . ' **/*.')
+    elseif a:direction == 'f'
+        execute "normal /" . l:pattern . "^M"
+    endif
 
-	let @/ = l:pattern
-	let @" = l:saved_reg
+    let @/ = l:pattern
+    let @" = l:saved_reg
 endfunction
 
 "Basically you press * or # to search for the current selection
@@ -266,13 +266,13 @@ vnoremap <silent> gv :call VisualSearch('gv')<CR>
 " -----------------------------------------------------------------------------
 
 function! VisualHighlight(match, group) range
-	execute "normal! vgvy"
+    execute "normal! vgvy"
 
-	let l:pattern = escape(@", '\\/.*$^~[]')
-	let l:pattern = substitute(l:pattern, "\n$", "", "")
-	let l:pattern = '/' . l:pattern . '/'
+    let l:pattern = escape(@", '\\/.*$^~[]')
+    let l:pattern = substitute(l:pattern, "\n$", "", "")
+    let l:pattern = '/' . l:pattern . '/'
 
-	execute a:match 'match ' a:group ' ' l:pattern
+    execute a:match 'match ' a:group ' ' l:pattern
 endfunction
 
 vnoremap <c-c>1 :call VisualHighlight(1, 'green')<CR>
@@ -288,33 +288,33 @@ au BufRead,BufNewFile *.pde set filetype=cpp
 " Undo reloading of a file
 " -----------------------------------------------------------------------------
 function! s:ReloadFilePreserveUndo()
-	" Load content of new file into a list of lines. Note that without last
-	" argument (1) it may fail to load file that does not contain "\n"
-	" character, and may consume last "\n" character
-	try
-		let filecontents=readfile(expand('%'), 1)
-	catch
-		" We return 0 on error
-		return 0
-	endtry
-	" Get the number of lines
-	let fclen=len(filecontents)
-	" If number of lines was reduced
-	if fclen<line('$')
-		" Delete some last lines to “black hole” register in order to leave
-		" registers untouched
-		execute fclen.",$d _"
-		" Join previous change with call setline() so that reloading can be
-		" undone in one step
-		undojoin
-	endif
-	" Overwrite lines with new contents. That does not move cursor.
-	" It returns 0 on success, so we need to invert that
-	let r=!setline(1, filecontents)
-	" Indicate that file was not modified: buffer contents after reload is equal
-	" to file contents
-	set nomodified
-	return r
+    " Load content of new file into a list of lines. Note that without last
+    " argument (1) it may fail to load file that does not contain "\n"
+    " character, and may consume last "\n" character
+    try
+        let filecontents=readfile(expand('%'), 1)
+    catch
+        " We return 0 on error
+        return 0
+    endtry
+    " Get the number of lines
+    let fclen=len(filecontents)
+    " If number of lines was reduced
+    if fclen<line('$')
+        " Delete some last lines to “black hole” register in order to leave
+        " registers untouched
+        execute fclen.",$d _"
+        " Join previous change with call setline() so that reloading can be
+        " undone in one step
+        undojoin
+    endif
+    " Overwrite lines with new contents. That does not move cursor.
+    " It returns 0 on success, so we need to invert that
+    let r=!setline(1, filecontents)
+    " Indicate that file was not modified: buffer contents after reload is equal
+    " to file contents
+    set nomodified
+    return r
 endfunction
 "
 " " Defined the editor command 'Reload' to call ReloadFilePreserveUndo
