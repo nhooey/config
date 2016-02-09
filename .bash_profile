@@ -195,7 +195,7 @@ if [[ $OSTYPE == darwin* ]]; then
     MANPATH="$(brew --prefix)/opt/coreutils/libexec/gnuman"
 fi
 
-export PATH="$HOME/bin/vine:$HOME/bin:$PATH_BREW:$PATH_GEM:/usr/local/bin:/sbin:/usr/sbin:/usr/local/share/npm/bin:$PATH"
+export PATH="$HOME/bin/tunnelbear:$HOME/bin:$PATH_BREW:$PATH_GEM:/usr/local/sbin:/usr/local/bin:/sbin:/usr/sbin:/usr/local/share/npm/bin:$PATH"
 export MANPATH
 
 # dottools: add distribution binary directories to PATH
