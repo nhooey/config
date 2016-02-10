@@ -9,4 +9,9 @@ fi
 
 $echo_dot_bashrc '>>'
 
+ssh_latest_agent_file="${HOME}/bin/ssh-save-agent"
+if [ -f ${ssh_latest_agent_file} ]; then
+    . ${ssh_latest_agent_file}
+fi
+
 $echo_dot_bashrc '<<'
