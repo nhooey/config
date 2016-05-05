@@ -28,4 +28,4 @@ if [ "$TERM" != "dumb" ]; then
 	alias vdir='ls --color=auto --format=long'
 fi
 
-alias ag="ag --color-line-number='0;34' --color-match='0;35' --color-path='0;32'"
+alias ag="ag --color-line-number='0;34' --color-match='0;35' --color-path='0;32' --pager 'less -FRX -x4'"
