@@ -1,1 +1,6 @@
-ssh -o 'StrictHostKeyChecking no' -o 'UserKnownHostsFile=/dev/null' $@
+#!/bin/bash
+
+host="${1}"
+shift
+
+ssh -o 'StrictHostKeyChecking no' -o 'UserKnownHostsFile=/dev/null' -i ~/.ssh/id_rsa_tbear tbear@${host} $@
