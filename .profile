@@ -27,4 +27,12 @@ if [ -n "$BASH_VERSION" ]; then
     fi
 fi
 
+# Synology Disktation bash override
+OS=$(uname -a)
+case "$OS" in *DiskStation*)
+    if [ -x /opt/bin/bash ]; then
+    exec bash
+    fi
+;; esac
+
 $echo_dot_profile '<<'
