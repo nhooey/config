@@ -7,7 +7,7 @@ source ~/.vimrc
 if has('gui_gtk2')
 	set guifont=Bitstream\ Vera\ Sans\ Mono\ 9
 elseif has('gui_macvim')
-	set guifont=Menlo:h10
+	set guifont=Monaco:h10
 else
 	set guifont=-misc-fixed-medium-r-normal--14-130-75-75-c-70-iso8859-1
 endif
@@ -24,6 +24,7 @@ if filereadable("/etc/vim/gvimrc.local")
 endif
 
 set guioptions-=T
+set noantialias
 
 " Prevent window from resizing on focus
 :setglobal guioptions-=L

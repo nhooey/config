@@ -24,8 +24,6 @@ syntax on
 "set background=dark
 
 colorscheme torte
-hi Pmenu    guifg=white guibg=darkblue
-hi PmenuSel    guifg=white guibg=blue
 
 set cursorline
 augroup CursorLine
@@ -38,35 +36,64 @@ hi CursorColumn cterm=NONE ctermbg=darkred  guibg=darkred
 hi SignColumn              ctermbg=darkgrey guibg=#222222
 hi Pmenu        ctermfg=15 ctermbg=13       guibg=DarkBlue
 hi PmenuSel     ctermfg=15 ctermbg=0        guibg=Blue
+hi StatusLine   ctermfg=6  ctermbg=black    guibg=#000000  guifg=#BBBBBB
+hi StatusLineNC ctermfg=0  ctermbg=13       guibg=#DDDDDD   guifg=#333333
 
 if has("gui_macvim")
     set macmeta
 endif
 
 " Vundle
-set nocompatible
-filetype off
-set rtp+=~/.vim/bundle/vundle/
-call vundle#rc()
-Bundle 'gmarik/vundle'
-Bundle 'L9'
-Bundle 'FuzzyFinder'
-Bundle 'nhooey/tabname'
-Bundle 'sollidsnake/vterm'
-Bundle 'vim-scripts/DetectIndent'
-Bundle 'vim-scripts/Align'
-Bundle 'mileszs/ack.vim'
-Bundle 'vim-scripts/vcscommand.vim'
-Bundle 'tpope/vim-fugitive'
-Bundle 'chrisbra/NrrwRgn'
-Bundle 'thisivan/vim-bufexplorer'
-Bundle 'airblade/vim-gitgutter'
-Bundle 'lepture/vim-jinja'
-Bundle 'rking/ag.vim'
-Bundle 'scrooloose/nerdtree'
-Bundle 'wookiehangover/jshint.vim'
-Bundle 'vim-scripts/gitignore'
-Bundle 'puppetlabs/puppet-syntax-vim'
+set nocompatible              " be iMproved, required
+filetype off                  " required
+
+" set the runtime path to include Vundle and initialize
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+" alternatively, pass a path where Vundle should install plugins
+"call vundle#begin('~/some/path/here')
+
+" let Vundle manage Vundle, required
+Plugin 'VundleVim/Vundle.vim'
+
+Plugin 'L9'
+
+Plugin 'FuzzyFinder'
+Plugin 'nhooey/tabname'
+Plugin 'sollidsnake/vterm'
+Plugin 'ciaranm/detectindent'
+Plugin 'vim-scripts/Align'
+Plugin 'vim-scripts/vcscommand.vim'
+Plugin 'tpope/vim-fugitive'
+Plugin 'chrisbra/NrrwRgn'
+Plugin 'thisivan/vim-bufexplorer'
+Plugin 'airblade/vim-gitgutter'
+Plugin 'lepture/vim-jinja'
+Plugin 'mileszs/ack.vim'
+Plugin 'scrooloose/nerdtree'
+Plugin 'albfan/nerdtree-git-plugin'
+Plugin 'vim-scripts/gitignore'
+Plugin 'puppetlabs/puppet-syntax-vim'
+Plugin 'derekwyatt/vim-scala'
+Plugin 'scrooloose/syntastic'
+Plugin 'hashivim/vim-vagrant'
+Plugin 'stephpy/vim-yaml'
+Plugin 'vim-scripts/indentpython.vim'
+Plugin 'nvie/vim-flake8'
+Plugin 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim/'}
+Plugin 'powerline/fonts'
+Plugin 'fs111/pydoc.vim'
+Plugin 'maksimr/vim-jsbeautify'
+Plugin 'othree/es.next.syntax.vim'
+Plugin 'mustache/vim-mustache-handlebars'
+Plugin 'hail2u/vim-css3-syntax'
+Plugin 'scrooloose/nerdcommenter'
+
+" All of your Plugins must be added before the following line
+call vundle#end()            " required
+filetype plugin indent on    " required
+" End Vundle
+
 
 filetype plugin indent on
 
@@ -102,6 +129,9 @@ set laststatus=2
 " Remove mouse open from netrw
 let g:netrw_mousemaps = 0
 
+" Set Pydoc to Python3
+let g:pydoc_cmd = 'python3 -m pydoc'
+
 set hlsearch
 set shiftwidth=4
 set tabstop=4
@@ -131,6 +161,8 @@ nn <M-k> <C-w>k
 nn <M-j> <C-w>j
 nn <M-h> <C-w>h
 nn <M-l> <C-w>l
+nn <S-M-k> :tabp<CR>
+nn <S-M-j> :tabn<CR>
 
 " Make shift-insert work like in Xterm
 map  <S-Insert> <MiddleMouse>
@@ -166,18 +198,20 @@ set tags=tags,lib/tags,task-deployment/lib/tags
 highlight QuestionableWhitespace ctermbg=black guibg=#333333
 autocmd BufNewFile,BufRead * call HighlightWhitespace()
 function! HighlightWhitespace()
-    if &expandtab
-        " highlight tabs not at the beginning of the line (but allow # for
-        " comments and % for mason), and trailing whitespace not followed by
-        " the cursor (maybe think about highlighting leading spaces not in
-        " denominations of tabstop?)
-        match QuestionableWhitespace /\(^[%#]\?\t*\)\@<!\t\|[ \t]\+\(\%#\)\@!$/
-    else
-        " highlight any leading spaces (TODO: ignore spaces in formatted
-        " assignment statements), " tabs not at the beginning of the line (but
-        " allow # for comments and % for mason), " and trailing whitespace not
-        " followed by the cursor
-        match QuestionableWhitespace /^ \+\|\(^[%#]\?\t*\)\@<!\t\|[ \t]\+\(\%#\)\@!$/
+    if index(['qf', 'nerdtree', ''], &filetype) < 0
+        if &expandtab
+            " highlight tabs not at the beginning of the line (but allow # for
+            " comments and % for mason), and trailing whitespace not followed by
+            " the cursor (maybe think about highlighting leading spaces not in
+            " denominations of tabstop?)
+            match QuestionableWhitespace /\(^[%#]\?\t*\)\@<!\t\|[ \t]\+\(\%#\)\@!$/
+        else
+            " highlight any leading spaces (TODO: ignore spaces in formatted
+            " assignment statements), " tabs not at the beginning of the line (but
+            " allow # for comments and % for mason), " and trailing whitespace not
+            " followed by the cursor
+            match QuestionableWhitespace /^ \+\|\(^[%#]\?\t*\)\@<!\t\|[ \t]\+\(\%#\)\@!$/
+        endif
     endif
 endfunction
 " -----------------------------------------------------------------------------
@@ -196,40 +230,8 @@ function! InsertTabWrapper()
 endfunction
 inoremap <tab> <c-r>=InsertTabWrapper()<cr>
 
-" Comment line toggle with 'X'
-" -----------------------------------------------------------------------------
-" see http://www.perlmonks.org/?node_id=561215 for more info
-function! ToggleComment()
-    let comment_start = '#'
-    let comment_end   = ''
-
-    if &filetype == 'sql'
-        let comment_start = '--'
-    endif
-    if &filetype == 'vim'
-        let comment_start = '"'
-    endif
-    if &filetype == 'css'
-        let comment_start = '\/\* '
-        let comment_end   = ' \*\/'
-    endif
-    if &filetype == 'javascript'
-        let comment_start = '\/\/'
-    endif
-
-    " if the comment start is at the beginning of the line and isn't followed
-    " by a space (i.e. the most likely form of an actual comment, to keep from
-    " uncommenting real comments
-    if getline('.') =~ ('^' . comment_start . '\( \w\)\@!')
-        execute 's/^' . comment_start . '//'
-        execute 's/' . comment_end . '$//'
-    else
-        s/^/\=comment_start/
-        s/$/\=comment_end/
-    endif
-endfunction
-map <silent> X :call ToggleComment()<cr>j
-" -----------------------------------------------------------------------------
+" Comment lines with 'X'
+vmap <silent>X <Plug>NERDCommenterToggle
 
 " Super Star Search
 " -----------------------------------------------------------------------------
@@ -325,3 +327,25 @@ au FileChangedShell * Reload
 " -----------------------------------------------------------------------------
 
 let NERDTreeIgnore = ['\.pyc$']
+" Prevent NERDTree from breaking Syntastic
+let g:NERDTreeUpdateOnWrite = 0
+
+" Syntastic
+" -----------------------------------------------------------------------------
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+let g:syntastic_python_checkers = ['pylint']
+let g:syntastic_javascript_checkers = ['eslint']
+" Add the virtualenv bin for pylint
+let $PATH = '.venv/bin' . ':' . $PATH
+" -----------------------------------------------------------------------------
+
+" Map `E` to `Explore`
+cabbrev E Explore
+
+" Ack setup: Use `ag` instead
+if executable('ag')
+  let g:ackprg = 'ag --vimgrep'
+endif
