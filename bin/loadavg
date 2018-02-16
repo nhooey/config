@@ -1,6 +1,12 @@
 #!/bin/sh
 
-uname="$(uname)"
+uname_file=/tmp/uname
+uname=""
+if [ ! -f /tmp/uname ]; then
+	uname > $uname_file
+fi
+
+uname=$(cat $uname_file)
 
 if [[ "$uname" == 'Linux' ]]; then
 	cut -d " " -f 1-3 /proc/loadavg
