@@ -3,3 +3,7 @@ Session.vim
 .cvsexportcommit.diff
 .msg
 *~
+.venv
+.DS_Store
+.agignore
+Gemfile.lock
