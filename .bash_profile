@@ -211,4 +211,7 @@ if [ -r "$HOME/.tools-cache/setup-dottools-path.sh" ]; then
   . "$HOME/.tools-cache/setup-dottools-path.sh"
 fi
 
+# Docker
+eval "$(docker-machine env default)"
+
 $echo_dot_bashprofile '<<'
