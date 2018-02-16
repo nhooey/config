@@ -12,5 +12,5 @@ fi
 IFS='-' read -ra arr <<< "$program"
 method=${arr[1]}
 
-echo git $method $* "$(git merge-base "master" "$branch")${suffix}..$branch" $*
+>&2 echo git $method $* "$(git merge-base "master" "$branch")${suffix}..$branch" $*
 git $method "$(git merge-base "master" "$branch")${suffix}..$branch" $*

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -uxe
 # config.git initialization script
 #
 # Run this to automatically install:
@@ -22,14 +22,16 @@ cd ~
 # Backup previous config.git stuff
 mkdir backup-config.git
 for file in bin .bash_profile .git .config.git; do
-	mv -f "$file" backup-config.git/
+	if [ -e ${file} ]; then
+		mv -fv "$file" backup-config.git/
+	fi
 done
 
 git clone $REPO config.git
-mv -f config.git/.git .config.git
+mv -fv config.git/.git .config.git
 shopt -s dotglob
 yes | mv -fi config.git/* .
-rm -rf config.git
+rm -rfv config.git
 
 
 git --git-dir=$HOME/.config.git/ --work-tree=$HOME remote set-url --push origin git@github.shuttercorp.net:nhooey/config.git
