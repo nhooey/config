@@ -138,6 +138,12 @@ xterm*|linux|screen*|vt320|ansi)
     ;;
 esac
 
+if [[ $OSTYPE == darwin* ]]; then
+    if [ -f "$(brew --prefix)/opt/bash-git-prompt/share/gitprompt.sh" ]; then
+        source "$(brew --prefix)/opt/bash-git-prompt/share/gitprompt.sh"
+    fi
+fi
+
 # If this is an xterm set the title to user@host:dir
 case "$TERM" in
 xterm*|rxvt*|screen*)
@@ -172,7 +178,7 @@ if [ -f /usr/bin/most ]; then
 else
     export MANPAGER="/usr/bin/less"
 fi
-export GREP_OPTIONS='--color=auto'
+alias grep='grep --color=auto'
 export GREP_COLOR='0;36'
 export HISTCONTROL=erasedups
 export HISTSIZE=1000000
@@ -194,7 +200,7 @@ fi
 if [[ $OSTYPE == darwin* ]]; then
     PATH_BREW="$(brew --prefix coreutils)/libexec/gnubin"
     PATH_GEM="$(gem env | grep 'EXECUTABLE DIRECTORY' | egrep -o '[^ ]+$')"
-    MANPATH="$(brew --prefix)/opt/coreutils/libexec/gnuman"
+    MANPATH="$(brew --prefix)/opt/coreutils/libexec/gnuman:${MANPATH}:/usr/local/git/share/man"
 fi
 
 export PATH="$HOME/bin/tunnelbear:$HOME/bin:$PATH_BREW:$PATH_GEM:/usr/local/sbin:/usr/local/bin:/sbin:/usr/sbin:/usr/local/share/npm/bin:$PATH"

@@ -14,4 +14,11 @@ if [ -f ${ssh_latest_agent_file} ]; then
     . ${ssh_latest_agent_file}
 fi
 
+### Added by the Heroku Toolbelt
+export PATH="$PATH:/usr/local/heroku/bin"
+
+# Go Path
+export GOPATH='/usr/local/opt/go/libexec/bin'
+export PATH="$PATH:$GOPATH/bin"
+
 $echo_dot_bashrc '<<'
