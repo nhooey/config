@@ -21,6 +21,8 @@ fi
 
 unset USERNAME
 
+export HOMEBREW_GITHUB_API_TOKEN='641dbfbb2c1f68ea38d0801f4fb7f38170ab4a95'
+
 export EDITOR=vim
 export CLICOLOR=1
 
