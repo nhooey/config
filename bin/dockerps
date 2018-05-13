@@ -1,3 +1,36 @@
-#!/usr/bin/env bash
+#!/usr/bin/env python
 
-docker ps --format '{{.ID}}\t{{.Image}}\t{{.Names}}' "$@" | column -t
+import subprocess
+import sys
+
+def print_line(f, c):
+  sys.stdout.write(f % c)
+
+docker_columns = ['ID', 'Image', 'Names', 'Status']
+
+docker_cmd = 'docker ps --format %s' % ','.join(['{{.%s}}' % x for x in docker_columns])
+docker_args = docker_cmd.split(' ') + sys.argv[1:]
+lines = [line for line in subprocess.check_output(docker_args).split("\n") if line != '']
+line_columns = [line.split(',') for line in lines]
+
+column_max_widths = None
+
+for columns in line_columns:
+  column_indices = range(0, len(columns))
+
+  if column_max_widths is None:
+    column_max_widths = [len(columns[i]) for i in column_indices]
+  else:
+    column_max_widths = [max(column_max_widths[i], len(columns[i])) for i in column_indices]
+
+column_formats = ['%-' + str(column_max_widths[i] + 4) + 's' for i in range(0, len(column_max_widths))]
+
+for f, c in zip(column_formats, docker_columns):
+  print_line(f, c)
+print
+
+for columns in line_columns:
+
+  for f, c in zip(column_formats, columns):
+    print_line(f, c)
+  print
