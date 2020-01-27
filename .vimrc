@@ -72,7 +72,7 @@ Plugin 'lepture/vim-jinja'
 Plugin 'mileszs/ack.vim'
 Plugin 'scrooloose/nerdtree'
 Plugin 'albfan/nerdtree-git-plugin'
-Plugin 'vim-scripts/gitignore'
+"Plugin 'vim-scripts/gitignore'  " Was breaking Vim editing at console, especially during Git commit editing
 Plugin 'puppetlabs/puppet-syntax-vim'
 Plugin 'derekwyatt/vim-scala'
 Plugin 'scrooloose/syntastic'
@@ -80,7 +80,7 @@ Plugin 'hashivim/vim-vagrant'
 Plugin 'stephpy/vim-yaml'
 Plugin 'vim-scripts/indentpython.vim'
 Plugin 'nvie/vim-flake8'
-Plugin 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim/'}
+"Plugin 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim/'}  " Was annoying git
 Plugin 'powerline/fonts'
 Plugin 'fs111/pydoc.vim'
 Plugin 'maksimr/vim-jsbeautify'
@@ -88,6 +88,8 @@ Plugin 'othree/es.next.syntax.vim'
 Plugin 'mustache/vim-mustache-handlebars'
 Plugin 'hail2u/vim-css3-syntax'
 Plugin 'scrooloose/nerdcommenter'
+Plugin 'tpope/vim-abolish'
+Plugin 'gabesoft/vim-ags'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -216,6 +218,32 @@ function! HighlightWhitespace()
 endfunction
 " -----------------------------------------------------------------------------
 
+" HTML Escape
+" -----------------------------------------------------------------------------
+nnoremap <Leader>h :'[,']call HtmlEscape()<CR>
+vnoremap <Leader>h :call HtmlEscape()<CR>
+nnoremap <Leader>u :'[,']call HtmlUnescape()<CR>
+vnoremap <Leader>u :call HtmlUnescape()<CR>
+
+function! HtmlEscape()
+  silent s/&/\&amp;/eg
+  silent s/</\&lt;/eg
+  silent s/>/\&gt;/eg
+endfunction
+
+function! HtmlUnescape()
+  silent s/&amp;/&/eg
+  silent s/&lt;/</eg
+  silent s/&gt;/>/eg
+endfunction
+" -----------------------------------------------------------------------------
+
+vnoremap <Leader>q :!generate-scala-html-snippet<CR>
+vnoremap <Leader>a :!generate-conf-html-snippet<CR>
+vnoremap <Leader>d :!generate-xml-html-snippet<CR>
+vnoremap <Leader>w :s/\<span\>/code/ge<CR>
+vnoremap <Leader>e /programlisting<CR>
+
 " Remap F3 to do FuzzyFinder
 noremap <F3> :FufFile **/<CR>
 
@@ -337,9 +365,9 @@ let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
 let g:syntastic_python_checkers = ['pylint']
-let g:syntastic_javascript_checkers = ['eslint']
+"let g:syntastic_javascript_checkers = ['eslint']
 " Add the virtualenv bin for pylint
-let $PATH = '.venv/bin' . ':' . $PATH
+let $PATH = '.venv/bin' . ':' . "/Users/nhooey/bin" . ':' . "/usr/local/opt/coreutils/libexec/gnubin" . ':' . $PATH
 " -----------------------------------------------------------------------------
 
 " Map `E` to `Explore`

@@ -6,7 +6,10 @@ import sys
 def print_line(f, c):
   sys.stdout.write(f % c)
 
-docker_columns = ['ID', 'Image', 'Names', 'Status']
+docker_columns = {
+  'container': ['ID', 'Image', 'Names', 'Status'],
+  'image': ['ID', 'Image', 'Names', 'Status'],
+}
 
 docker_cmd = 'docker ps --format %s' % ','.join(['{{.%s}}' % x for x in docker_columns])
 docker_args = docker_cmd.split(' ') + sys.argv[1:]

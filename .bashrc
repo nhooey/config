@@ -19,6 +19,8 @@ export PATH="$PATH:/usr/local/heroku/bin"
 
 # Go Path
 export GOPATH='/usr/local/opt/go/libexec/bin'
-export PATH="$PATH:$GOPATH/bin"
+export GNUBIN_GREP_PATH='/usr/local/Cellar/grep/3.3/libexec/gnubin'
+export GNUBIN_SED_PATH='/usr/local/opt/gnu-sed/libexec/gnubin:$PATH'
+export PATH="$GNUBIN_GREP_PATH:$GNUBIN_SED_PATH:$PATH:$GOPATH/bin"
 
 $echo_dot_bashrc '<<'

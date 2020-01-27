@@ -94,7 +94,7 @@ function __git_ps1_branch()
 #        __color "[$(basename "$(dirname "$(echo $(cd "$GITDIR"; pwd))")")]"
 #    fi
 
-    GIT_PS1=$(__git_ps1 "[%s]" 2> /dev/null)
+    GIT_PS1=$(__git_ps1 "%s" 2> /dev/null)
     GIT_PS1_SUCCESS=$?
 
 #    if [[ $GIT_PS1 != "" ]]; then
@@ -111,6 +111,15 @@ function __git_ps1_branch()
             echo $GIT_PS1_COLOR
 #        fi
 #    fi
+}
+
+function __color_git_sha1() {
+  GIT_SHA1="$(git rev-parse --verify HEAD 2> /dev/null | cut -c1-7)"
+  if [ $? -eq 0 ]; then
+    __color "${GIT_SHA1}"
+  else
+    echo ""
+  fi
 }
 
 # Enable 256 colours in tmux
@@ -130,7 +139,7 @@ xterm*|linux|screen*|vt320|ansi)
         SCREEN_WIN="[$WINDOW]"
     fi
 
-    PS1='\[\033[40;1;41m\]$(r=$?; if test $r -ne 0; then echo "[$r]"; set ?=$r; unset r; fi)\[\033[00m\]${debian_chroot:+($debian_chroot)}\[\033[01;37m\]\u\[\033[01;30m\]@$HOSTNAME_COLOR$(__git_ps1_branch):$(__color_pwd)
+    PS1='\[\033[40;1;41m\]$(r=$?; if test $r -ne 0; then echo "[$r]"; set ?=$r; unset r; fi)\[\033[00m\]${debian_chroot:+($debian_chroot)}\[\033[01;37m\]\u\[\033[01;30m\]@$HOSTNAME_COLOR[$(__git_ps1_branch)|$(__color_git_sha1)]:$(__color_pwd)
 \[\033[01;30m\]$(date +"%Y-%m-%d %H:%M:%S")\[\033[00m\] \[\033[00;34m\]\$\[\033[00m\] '
     ;;
 *)
@@ -203,7 +212,7 @@ if [[ $OSTYPE == darwin* ]]; then
     MANPATH="$(brew --prefix)/opt/coreutils/libexec/gnuman:${MANPATH}:/usr/local/git/share/man"
 fi
 
-export PATH="$HOME/bin/tunnelbear:$HOME/bin:$PATH_BREW:$PATH_GEM:/usr/local/sbin:/usr/local/bin:/sbin:/usr/sbin:/usr/local/share/npm/bin:$PATH"
+export PATH="$HOME/bin:$PATH_BREW:$PATH_GEM:/usr/local/sbin:/usr/local/bin:/sbin:/usr/sbin:$PATH"
 export MANPATH
 
 # dottools: add distribution binary directories to PATH
@@ -212,6 +221,8 @@ if [ -r "$HOME/.tools-cache/setup-dottools-path.sh" ]; then
 fi
 
 # Docker
-eval "$(docker-machine env default)"
+if which docker-machine 2>&1 > /dev/null; then
+  eval "$(docker-machine env default 2> /dev/null)"
+fi
 
 $echo_dot_bashprofile '<<'

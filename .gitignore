@@ -7,3 +7,5 @@ Session.vim
 .DS_Store
 .agignore
 Gemfile.lock
+.idea
+.idea_modules
