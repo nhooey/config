@@ -5,6 +5,7 @@
 echo_dot_bashrc=':'
 if [ -f "$HOME/.echo_login" ]; then
     echo_dot_bashrc="echo '~/.bashrc'"
+    set -x
 fi
 
 $echo_dot_bashrc '>>'

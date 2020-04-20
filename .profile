@@ -10,6 +10,7 @@
 echo_dot_profile=':'
 if [ -f "$HOME/.echo_login" ]; then
     echo_dot_profile="echo '~/.profile'"
+    set -x
 fi
 
 $echo_dot_profile '>>'
@@ -31,7 +32,7 @@ fi
 OS=$(uname -a)
 case "$OS" in *DiskStation*)
     if [ -x /opt/bin/bash ]; then
-    exec bash
+        export PATH="/opt/bin:${PATH}"
     fi
 ;; esac
 
