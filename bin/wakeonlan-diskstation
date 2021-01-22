@@ -1,0 +1,2 @@
+#!/bin/bash
+wakeonlan 00:11:32:0F:95:43
